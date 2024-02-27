@@ -57,24 +57,25 @@ fun CustomTextField(
 //            .height(50.dp), contentAlignment = Alignment.Center
 //
 //    ) {
-    TextField(value = text, onValueChange = { text = it }, placeholder = {
-        Text(placeholder)
-    }, colors = textFieldColors(
-        textColor = MaterialTheme.colorScheme.secondary,
-        placeholderColor = MaterialTheme.colorScheme.onSecondary,
-        leadingIconColor = MaterialTheme.colorScheme.onSecondary,
-        trailingIconColor = MaterialTheme.colorScheme.onSecondary,
-        focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
-        cursorColor = MaterialTheme.colorScheme.secondary,
-        backgroundColor = MaterialTheme.colorScheme.onSecondary.copy(
-            alpha = animatedFocus
-        ),
+    TextField(value = text, onValueChange = { text = it },
+        placeholder = {
+            Text(placeholder)
+        }, colors = textFieldColors(
+            textColor = MaterialTheme.colorScheme.secondary,
+            placeholderColor = MaterialTheme.colorScheme.onSecondary,
+            leadingIconColor = MaterialTheme.colorScheme.onSecondary,
+            trailingIconColor = MaterialTheme.colorScheme.onSecondary,
+            focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
+            cursorColor = MaterialTheme.colorScheme.secondary,
+            backgroundColor = MaterialTheme.colorScheme.onSecondary.copy(
+                alpha = animatedFocus
+            ),
 
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
-        disabledIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
 
-        ), leadingIcon = leadingIcon, trailingIcon = trailingIcon, singleLine = true,
+            ), leadingIcon = leadingIcon, trailingIcon = trailingIcon, singleLine = true,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = KeyboardActions(),

@@ -1,20 +1,13 @@
 package ui.account.auth.registration
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,16 +15,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -43,18 +33,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.transitions.SlideTransition
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomTextField
@@ -78,22 +69,27 @@ class RegistrationScreen : Screen {
                 Column(
                     modifier = Modifier.fillMaxSize().padding(paddingValue).padding(top = 20.dp)
                 ) {
-                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
-                        CustomButton(
-                            modifier = Modifier.weight(1f).padding(horizontal = 3.dp).height(40.dp),
-                            color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
-                            title = "Login"
-                        ) { currentView = AuthEnum.LOGIN }
-                        CustomButton(
-                            modifier = Modifier.weight(1f).padding(horizontal = 3.dp).height(40.dp),
-                            color = if (currentView.name == AuthEnum.REGISTRATION.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
-                            title = "Registration"
-                        ) {
-                            currentView = AuthEnum.REGISTRATION
-                            animationState = true
+                    if (currentView != AuthEnum.PASSWORDFORGET) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
+                            CustomButton(
+                                modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
+                                    .height(40.dp),
+                                color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
+                                title = "Login"
+                            ) { currentView = AuthEnum.LOGIN }
+                            CustomButton(
+                                modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
+                                    .height(40.dp),
+                                color = if (currentView.name == AuthEnum.REGISTRATION.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
+                                title = "Registration"
+                            ) {
+                                currentView = AuthEnum.REGISTRATION
+                                animationState = true
+                            }
                         }
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     when (currentView) {
                         AuthEnum.LOGIN -> {
@@ -107,7 +103,9 @@ class RegistrationScreen : Screen {
                                     animationSpec = tween(delayMillis = 300)
                                 )
                             ) {
-                                LogInView(navigator)
+                                LogInView() {
+                                    currentView = AuthEnum.PASSWORDFORGET
+                                }
                             }
                         }
 
@@ -125,6 +123,12 @@ class RegistrationScreen : Screen {
                                 RegistrationView(navigator)
                             }
                         }
+
+                        AuthEnum.PASSWORDFORGET -> {
+                            PasswordForget() {
+                                currentView = AuthEnum.LOGIN
+                            }
+                        }
                     }
 
                 }
@@ -136,12 +140,58 @@ class RegistrationScreen : Screen {
 }
 
 enum class AuthEnum() {
-    LOGIN,
-    REGISTRATION
+    LOGIN, REGISTRATION, PASSWORDFORGET
 }
 
 @Composable
-fun LogInView(navigator: Navigator) {
+fun PasswordForget(backToLogin: () -> Unit) {
+    var email by remember { mutableStateOf("") }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
+            Text(
+                "Password vergessen? Kein Problem! " +
+                        "Tragen hier deine E-mail-Adresse ein und wir schicken Dir " +
+                        "eine E-mail an die verknüpfte Adresse. Damit kann das " +
+                        "Password zurückgesetzt werden.",
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            CustomTextField(
+                text = email,
+                onchangeText = { email = it },
+                placeholder = "E-mail",
+                leadingIcon = {
+                    Icon(Icons.Default.Mail, contentDescription = null)
+                },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Email
+                )
+            )
+//            Spacer(modifier = Modifier.height(15.dp))
+            CustomButton(title = "Password reset") {
+
+            }
+            Text(
+                "Login",
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.fillMaxWidth().noRippleClickable {
+                    backToLogin()
+                })
+
+
+        }
+    }
+}
+
+
+@Composable
+fun LogInView(toPasswordForget: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -156,8 +206,13 @@ fun LogInView(navigator: Navigator) {
                 onchangeText = { email = it },
                 placeholder = "E-mail",
                 leadingIcon = {
-                    Icon(Icons.Default.Email, contentDescription = null)
-                }
+                    Icon(Icons.Default.Mail, contentDescription = null)
+                },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Email
+                )
             )
             CustomTextField(
                 text = password,
@@ -167,13 +222,11 @@ fun LogInView(navigator: Navigator) {
                     Icon(Icons.Outlined.Lock, contentDescription = null)
                 },
                 trailingIcon = {
-                    Icon(
-                        if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = null,
                         modifier = Modifier.noRippleClickable {
                             passwordVisible = !passwordVisible
-                        }
-                    )
+                        })
                 },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
@@ -186,6 +239,18 @@ fun LogInView(navigator: Navigator) {
             Spacer(modifier = Modifier.height(15.dp))
 
             CustomButton(title = "Login") {}
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                "Password forget?",
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.fillMaxWidth().noRippleClickable {
+                    toPasswordForget()
+                })
 
         }
     }
@@ -205,14 +270,12 @@ fun RegistrationView(navigator: Navigator) {
             modifier = Modifier.fillMaxSize().padding(top = 10.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            CustomTextField(
-                text = userName,
+            CustomTextField(text = userName,
                 onchangeText = { userName = it },
                 placeholder = "Username",
                 leadingIcon = {
                     Icon(Icons.Default.Person, contentDescription = null)
-                }
-            )
+                })
             CustomTextField(
                 text = email,
                 onchangeText = { email = it },
@@ -235,13 +298,11 @@ fun RegistrationView(navigator: Navigator) {
                     Icon(Icons.Outlined.Lock, contentDescription = null)
                 },
                 trailingIcon = {
-                    Icon(
-                        if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = null,
                         modifier = Modifier.noRippleClickable {
                             passwordVisible = !passwordVisible
-                        }
-                    )
+                        })
                 },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
@@ -259,13 +320,11 @@ fun RegistrationView(navigator: Navigator) {
                     Icon(Icons.Outlined.Lock, contentDescription = null)
                 },
                 trailingIcon = {
-                    Icon(
-                        if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = null,
                         modifier = Modifier.noRippleClickable {
                             passwordVisible = !passwordVisible
-                        }
-                    )
+                        })
                 },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
