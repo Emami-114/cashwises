@@ -26,7 +26,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import cashwises.composeapp.generated.resources.Res
 import domain.model.DealModel
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.noRippleClickable
@@ -47,7 +49,7 @@ fun ProductRow(dealModel: DealModel) {
         ) {
             Image(
                 painter =
-                painterResource(dealModel.image ?: ""),
+                painterResource(DrawableResource(dealModel.image ?: "")),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxWidth().padding(all = 10.dp).clip(roundedCornerShape)
