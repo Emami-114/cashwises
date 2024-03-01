@@ -8,12 +8,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomDivider() {
+fun CustomDivider(height: Dp = 1.dp) {
     Box(
-        modifier = Modifier.fillMaxWidth().height(1.dp)
+        modifier = Modifier.fillMaxWidth().height(height)
             .background(
                 brush = Brush.horizontalGradient(
                     colors =
