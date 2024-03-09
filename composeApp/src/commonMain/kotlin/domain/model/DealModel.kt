@@ -3,6 +3,17 @@ package domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class DealModel2(
+    val deals: List<DealModel3>
+)
+
+@Serializable
+data class DealModel3(
+    val id: String?,
+    val title: String,
+)
+
+@Serializable
 data class DealModel(
     val id: String?,
     val title: String,

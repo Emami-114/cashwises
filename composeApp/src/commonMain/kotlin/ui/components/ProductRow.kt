@@ -27,8 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import domain.model.DealModel
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.noRippleClickable
 
 @OptIn(ExperimentalResourceApi::class)
@@ -47,7 +51,7 @@ fun ProductRow(dealModel: DealModel) {
         ) {
             Image(
                 painter =
-                painterResource(dealModel.image ?: ""),
+                painterResource(resource = DrawableResource(dealModel.image ?: "")),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxWidth().padding(all = 10.dp).clip(roundedCornerShape)
@@ -55,7 +59,6 @@ fun ProductRow(dealModel: DealModel) {
             Box(
                 modifier = Modifier.fillMaxWidth().clip(roundedCornerShape)
                     .background(Color.Gray.copy(alpha = 0.5f)).padding(5.dp)
-
             ) {
                 Column(modifier = Modifier.zIndex(1f)) {
                     Text(
@@ -76,7 +79,6 @@ fun ProductRow(dealModel: DealModel) {
                         )
                         Text("1T", fontSize = 10.sp, fontWeight = FontWeight.Medium)
                     }
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -91,8 +93,6 @@ fun ProductRow(dealModel: DealModel) {
 
                             }
                         )
-
-
                     }
                 }
             }

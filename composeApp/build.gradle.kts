@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.buildConfig)
+
 }
 
 kotlin {
@@ -33,12 +36,15 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androidx.appcompat)
+            implementation(libs.kotlinx.coroutines.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -52,10 +58,15 @@ kotlin {
             implementation(libs.voyager.navigation)
             implementation(libs.voyager.tab)
             implementation(libs.voyager.transition)
+            // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.client.serialization)
+            // MOKO
             implementation(libs.moko.mvvm)
+            implementation(libs.multiplatformSettings)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.coroutines.core)
 
             // Koin
             implementation(libs.koin.core)
@@ -63,6 +74,9 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(compose.desktop.common)
+//            implementation(libs.ktor.client.cio)
+//            implementation(libs.ktor.client.okhttp)
         }
     }
 }
