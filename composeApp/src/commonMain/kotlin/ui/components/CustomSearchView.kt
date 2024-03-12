@@ -50,11 +50,11 @@ fun CustomSearchView(
     )
     val focusManager = LocalFocusManager.current
     Box(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 15.dp)
+        modifier = modifier.fillMaxWidth()
+            .padding(horizontal = 15.dp)
             .clip(MaterialTheme.shapes.large)
             .background(Color.Transparent)
-            .customBorder()
-            .height(50.dp),
+            .customBorder(),
         contentAlignment = Alignment.Center
 //            .padding(horizontal = 5.dp)
 
@@ -102,7 +102,8 @@ fun CustomSearchView(
                             }
                         })
             },
-            modifier = modifier.fillMaxWidth().onFocusChanged { focus = it.isFocused }
+            modifier = modifier.fillMaxWidth().padding(0.dp)
+                .onFocusChanged { focus = it.isFocused }
         )
     }
 }

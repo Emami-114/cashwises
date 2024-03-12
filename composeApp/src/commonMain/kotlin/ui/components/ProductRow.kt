@@ -51,7 +51,8 @@ fun ProductRow(dealModel: DealModel) {
         ) {
             Image(
                 painter =
-                painterResource(resource = DrawableResource(dealModel.image ?: "")),
+                painterResource(resource = DrawableResource(dealModel.thumbnail ?: "")),
+
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxWidth().padding(all = 10.dp).clip(roundedCornerShape)

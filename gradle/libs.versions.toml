@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.0"
+agp = "8.2.2"
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
@@ -24,6 +24,7 @@ kotlinx-coroutines = "1.7.3"
 multiplatformSettings = "1.1.1"
 kotlinx-serialization = "1.6.2"
 buildConfig = "4.1.1"
+calf = "0.4.0"
 
 
 [libraries]
@@ -59,6 +60,7 @@ ktor-client-cio= {module ="io.ktor:ktor-client-cio", version.ref = "ktor"}
 ktor-client-android= {module ="io.ktor:ktor-client-android", version.ref = "ktor"}
 
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+calf-filepicker = { module = "com.mohamedrejeb.calf:calf-file-picker", version.ref = "calf" }
 
 
 # MOKO
