@@ -23,8 +23,6 @@ import org.jetbrains.compose.resources.InternalResourceApi
 import ui.components.CustomBackgroundView
 import ui.components.CustomSearchView
 import ui.components.CustomTopAppBar
-import ui.components.DuckieTextField2
-import ui.menu.components.TabbarView
 
 class SearchScreen() : Screen {
     @OptIn(InternalResourceApi::class, ExperimentalResourceApi::class)
@@ -46,19 +44,6 @@ class SearchScreen() : Screen {
             },
 
             ) { paddingValues ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                CustomBackgroundView()
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    DuckieTextField2(
-                        text = search,
-                        onTextChanged = {search = it}
-                    )
-                }
-            }
-
 
         }
 
