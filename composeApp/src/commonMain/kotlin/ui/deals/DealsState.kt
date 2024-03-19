@@ -2,6 +2,7 @@ package ui.deals
 
 import domain.model.DealModel
 import domain.model.ImageModel
+import kotlinx.serialization.SerialName
 
 data class DealsState(
     val id: String = "",
@@ -20,6 +21,9 @@ data class DealsState(
     val providerUrl: String? = null,
     val thumbnail: String? = null,
     val images: List<String>? = null,
+    val userId: String? = null,
+    val videoUrl: String? = null,
+
     val thumbnailByte: ImageModel? = null,
-    val imagesByte: List<ImageModel>? = null
+    var imagesByte: List<ImageModel>? = null
 )

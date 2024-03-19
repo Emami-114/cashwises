@@ -74,7 +74,9 @@ class RegistrationScreen : Screen {
                             CustomButton(
                                 modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
                                     .height(40.dp),
-                                color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
+                                color = if (currentView.name == AuthEnum.LOGIN.name)
+                                    MaterialTheme.colorScheme.primary else
+                                    MaterialTheme.colorScheme.onPrimary,
                                 title = "Login"
                             ) { currentView = AuthEnum.LOGIN }
                             CustomButton(

@@ -83,13 +83,16 @@ kotlin {
             implementation(libs.koin.compose)
             // file picker
             implementation(libs.calf.filepicker)
-            api("io.github.qdsfdhvh:image-loader:1.7.1")
-
+            // image laoder
+            api("io.github.qdsfdhvh:image-loader:1.7.0")
+            api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.0")
+//            api("io.github.qdsfdhvh:image-loader-extension-blur:1.7.8")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
             implementation(libs.ktor.client.okhttp)
+//            api("io.github.qdsfdhvh:image-loader-extension-imageio:1.7.8")
         }
     }
 }

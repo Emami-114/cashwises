@@ -24,7 +24,9 @@ class DealsUseCase : KoinComponent {
         provider: String?,
         providerUrl: String?,
         thumbnail: String?,
-        images: List<String>?
+        images: List<String>?,
+        userId: String?,
+        videoUrl: String?,
     ) {
         repository.addDeal(
             title = title,
@@ -38,7 +40,9 @@ class DealsUseCase : KoinComponent {
             provider = provider,
             providerUrl = providerUrl,
             images = images,
-            thumbnail = thumbnail
+            thumbnail = thumbnail,
+            userId = userId,
+            videoUrl = videoUrl
         )
     }
 

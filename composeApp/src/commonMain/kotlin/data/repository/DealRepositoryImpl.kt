@@ -69,7 +69,9 @@ class DealRepositoryImpl : DealRepository {
         provider: String?,
         providerUrl: String?,
         thumbnail: String?,
-        images: List<String>?
+        images: List<String>?,
+        userId: String?,
+        videoUrl: String?,
     ) {
         try {
             val body = DealModel(
@@ -84,7 +86,9 @@ class DealRepositoryImpl : DealRepository {
                 provider = provider,
                 providerUrl = providerUrl,
                 thumbnail = thumbnail,
-                images = images
+                images = images,
+                userId = userId,
+                videoUrl = videoUrl,
             )
             client.post("${ApiConfig.BASE_URL}deals/") {
                 contentType(ContentType.Application.Json)

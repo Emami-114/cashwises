@@ -19,6 +19,8 @@ interface DealRepository {
         providerUrl: String? = null,
         thumbnail: String? = null,
         images: List<String>? = null,
+        userId: String? = null,
+        videoUrl: String? = null,
     )
 
     suspend fun updateDeal(

@@ -46,7 +46,6 @@ class SearchScreen() : Screen {
             ) { paddingValues ->
 
         }
-
     }
 
 }

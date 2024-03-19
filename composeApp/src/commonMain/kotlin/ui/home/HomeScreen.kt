@@ -51,32 +51,6 @@ class HomeScreen : Screen {
     override fun Content() {
         val viewModel: DealsViewModel = koinInject()
         val uiState by viewModel.state.collectAsState()
-        val refreshing by remember { mutableStateOf(false) }
-        val pullRefreshState = rememberPullRefreshState(refreshing, { })
-
-        var listImage by remember { mutableStateOf("") }
-
-        val scope = rememberCoroutineScope()
-        val context = LocalPlatformContext.current
-        val pickerLaunch = rememberFilePickerLauncher(
-            type = FilePickerFileType.Image,
-            selectionMode = FilePickerSelectionMode.Multiple,
-            onResult = { kmpFiles ->
-                for (i in kmpFiles) {
-                    scope.launch {
-                        i?.let { file ->
-//                            viewModel.uploadImage(
-//                                byteArray = file.readByteArray(context),
-//                                fileName = file.getName(context).toString()
-//                            )
-//                        viewModel.fileName.value = file.getName(context).toString()
-//                        listImage = file.getPath(context).toString()
-                        }
-                    }
-                }
-
-            }
-        )
 
         Scaffold(topBar = {
             CustomTopAppBar(title = "Home")
@@ -104,27 +78,7 @@ class HomeScreen : Screen {
                     modifier = Modifier.padding(it)
                         .padding(all = 5.dp)
                 ) {
-                    item {
-                        Button(onClick = { pickerLaunch.launch() }) {
-                            Text("Add")
-                        }
-                    }
-
-                    item {
-//                        Button(onClick = { viewModel.uploadImage() }) {
-//                            Text("Upload image")
-//                        }
-                    }
-
-                    item {
-//                        if (viewModel.bytes.value != null) {
-                        val painter =
-                            rememberImagePainter(listImage)
-                        Image(painter, contentDescription = null)
-//
-//                        }
-                    }
-                    items(exampleDeals) { deal ->
+                    items(uiState.deals) { deal ->
                         ProductRow(deal)
                     }
                 }

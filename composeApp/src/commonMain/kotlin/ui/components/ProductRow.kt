@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.seiko.imageloader.rememberImagePainter
+import data.repository.ApiConfig
 import domain.model.DealModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -49,10 +51,10 @@ fun ProductRow(dealModel: DealModel) {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy((-10).dp)
         ) {
+            val painter =
+                rememberImagePainter("${ApiConfig.BASE_URL}image/${dealModel.thumbnail}")
             Image(
-                painter =
-                painterResource(resource = DrawableResource(dealModel.thumbnail ?: "")),
-
+                painter = painter,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxWidth().padding(all = 10.dp).clip(roundedCornerShape)

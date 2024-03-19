@@ -42,16 +42,8 @@ class DealsViewModel : ViewModel(), KoinComponent {
         )
 
     init {
-//        getDeals()
-//        viewModelScope.launch {
-//            bytes = readResourceBytes()
-//        }
+        getDeals()
     }
-
-//    fun uploadImage(byteArray: ByteArray, fileName: String) = viewModelScope.launch {
-////        addImage(bytesArray.value)
-//        useCase.uploadImage(byteArray, fileName)
-//    }
 
     fun onEvent(event: DealEvent) {
         when (event) {
@@ -67,6 +59,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
             is DealEvent.OnProviderUrlChange -> doChangeProviderUrl(event)
             is DealEvent.OnThumbnailChange -> doChangeThumbnail(event)
             is DealEvent.OnImagesChange -> doChangeImages(event)
+            is DealEvent.OnVideoUrlChange -> doChangeVideoUrl(event)
             is DealEvent.OnAction -> doCreateDeal(event)
             is DealEvent.OnSetDefaultState -> _state.value = DealsState()
         }
@@ -79,8 +72,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun doChangeImages(image: ImageModel) {
+        _state.value.imagesByte?.plus(image)
+    }
+
     private fun doCreateDeal(event: DealEvent.OnAction) {
         viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true)
             useCase.uploadImage(
                 _state.value.thumbnailByte?.byteArray ?: ByteArray(0),
                 fileName = _state.value.thumbnailByte?.name ?: "",
@@ -88,7 +86,16 @@ class DealsViewModel : ViewModel(), KoinComponent {
                     _state.update { it.copy(thumbnail = _state.value.thumbnailByte?.name) }
                 }
             )
-            _state.value = _state.value.copy(isLoading = true)
+            if (_state.value.images != null) {
+                _state.value.imagesByte?.forEach { imageByte ->
+                    useCase.uploadImage(
+                        imageByte.byteArray,
+                        fileName = imageByte.name,
+                        path = { path ->
+                            _state.update { it.copy(images = it.images?.plus(path)) }
+                        })
+                }
+            }
             useCase.addDeals(
                 title = _state.value.title,
                 description = _state.value.description,
@@ -101,8 +108,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 provider = _state.value.provider,
                 providerUrl = _state.value.providerUrl,
                 thumbnail = _state.value.thumbnail,
-                images = _state.value.images
+                images = _state.value.images,
+                userId = _state.value.userId,
+                videoUrl = _state.value.videoUrl
             )
+            onEvent(event = DealEvent.OnSetDefaultState)
             _state.value = _state.value.copy(isLoading = false)
         }
     }
@@ -179,21 +189,10 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun addDeal() = viewModelScope.launch {
-        useCase.addDeals(
-            title = "Zweite versuch von client",
-            description = "Zweite versuch von client description",
-            category = "Handy",
-            isFree = true,
-            price = 10.0,
-            offerPrice = 5.0,
-            published = true,
-            expirationDate = "10.12.2024",
-            provider = "Amazon",
-            providerUrl = "Provider Url",
-            thumbnail = "Image 1",
-            images = null
-        )
+    private fun doChangeVideoUrl(event: DealEvent.OnVideoUrlChange) {
+        _state.update {
+            it.copy(videoUrl = event.values)
+        }
     }
 
     private fun getDeals() = viewModelScope.launch {

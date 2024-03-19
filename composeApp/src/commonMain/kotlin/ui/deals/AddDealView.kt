@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -59,8 +56,9 @@ fun AddDealView() {
         CustomBackgroundView()
         val scopeCoroutine = rememberCoroutineScope()
         val context = LocalPlatformContext.current
-        val pickerLaunch = rememberFilePickerLauncher(type = FilePickerFileType.Image,
-            selectionMode = FilePickerSelectionMode.Multiple,
+        val pickerLaunch = rememberFilePickerLauncher(
+            type = FilePickerFileType.Image,
+            selectionMode = FilePickerSelectionMode.Single,
             onResult = { kmpFiles ->
                 for (i in kmpFiles) {
                     scopeCoroutine.launch {
@@ -72,15 +70,30 @@ fun AddDealView() {
                                     byteArray = file.readByteArray(context)
                                 )
                             )
-//                        viewModel.fileName.value = file.getName(context).toString()
-//                        listImage = file.getPath(context).toString()
                         }
                     }
                 }
-
             })
-        val scrollState = rememberScrollState()
+        val pickerLaunch2 = rememberFilePickerLauncher(
+            type = FilePickerFileType.Image,
+            selectionMode = FilePickerSelectionMode.Multiple,
+            onResult = { kmpFiles ->
+                for (i in kmpFiles) {
+                    scopeCoroutine.launch {
+                        i?.let { file ->
+                            viewModel.doChangeImages(
+                                ImageModel(
+                                    name = file.getName(context).toString(),
+                                    path = file.getPath(context).toString(),
+                                    byteArray = file.readByteArray(context)
+                                )
+                            )
+                        }
+                    }
+                }
+            })
 
+        val scrollState = rememberScrollState()
         LazyVerticalGrid(
             columns = GridCells.Fixed(if (maxWith > 900.dp) 2 else 1),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -92,28 +105,35 @@ fun AddDealView() {
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
-                    val painter = uiState.thumbnailByte?.let { rememberImagePainter(it.path) }
-                    if (painter != null) {
+                    val painter =
+                        rememberImagePainter(uiState.thumbnailByte?.path ?: "")
+                    if (uiState.thumbnailByte != null) {
                         Image(
-                            painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
+                            painter, contentDescription = null, contentScale = ContentScale.Crop,
                             modifier = Modifier.height(if (maxWith > 800.dp) 500.dp else 300.dp)
                                 .width(if (maxWith > 800.dp) 500.dp else 300.dp)
                         )
                     }
-
                     Button(onClick = { pickerLaunch.launch() }) {
                         Text("Thumbnail")
                     }
-
                 }
             }
-            if (maxWith > 800.dp) {
-                item {
-
+            item {
+                val painter =
+                    rememberImagePainter(uiState.imagesByte?.first()?.path ?: "")
+                if (uiState.imagesByte?.first() != null) {
+                    Image(
+                        painter, contentDescription = null, contentScale = ContentScale.Crop,
+                        modifier = Modifier.height(if (maxWith > 800.dp) 500.dp else 300.dp)
+                            .width(if (maxWith > 800.dp) 500.dp else 300.dp)
+                    )
+                }
+                Button(onClick = { pickerLaunch2.launch() }) {
+                    Text("Images")
                 }
             }
+
             item {
                 CustomTextField(value = uiState.title,
                     onValueChange = { viewModel.onEvent(DealEvent.OnTitleChange(it)) },
@@ -206,6 +226,15 @@ fun AddDealView() {
                     placeholder = {
                         Text(
                             "provider url", color = MaterialTheme.colorScheme.secondary
+                        )
+                    })
+            }
+            item {
+                CustomTextField(value = uiState.videoUrl ?: "",
+                    onValueChange = { viewModel.onEvent(DealEvent.OnVideoUrlChange(it)) },
+                    placeholder = {
+                        Text(
+                            "Video url", color = MaterialTheme.colorScheme.secondary
                         )
                     })
             }

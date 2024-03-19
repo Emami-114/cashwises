@@ -25,11 +25,12 @@ data class DealModel(
     val provider: String? = null,
     @SerialName("provider_url")
     val providerUrl: String? = null,
-    @SerialName("image")
     val thumbnail: String? = null,
     val images: List<String>? = null,
     @SerialName("user_id")
     val userId: String? = null,
+    @SerialName("video_url")
+    val videoUrl: String? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
     @SerialName("updated_at")
