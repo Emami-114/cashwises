@@ -19,14 +19,19 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
-fun RowScope.TabNavigationItem(tab: Tab) {
+fun RowScope.TabNavigationItem(tab: Tab?, onClick: () -> Unit) {
     val tabNavigator = LocalTabNavigator.current
     var inter = MutableInteractionSource()
     BottomNavigationItem(
         selected = tabNavigator.current == tab,
-        onClick = { tabNavigator.current = tab },
+        onClick = {
+            if (tab != null) {
+                tabNavigator.current = tab
+            }
+            onClick()
+        },
         icon = {
-            tab.options.icon?.let { icon ->
+            tab?.options?.icon?.let { icon ->
                 Icon(
                     painter = icon,
                     contentDescription = null
@@ -36,7 +41,10 @@ fun RowScope.TabNavigationItem(tab: Tab) {
         selectedContentColor = MaterialTheme.colorScheme.primary,
         unselectedContentColor = MaterialTheme.colorScheme.secondary,
         label = {
-            Text(tab.options.title)
+            if (tab != null) {
+                Text(tab.options.title)
+
+            }
         },
         alwaysShowLabel = false,
         interactionSource = remember { MutableInteractionSource() },
