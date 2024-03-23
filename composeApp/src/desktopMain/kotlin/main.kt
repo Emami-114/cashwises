@@ -7,7 +7,7 @@ import ui.App
 
 fun main() = application {
     startKoin { modules(getSharedModules()) }
-    Window(onCloseRequest = ::exitApplication, title = "cash-wises") {
+    Window(onCloseRequest = ::exitApplication, title = "cashwises") {
         CompositionLocalProvider(
 //            LocalImageLoader provides remember { generateImageLoader() },
             ) {
