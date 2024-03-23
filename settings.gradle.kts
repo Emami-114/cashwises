@@ -1,4 +1,4 @@
-rootProject.name = "Cashwises"
+rootProject.name = "cashwises"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
