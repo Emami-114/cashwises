@@ -75,5 +75,7 @@ internal val md_theme_dark_surfaceTint = Color(0xFF55D6F4)
 internal val md_theme_dark_outlineVariant = Color(0xFF3F484B)
 internal val md_theme_dark_scrim = Color(0xFF000000)
 
+// Green Color
+internal val md_theme_dark_green = Color(0xFF34B433)
 
 internal val seed = Color(0xFF2C3639)

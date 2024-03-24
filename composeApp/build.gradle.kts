@@ -87,6 +87,9 @@ kotlin {
             api("io.github.qdsfdhvh:image-loader:1.7.0")
             api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.0")
 //            api("io.github.qdsfdhvh:image-loader-extension-blur:1.7.8")
+
+            // rich text editor
+            implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc01")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -129,6 +132,9 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
+}
+dependencies {
+    implementation(libs.androidx.media3.common)
 }
 
 compose.desktop {

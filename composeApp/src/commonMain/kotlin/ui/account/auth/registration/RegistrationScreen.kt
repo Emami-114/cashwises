@@ -162,7 +162,7 @@ fun PasswordForget(backToLogin: () -> Unit) {
             CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("E-mail") },
+                placeholder = "E-mail",
                 leadingIcon = {
                     Icon(Icons.Default.Mail, contentDescription = null)
                 },
@@ -206,7 +206,7 @@ fun LogInView(toPasswordForget: () -> Unit) {
             CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("E-mail") },
+                placeholder = "E-mail",
                 leadingIcon = {
                     Icon(Icons.Default.Mail, contentDescription = null)
                 },
@@ -219,7 +219,7 @@ fun LogInView(toPasswordForget: () -> Unit) {
             CustomTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = { Text("Password") },
+                placeholder = "Password",
                 leadingIcon = {
                     Icon(Icons.Outlined.Lock, contentDescription = null)
                 },
@@ -275,14 +275,14 @@ fun RegistrationView(navigator: Navigator) {
             CustomTextField(
                 value = userName,
                 onValueChange = { userName = it },
-                placeholder = { Text("Username") },
+                placeholder ="Username",
                 leadingIcon = {
                     Icon(Icons.Default.Person, contentDescription = null)
                 })
             CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("E-mail") },
+                placeholder = "E-mail",
                 leadingIcon = {
                     Icon(Icons.Default.Mail, contentDescription = null)
                 },
@@ -296,7 +296,7 @@ fun RegistrationView(navigator: Navigator) {
             CustomTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = { Text("Password") },
+                placeholder = "Password",
                 leadingIcon = {
                     Icon(Icons.Outlined.Lock, contentDescription = null)
                 },
@@ -318,7 +318,7 @@ fun RegistrationView(navigator: Navigator) {
             CustomTextField(
                 value = password,
                 onValueChange = { password = it },
-                placeholder = { Text("Password repeat") },
+                placeholder = "Password repeat",
                 leadingIcon = {
                     Icon(Icons.Outlined.Lock, contentDescription = null)
                 },

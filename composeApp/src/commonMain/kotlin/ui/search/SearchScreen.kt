@@ -21,6 +21,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.InternalResourceApi
 import ui.components.CustomBackgroundView
+import ui.components.CustomRichTextEditor
 import ui.components.CustomSearchView
 import ui.components.CustomTopAppBar
 
@@ -44,7 +45,7 @@ class SearchScreen() : Screen {
             },
 
             ) { paddingValues ->
-
+            CustomRichTextEditor()
         }
     }
 

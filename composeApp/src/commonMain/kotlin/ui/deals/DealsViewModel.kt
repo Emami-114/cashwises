@@ -4,6 +4,8 @@ import androidx.compose.runtime.mutableStateOf
 import com.mohamedrejeb.calf.core.LocalPlatformContext
 import com.mohamedrejeb.calf.io.KmpFile
 import com.mohamedrejeb.calf.io.readByteArray
+import com.mohamedrejeb.richeditor.model.RichTextState
+import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import data.repository.ApiConfig
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.ImageModel
