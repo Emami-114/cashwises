@@ -99,7 +99,8 @@ fun CustomTextField(
 //            .height(90.dp)
             .padding(horizontal = 15.dp)
             .clip(shape)
-            .background(colors.backgroundColor(enabled).value, shape).customBorder()
+            .background(colors.backgroundColor(enabled).value, shape)
+            .customBorder()
             .onFocusChanged { focus = it.isFocused }
             .indicatorLine(enabled, isError, interactionSource, colors)
             .defaultMinSize(

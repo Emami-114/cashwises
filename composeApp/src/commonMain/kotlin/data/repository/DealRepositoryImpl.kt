@@ -23,34 +23,9 @@ import okio.Path.Companion.toPath
 class DealRepositoryImpl : DealRepository {
     private val client = ApiConfig.httpClient
 
-//    @OptIn(InternalAPI::class)
-//    suspend fun addImage(data: Data) {
-//        try {
-//            client.submitForm {
-//                url("${ApiConfig.BASE_URL}image")
-//                method = HttpMethod.Put
-//                body = MultiPartFormDataContent(
-//                    formData {
-//                        append("image",
-//                            data,
-//                            Headers.build {
-//                                append(HttpHeaders.ContentType, "image/jpg")
-//                                append(HttpHeaders.ContentDisposition, "filename=hello.jpg")
-//                            }
-//
-//                        )
-//                    }
-//                )
-//            }
-//        } catch (e: Exception) {
-//
-//        }
-//
-//    }
-
     override suspend fun getDeals(): DealsModel {
         try {
-            val response = client.get("${ApiConfig.BASE_URL}deals")
+            val response = client.get("${ApiConfig.BASE_URL}/deals")
             return response.body<DealsModel>()
         } catch (e: Exception) {
             throw e
@@ -90,7 +65,7 @@ class DealRepositoryImpl : DealRepository {
                 userId = userId,
                 videoUrl = videoUrl,
             )
-            client.post("${ApiConfig.BASE_URL}deals/") {
+            client.post("${ApiConfig.BASE_URL}/deals/") {
                 contentType(ContentType.Application.Json)
                 setBody(body)
             }
@@ -124,7 +99,7 @@ class DealRepositoryImpl : DealRepository {
         @OptIn(InternalAPI::class)
         try {
             val response = client.submitForm {
-                url("${ApiConfig.BASE_URL}image/")
+                url("${ApiConfig.BASE_URL}/image/")
                 method = HttpMethod.Post
                 body = MultiPartFormDataContent(
                     formData {
@@ -146,6 +121,6 @@ class DealRepositoryImpl : DealRepository {
     }
 
     override suspend fun deleteDeal(id: String) {
-        client.delete("${ApiConfig.BASE_URL}deals/$id")
+        client.delete("${ApiConfig.BASE_URL}/deals/$id")
     }
 }

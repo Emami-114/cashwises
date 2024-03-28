@@ -1,10 +1,7 @@
 package ui.deals
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -16,14 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.Switch
-import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,7 +37,6 @@ import com.mohamedrejeb.calf.io.readByteArray
 import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
-import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.seiko.imageloader.rememberImagePainter
 import domain.model.ImageModel
@@ -53,8 +44,11 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
+import ui.components.CustomImagePicker
 import ui.components.CustomRichTextEditor
 import ui.components.CustomTextField
+import ui.deals.ViewModel.DealEvent
+import ui.deals.ViewModel.DealsViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -62,51 +56,19 @@ fun AddDealView() {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val richTextState = rememberRichTextState()
-    BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    val scrollState = rememberScrollState(0)
+
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         val scope = this
         val maxWith = scope.maxWidth
         val maxHeight = scope.maxHeight
         CustomBackgroundView()
-        val scopeCoroutine = rememberCoroutineScope()
-        val context = LocalPlatformContext.current
-        val pickerLaunch = rememberFilePickerLauncher(
-            type = FilePickerFileType.Image,
-            selectionMode = FilePickerSelectionMode.Single,
-            onResult = { kmpFiles ->
-                for (i in kmpFiles) {
-                    scopeCoroutine.launch {
-                        i.let { file ->
-                            viewModel.doChangeImage(
-                                ImageModel(
-                                    name = file.getName(context).toString(),
-                                    path = file.getPath(context).toString(),
-                                    byteArray = file.readByteArray(context)
-                                )
-                            )
-                        }
-                    }
-                }
-            })
-        val pickerLaunch2 = rememberFilePickerLauncher(
-            type = FilePickerFileType.Image,
-            selectionMode = FilePickerSelectionMode.Multiple,
-            onResult = { kmpFiles ->
-                for (i in kmpFiles) {
-                    scopeCoroutine.launch {
-                        i?.let { file ->
-                            viewModel.doChangeImages(
-                                ImageModel(
-                                    name = file.getName(context).toString(),
-                                    path = file.getPath(context).toString(),
-                                    byteArray = file.readByteArray(context)
-                                )
-                            )
-                        }
-                    }
-                }
-            })
+
         FlowRow(
-            modifier = Modifier.verticalScroll(state = ScrollState(0), true),
+            modifier = Modifier.verticalScroll(state = scrollState, true),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             maxItemsInEachRow = 3
@@ -114,28 +76,24 @@ fun AddDealView() {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-
+                verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                val painter =
-                    rememberImagePainter(uiState.thumbnailByte?.path ?: "")
-                if (uiState.thumbnailByte != null) {
-                    Image(
-                        painter, contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(if (maxWith > 800.dp) 500.dp else 300.dp)
-                            .width(if (maxWith > 800.dp) 500.dp else 300.dp)
-                            .clip(MaterialTheme.shapes.large)
-                    )
+
+                CustomImagePicker{ image ->
+                    viewModel.doChangeImage(image)
                 }
-                CustomButton(
-                    onClick = { pickerLaunch.launch() },
-                    modifier = Modifier
-                        .padding(vertical = 20.dp)
-                        .width(300.dp)
-                        .height(40.dp),
-                    title = "Thumbnail"
-                )
+//                val painter =
+//                    rememberImagePainter(uiState.thumbnailByte?.path ?: "")
+//                if (uiState.thumbnailByte != null) {
+//                    Image(
+//                        painter, contentDescription = null,
+//                        contentScale = ContentScale.Crop,
+//                        modifier = Modifier
+//                            .height(if (maxWith > 800.dp) 500.dp else 300.dp)
+//                            .width(if (maxWith > 800.dp) 500.dp else 300.dp)
+//                            .clip(MaterialTheme.shapes.large)
+//                    )
+//                }
             }
             CustomRichTextEditor(
                 state = richTextState,
@@ -185,7 +143,6 @@ fun AddDealView() {
                     .alpha(if (uiState.isFree == true) 0.4f else 1f)
             )
 
-
             CustomTextField(
                 value = uiState.offerPrice ?: "",
                 onValueChange = { viewModel.onEvent(DealEvent.OnOfferPriceChange(it)) },
@@ -225,7 +182,6 @@ fun AddDealView() {
                 placeholder = "Video url",
                 modifier = Modifier.weight(1f)
             )
-
 
             CustomButton(
                 onClick = {

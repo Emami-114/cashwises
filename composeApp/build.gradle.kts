@@ -84,8 +84,8 @@ kotlin {
             // file picker
             implementation(libs.calf.filepicker)
             // image laoder
-            api("io.github.qdsfdhvh:image-loader:1.7.0")
-            api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.0")
+            api("io.github.qdsfdhvh:image-loader:1.7.1")
+            api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.1")
 //            api("io.github.qdsfdhvh:image-loader-extension-blur:1.7.8")
 
             // rich text editor

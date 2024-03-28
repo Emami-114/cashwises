@@ -1,6 +1,4 @@
-package ui.deals
-
-import kotlinx.serialization.SerialName
+package ui.deals.ViewModel
 
 sealed interface DealEvent {
     data object OnAction : DealEvent

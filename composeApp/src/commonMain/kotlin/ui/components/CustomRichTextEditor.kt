@@ -37,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -51,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -72,9 +74,8 @@ fun CustomRichTextEditor(
 ) {
     val titleSize = MaterialTheme.typography.titleLarge.fontSize
     val subTitleSize = MaterialTheme.typography.displaySmall.fontSize
-    state.setConfig(
-        linkColor = Color.Blue
-    )
+    val textRange by mutableStateOf(TextRange.Zero)
+
     Scaffold(modifier = modifier) {
         Column(
             modifier = modifier
@@ -139,8 +140,6 @@ fun CustomRichTextEditor(
             )
         }
     }
-
-
 }
 
 @OptIn(ExperimentalLayoutApi::class)
