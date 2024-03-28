@@ -16,6 +16,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import cafe.adriel.voyager.transitions.ScaleTransition
+import cafe.adriel.voyager.transitions.SlideTransition
 import domain.model.exampleDeals
 import ui.components.ProductRow
 
@@ -38,7 +39,7 @@ object HomeTab : Tab {
     @Composable
     override fun Content() {
         Navigator(HomeScreen()) { navigator ->
-            ScaleTransition(navigator)
+            SlideTransition(navigator)
         }
     }
 

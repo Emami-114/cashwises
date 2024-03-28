@@ -2,6 +2,7 @@ package ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,12 +40,15 @@ import ui.components.customModiefier.noRippleClickable
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ProductRow(dealModel: DealModel) {
+fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
     val roundedCornerShape = RoundedCornerShape(15.dp)
     Box(
         modifier = Modifier.fillMaxSize()
             .clip(roundedCornerShape)
-            .background(MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.3f)),
+            .background(MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.3f))
+            .clickable {
+                onClick()
+            },
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -52,7 +56,7 @@ fun ProductRow(dealModel: DealModel) {
             verticalArrangement = Arrangement.spacedBy((-10).dp)
         ) {
             val painter =
-                rememberImagePainter("${ApiConfig.BASE_URL}image/${dealModel.thumbnail}")
+                rememberImagePainter("${ApiConfig.BASE_URL}/image/${dealModel.thumbnail}")
             Image(
                 painter = painter,
                 contentDescription = null,

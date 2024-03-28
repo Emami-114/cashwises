@@ -1,4 +1,4 @@
-package ui.deals
+package ui.deals.ViewModel
 
 import domain.model.DealModel
 import domain.model.ImageModel

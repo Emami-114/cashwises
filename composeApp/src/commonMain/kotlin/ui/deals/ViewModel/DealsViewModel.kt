@@ -1,32 +1,13 @@
-package ui.deals
+package ui.deals.ViewModel
 
-import androidx.compose.runtime.mutableStateOf
-import com.mohamedrejeb.calf.core.LocalPlatformContext
-import com.mohamedrejeb.calf.io.KmpFile
-import com.mohamedrejeb.calf.io.readByteArray
-import data.repository.ApiConfig
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.ImageModel
-import io.ktor.client.call.body
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.url
-import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.util.InternalAPI
-import io.ktor.utils.io.core.buildPacket
-import io.ktor.utils.io.core.writeFully
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.InternalResourceApi
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import useCase.DealsUseCase
@@ -42,7 +23,6 @@ class DealsViewModel : ViewModel(), KoinComponent {
         )
 
     init {
-        getDeals()
     }
 
     fun onEvent(event: DealEvent) {
@@ -195,7 +175,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun getDeals() = viewModelScope.launch {
+    fun getDeals() = viewModelScope.launch {
         println("list: ${useCase.getDeals().deals}")
         _state.value.copy(isLoading = true)
         _state.update {

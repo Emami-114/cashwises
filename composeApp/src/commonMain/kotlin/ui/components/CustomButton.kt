@@ -27,8 +27,9 @@ fun CustomButton(
     onClick: () -> Unit
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().noRippleClickable(onClick)
-            .clip(MaterialTheme.shapes.large).background(color),
+        modifier = modifier.fillMaxWidth()
+            .clip(MaterialTheme.shapes.large).background(color)
+            .clickable { onClick() },
         contentAlignment = Alignment.Center,
     ) {
         Text(

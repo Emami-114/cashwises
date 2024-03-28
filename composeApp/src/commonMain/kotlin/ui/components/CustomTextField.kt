@@ -53,7 +53,7 @@ fun CustomTextField(
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
     label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
+    placeholder: String = "",
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
@@ -99,7 +99,8 @@ fun CustomTextField(
 //            .height(90.dp)
             .padding(horizontal = 15.dp)
             .clip(shape)
-            .background(colors.backgroundColor(enabled).value, shape).customBorder()
+            .background(colors.backgroundColor(enabled).value, shape)
+            .customBorder()
             .onFocusChanged { focus = it.isFocused }
             .indicatorLine(enabled, isError, interactionSource, colors)
             .defaultMinSize(
@@ -124,7 +125,7 @@ fun CustomTextField(
                 value = value,
                 visualTransformation = visualTransformation,
                 innerTextField = innerTextField,
-                placeholder = placeholder,
+                placeholder = { Text(placeholder, color = colors.placeholderColor(true).value) },
                 label = label,
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,

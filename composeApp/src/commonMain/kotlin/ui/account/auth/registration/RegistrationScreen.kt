@@ -18,17 +18,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +46,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.koin.compose.koinInject
+import ui.account.auth.login.LogInView
+import ui.account.auth.registration.viewModel.RegistrationViewModel
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomTextField
@@ -58,7 +61,6 @@ class RegistrationScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
         var animationState by remember { mutableStateOf(false) }
-
         Scaffold(topBar = {
             CustomTopAppBar(title = currentView.name, backButtonAction = {
                 navigator.pop()
@@ -74,9 +76,7 @@ class RegistrationScreen : Screen {
                             CustomButton(
                                 modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
                                     .height(40.dp),
-                                color = if (currentView.name == AuthEnum.LOGIN.name)
-                                    MaterialTheme.colorScheme.primary else
-                                    MaterialTheme.colorScheme.onPrimary,
+                                color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
                                 title = "Login"
                             ) { currentView = AuthEnum.LOGIN }
                             CustomButton(
@@ -151,10 +151,7 @@ fun PasswordForget(backToLogin: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
             Text(
-                "Password vergessen? Kein Problem! " +
-                        "Tragen hier deine E-mail-Adresse ein und wir schicken Dir " +
-                        "eine E-mail an die verknüpfte Adresse. Damit kann das " +
-                        "Password zurückgesetzt werden.",
+                "Password vergessen? Kein Problem! " + "Tragen hier deine E-mail-Adresse ein und wir schicken Dir " + "eine E-mail an die verknüpfte Adresse. Damit kann das " + "Password zurückgesetzt werden.",
                 color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
@@ -162,7 +159,7 @@ fun PasswordForget(backToLogin: () -> Unit) {
             CustomTextField(
                 value = email,
                 onValueChange = { email = it },
-                placeholder = { Text("E-mail") },
+                placeholder = "E-mail",
                 leadingIcon = {
                     Icon(Icons.Default.Mail, contentDescription = null)
                 },
@@ -176,8 +173,7 @@ fun PasswordForget(backToLogin: () -> Unit) {
             CustomButton(title = "Password reset") {
 
             }
-            Text(
-                "Login",
+            Text("Login",
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -191,173 +187,159 @@ fun PasswordForget(backToLogin: () -> Unit) {
     }
 }
 
-
-@Composable
-fun LogInView(toPasswordForget: () -> Unit) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    Box(modifier = Modifier.fillMaxSize()) {
-//        CustomBackgroundView()
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            CustomTextField(
-                value = email,
-                onValueChange = { email = it },
-                placeholder = { Text("E-mail") },
-                leadingIcon = {
-                    Icon(Icons.Default.Mail, contentDescription = null)
-                },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Email
-                )
-            )
-            CustomTextField(
-                value = password,
-                onValueChange = { password = it },
-                placeholder = { Text("Password") },
-                leadingIcon = {
-                    Icon(Icons.Outlined.Lock, contentDescription = null)
-                },
-                trailingIcon = {
-                    Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = null,
-                        modifier = Modifier.noRippleClickable {
-                            passwordVisible = !passwordVisible
-                        })
-                },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Email
-                ),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
-
-            )
-            Spacer(modifier = Modifier.height(15.dp))
-
-            CustomButton(title = "Login") {}
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                "Password forget?",
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.fillMaxWidth().noRippleClickable {
-                    toPasswordForget()
-                })
-
-        }
-    }
-}
-
 @Composable
 fun RegistrationView(navigator: Navigator) {
-    var userName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var switch by remember { mutableStateOf(false) }
+    var passwordConfirmVisible by remember { mutableStateOf(false) }
+    val viewMode: RegistrationViewModel = koinInject()
+    val uiState by viewMode.registrationState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            CustomTextField(
-                value = userName,
-                onValueChange = { userName = it },
-                placeholder = { Text("Username") },
-                leadingIcon = {
-                    Icon(Icons.Default.Person, contentDescription = null)
-                })
-            CustomTextField(
-                value = email,
-                onValueChange = { email = it },
-                placeholder = { Text("E-mail") },
-                leadingIcon = {
-                    Icon(Icons.Default.Mail, contentDescription = null)
-                },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Email
-                )
-            )
-
-            CustomTextField(
-                value = password,
-                onValueChange = { password = it },
-                placeholder = { Text("Password") },
-                leadingIcon = {
-                    Icon(Icons.Outlined.Lock, contentDescription = null)
-                },
-                trailingIcon = {
-                    Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = null,
-                        modifier = Modifier.noRippleClickable {
-                            passwordVisible = !passwordVisible
-                        })
-                },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Password
-                ),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
-            )
-
-            CustomTextField(
-                value = password,
-                onValueChange = { password = it },
-                placeholder = { Text("Password repeat") },
-                leadingIcon = {
-                    Icon(Icons.Outlined.Lock, contentDescription = null)
-                },
-                trailingIcon = {
-                    Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = null,
-                        modifier = Modifier.noRippleClickable {
-                            passwordVisible = !passwordVisible
-                        })
-                },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.None,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Password
-                ),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.weight(6f)
-                )
-                Switch(checked = switch, onCheckedChange = {
-                    switch = it
-                }, modifier = Modifier.weight(1f))
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            CustomButton(title = "Registration") {
-
+        when {
+            uiState.isLoading -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.onSecondary)
+                }
             }
 
+            uiState.errorMessage.isNullOrEmpty().not() -> {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = uiState.errorMessage.orEmpty(),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
+                    CustomTextField(value = uiState.nameText,
+                        onValueChange = {
+                            viewMode.onRegisterEvent(
+                                RegistrationEvent.OnUserNameChange(
+                                    it
+                                )
+                            )
+                        },
+                        placeholder = "Username",
+                        leadingIcon = {
+                            Icon(Icons.Default.Person, contentDescription = null)
+                        })
+                    CustomTextField(
+                        value = uiState.emailText,
+                        onValueChange = {
+                            viewMode.onRegisterEvent(
+                                RegistrationEvent.OnEmailChange(
+                                    it
+                                )
+                            )
+                        },
+                        placeholder = "E-mail",
+                        leadingIcon = {
+                            Icon(Icons.Default.Mail, contentDescription = null)
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Email
+                        )
+                    )
+
+                    CustomTextField(
+                        value = uiState.passwordText,
+                        onValueChange = {
+                            viewMode.onRegisterEvent(
+                                RegistrationEvent.OnPasswordChange(
+                                    it
+                                )
+                            )
+                        },
+                        placeholder = "Password",
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Lock, contentDescription = null)
+                        },
+                        trailingIcon = {
+                            Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = null,
+                                modifier = Modifier.noRippleClickable {
+                                    passwordVisible = !passwordVisible
+                                })
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
+                    )
+
+                    CustomTextField(
+                        value = uiState.passwordConfirm,
+                        onValueChange = {
+                            viewMode.onRegisterEvent(
+                                RegistrationEvent.OnPasswordConfirmChange(
+                                    it
+                                )
+                            )
+                        },
+                        placeholder = "Password repeat",
+                        leadingIcon = {
+                            Icon(Icons.Outlined.Lock, contentDescription = null)
+                        },
+                        trailingIcon = {
+                            Icon(if (passwordConfirmVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = null,
+                                modifier = Modifier.noRippleClickable {
+                                    passwordConfirmVisible = !passwordConfirmVisible
+                                })
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.None,
+                            autoCorrect = false,
+                            keyboardType = KeyboardType.Password
+                        ),
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.weight(6f)
+                        )
+                        Switch(
+                            checked = uiState.acceptedDataProtection,
+                            onCheckedChange = {
+                                viewMode.onRegisterEvent(
+                                    RegistrationEvent.OnAcceptedDataProtectChange(
+                                        it
+                                    )
+                                )
+                            }, modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CustomButton(title = "Registration") {
+                        viewMode.onRegisterEvent(RegistrationEvent.OnRegistration)
+                    }
+                }
+            }
         }
 
     }
-
-
 }
