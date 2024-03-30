@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,7 +69,9 @@ fun AddDealView() {
         CustomBackgroundView()
 
         FlowRow(
-            modifier = Modifier.verticalScroll(state = scrollState, true),
+            modifier = Modifier.padding(10.dp).padding(horizontal = 10.dp)
+                .verticalScroll(state = scrollState, true)
+            ,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             maxItemsInEachRow = 3
@@ -76,25 +79,13 @@ fun AddDealView() {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-
-                CustomImagePicker{ image ->
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                CustomImagePicker(modifier = Modifier.padding(horizontal = 30.dp)) { image ->
                     viewModel.doChangeImage(image)
                 }
-//                val painter =
-//                    rememberImagePainter(uiState.thumbnailByte?.path ?: "")
-//                if (uiState.thumbnailByte != null) {
-//                    Image(
-//                        painter, contentDescription = null,
-//                        contentScale = ContentScale.Crop,
-//                        modifier = Modifier
-//                            .height(if (maxWith > 800.dp) 500.dp else 300.dp)
-//                            .width(if (maxWith > 800.dp) 500.dp else 300.dp)
-//                            .clip(MaterialTheme.shapes.large)
-//                    )
-//                }
             }
+
             CustomRichTextEditor(
                 state = richTextState,
                 modifier = Modifier.fillMaxWidth()
@@ -190,7 +181,7 @@ fun AddDealView() {
                     richTextState.clear()
                 },
                 title = "Create",
-                modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 50.dp)
+                modifier = Modifier.fillMaxWidth().height(50.dp)
             )
             Spacer(modifier = Modifier.height(150.dp))
         }

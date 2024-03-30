@@ -23,12 +23,16 @@ import okio.Path.Companion.toPath
 class DealRepositoryImpl : DealRepository {
     private val client = ApiConfig.httpClient
 
-    override suspend fun getDeals(): DealsModel {
-        try {
-            val response = client.get("${ApiConfig.BASE_URL}/deals")
-            return response.body<DealsModel>()
+    override suspend fun getDeals(): DealsModel? {
+        return try {
+            val response = client.get("${ApiConfig.BASE_URL}/deals") {
+                contentType(ContentType.Application.Json)
+            }
+            response.body<DealsModel>()
         } catch (e: Exception) {
-            throw e
+            println("Failed repository get deals: ${e.message}")
+            null
+    //            throw e
         }
     }
 

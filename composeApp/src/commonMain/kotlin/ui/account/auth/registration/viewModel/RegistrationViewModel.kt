@@ -17,8 +17,8 @@ import useCase.AuthUseCase
 class RegistrationViewModel : ViewModel(), KoinComponent {
     private val useCase: AuthUseCase by inject()
 
-    private val _registrationState = MutableStateFlow(RegistrationState())
-    val registrationState = _registrationState.stateIn(
+    private val _state = MutableStateFlow(RegistrationState())
+    val state = _state.stateIn(
         viewModelScope, SharingStarted.WhileSubscribed(5000L), RegistrationState()
     )
 
@@ -30,32 +30,32 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
             is RegistrationEvent.OnPasswordChange -> doPasswordChange(event)
             is RegistrationEvent.OnPasswordConfirmChange -> doPasswordConfirmChange(event)
             is RegistrationEvent.OnAcceptedDataProtectChange -> doAcceptedDataProtectChange(event)
-            is RegistrationEvent.OnSetDefault -> _registrationState.value = RegistrationState()
+            is RegistrationEvent.OnSetDefault -> _state.value = RegistrationState()
         }
     }
 
     private fun doRegistration(event: RegistrationEvent.OnRegistration) {
         when {
-            _registrationState.value.emailText.isBlank() || _registrationState.value.emailText.isEmpty() -> {
-                _registrationState.update {
+            _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() -> {
+                _state.update {
                     it.copy(emailError = "Email is blank or empty")
                 }
             }
 
             else -> {
-                if (_registrationState.value.isLoading) return
+                if (_state.value.isLoading) return
                 viewModelScope.launch {
-                    _registrationState.value = _registrationState.value.copy(isLoading = true)
+                    _state.value = _state.value.copy(isLoading = true)
 
                     try {
                         val registeModel = RegisterModel(
-                            name = _registrationState.value.nameText,
-                            email = _registrationState.value.emailText,
-                            password = _registrationState.value.passwordText,
-                            passwordConfirm = _registrationState.value.passwordConfirm
+                            name = _state.value.nameText,
+                            email = _state.value.emailText,
+                            password = _state.value.passwordText,
+                            passwordConfirm = _state.value.passwordConfirm
                         )
                         useCase.register(registeModel) {
-                            _registrationState.update {
+                            _state.update {
                                 it.copy(
                                     isRegistrationSuccess = true,
                                     isLoading = false,
@@ -65,7 +65,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
 
                         }
                     } catch (e: Exception) {
-                        _registrationState.update {
+                        _state.update {
                             it.copy(
                                 isRegistrationSuccess = false,
                                 isLoading = false,
@@ -73,7 +73,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                             )
                         }
                         delay(4000)
-                        _registrationState.value = RegistrationState()
+                        _state.value = RegistrationState()
                     }
                 }
             }
@@ -81,7 +81,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     }
 
     private fun doAcceptedDataProtectChange(event: RegistrationEvent.OnAcceptedDataProtectChange) {
-        _registrationState.update {
+        _state.update {
             it.copy(
                 acceptedDataProtection = event.value
             )
@@ -89,7 +89,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     }
 
     private fun doUserNameChange(event: RegistrationEvent.OnUserNameChange) {
-        _registrationState.update {
+        _state.update {
             it.copy(
                 nameText = event.value,
                 nameError = null
@@ -98,7 +98,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     }
 
     private fun doEmailChange(event: RegistrationEvent.OnEmailChange) {
-        _registrationState.update {
+        _state.update {
             it.copy(
                 emailText = event.value,
                 passwordError = null
@@ -107,7 +107,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     }
 
     private fun doPasswordChange(event: RegistrationEvent.OnPasswordChange) {
-        _registrationState.update {
+        _state.update {
             it.copy(
                 passwordText = event.value,
                 passwordError = null
@@ -116,7 +116,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     }
 
     private fun doPasswordConfirmChange(event: RegistrationEvent.OnPasswordConfirmChange) {
-        _registrationState.update {
+        _state.update {
             it.copy(
                 passwordConfirm = event.value,
                 passwordError = null

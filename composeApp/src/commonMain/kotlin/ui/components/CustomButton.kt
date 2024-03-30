@@ -21,7 +21,7 @@ import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun CustomButton(
-    modifier: Modifier = Modifier.padding(horizontal = 15.dp).height(50.dp),
+    modifier: Modifier = Modifier.height(50.dp),
     color: Color = MaterialTheme.colorScheme.primary,
     title: String,
     onClick: () -> Unit

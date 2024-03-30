@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Modifier.customBorder(
-    color: Color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.4f),
+    color: Color = MaterialTheme.colorScheme.surface,
     width: Dp = 1.dp,
     shape: Shape = MaterialTheme.shapes.large
 ): Modifier = composed {

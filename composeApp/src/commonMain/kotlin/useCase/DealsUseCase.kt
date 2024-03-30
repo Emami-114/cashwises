@@ -8,8 +8,13 @@ import org.koin.core.component.inject
 class DealsUseCase : KoinComponent {
     private val repository: DealRepository by inject()
 
-    suspend fun getDeals(): DealsModel {
-        return repository.getDeals()
+    suspend fun getDeals(): DealsModel? {
+        try {
+            return repository.getDeals()
+
+        } catch (e: Exception) {
+            throw Exception("Oh, something went wrong!: ${e.message}")
+        }
     }
 
     suspend fun addDeals(

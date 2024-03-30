@@ -15,6 +15,10 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.InternalResourceApi
+import org.koin.compose.koinInject
+import org.koin.dsl.koinApplication
+import ui.category.CreateCategory
+import ui.category.viewModel.CategoryViewModel
 import ui.components.CustomImagePicker
 import ui.components.CustomSearchView
 import ui.components.CustomTopAppBar
@@ -25,7 +29,6 @@ class SearchScreen() : Screen {
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
         var search by remember { mutableStateOf("") }
-
         Scaffold(
             topBar = {
                 CustomTopAppBar(modifier = Modifier.height(80.dp), title = "", rightAction = {
@@ -39,9 +42,7 @@ class SearchScreen() : Screen {
             },
 
             ) { paddingValues ->
-            CustomImagePicker() {
-
-            }
+            CreateCategory()
         }
     }
 

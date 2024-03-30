@@ -46,7 +46,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
     }
 
 
-    fun doChangeImage(image: ImageModel) {
+    fun doChangeImage(image: ImageModel?) {
         _state.update {
             it.copy(thumbnailByte = image)
         }
@@ -176,11 +176,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
     }
 
     fun getDeals() = viewModelScope.launch {
-        println("list: ${useCase.getDeals().deals}")
-        _state.value.copy(isLoading = true)
+        println("list: ${useCase.getDeals()?.deals}")
+       _state.value = _state.value.copy(isLoading = true)
         _state.update {
             it.copy(
-                deals = useCase.getDeals().deals,
+                deals = useCase.getDeals()?.deals ?: listOf(),
                 isLoading = false,
                 error = null,
             )

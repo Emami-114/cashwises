@@ -13,7 +13,6 @@ class AuthUseCase : KoinComponent {
             repository.register(registerModel = registerModel).let { isSuccess ->
                 if (isSuccess) {
                     onSuccess()
-                    println("Register ***")
                 } else {
                     throw Exception("Oh, something went wrong!")
                 }

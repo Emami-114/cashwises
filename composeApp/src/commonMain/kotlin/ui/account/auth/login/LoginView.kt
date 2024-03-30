@@ -70,7 +70,9 @@ fun LogInView(toPasswordForget: () -> Unit) {
 
             else -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+                    modifier = Modifier.fillMaxSize()
+                        .padding(10.dp)
+                        .padding(horizontal = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(15.dp)
                 ) {
                     CustomTextField(

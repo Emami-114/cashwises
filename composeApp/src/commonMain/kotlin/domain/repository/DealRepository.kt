@@ -4,7 +4,7 @@ import domain.model.DealsModel
 import kotlinx.serialization.SerialName
 
 interface DealRepository {
-    suspend fun getDeals(): DealsModel
+    suspend fun getDeals(): DealsModel?
 
     suspend fun addDeal(
         title: String,
