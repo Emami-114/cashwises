@@ -1,12 +1,10 @@
-package ui.deals
-
-import kotlinx.serialization.SerialName
+package ui.deals.ViewModel
 
 sealed interface DealEvent {
     data object OnAction : DealEvent
     data class OnTitleChange(val value: String) : DealEvent
     data class OnDescriptionChange(val value: String) : DealEvent
-    data class OnCategoryChange(val value: String) : DealEvent
+    data class OnCategoryChange(val value: List<String>) : DealEvent
     data class OnIsFreeChange(val value: Boolean) : DealEvent
     data class OnPriceChange(val value: String) : DealEvent
     data class OnOfferPriceChange(val value: String) : DealEvent

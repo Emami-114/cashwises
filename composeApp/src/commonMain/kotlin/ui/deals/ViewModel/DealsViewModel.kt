@@ -1,39 +1,25 @@
-package ui.deals
+package ui.deals.ViewModel
 
-import androidx.compose.runtime.mutableStateOf
-import com.mohamedrejeb.calf.core.LocalPlatformContext
-import com.mohamedrejeb.calf.io.KmpFile
-import com.mohamedrejeb.calf.io.readByteArray
-import data.repository.ApiConfig
+import data.repository.CategoryRepositoryImpl
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import domain.model.DealModel
 import domain.model.ImageModel
-import io.ktor.client.call.body
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.url
-import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.util.InternalAPI
-import io.ktor.utils.io.core.buildPacket
-import io.ktor.utils.io.core.writeFully
+import domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.InternalResourceApi
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
 class DealsViewModel : ViewModel(), KoinComponent {
     private val useCase: DealsUseCase by inject()
     private val _state = MutableStateFlow(DealsState())
+    private val categoriesUseCase: CategoryUseCase by inject()
     val state = _state.asStateFlow()
         .stateIn(
             viewModelScope,
@@ -66,37 +52,42 @@ class DealsViewModel : ViewModel(), KoinComponent {
     }
 
 
-    fun doChangeImage(image: ImageModel) {
+    fun doChangeThumbnail(image: ImageModel?) {
         _state.update {
             it.copy(thumbnailByte = image)
         }
     }
 
-    fun doChangeImages(image: ImageModel) {
-        _state.value.imagesByte?.plus(image)
+    fun doChangeImages(image: List<ImageModel>?) {
+        _state.update {
+            it.copy(imagesByte = image)
+        }
     }
 
     private fun doCreateDeal(event: DealEvent.OnAction) {
+        if (_state.value.isLoading) return
+
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            useCase.uploadImage(
-                _state.value.thumbnailByte?.byteArray ?: ByteArray(0),
-                fileName = _state.value.thumbnailByte?.name ?: "",
-                path = { imagePath ->
-                    _state.update { it.copy(thumbnail = _state.value.thumbnailByte?.name) }
-                }
-            )
-            if (_state.value.images != null) {
-                _state.value.imagesByte?.forEach { imageByte ->
-                    useCase.uploadImage(
-                        imageByte.byteArray,
-                        fileName = imageByte.name,
-                        path = { path ->
-                            _state.update { it.copy(images = it.images?.plus(path)) }
-                        })
+
+            if (_state.value.thumbnailByte != null) {
+                useCase.uploadImage(listOf(_state.value.thumbnailByte!!)) { path ->
+                    _state.update {
+                        it.copy(thumbnail = path.firstOrNull())
+                    }
                 }
             }
-            useCase.addDeals(
+//            if (_state.value.imagesByte != null) {
+//                useCase.uploadImage(_state.value.imagesByte!!) { imagesPath ->
+//                    _state.update {
+//                        it.copy(
+//                            images = imagesPath
+//                        )
+//                    }
+//                    println("image path von upload image $imagesPath")
+//                }
+//            }
+            val deal = DealModel(
                 title = _state.value.title,
                 description = _state.value.description,
                 category = _state.value.category,
@@ -110,10 +101,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 thumbnail = _state.value.thumbnail,
                 images = _state.value.images,
                 userId = _state.value.userId,
-                videoUrl = _state.value.videoUrl
+                videoUrl = _state.value.videoUrl,
             )
+            useCase.addDeals(dealModel = deal)
             onEvent(event = DealEvent.OnSetDefaultState)
-            _state.value = _state.value.copy(isLoading = false)
+            println("Deals mit image $deal")
         }
     }
 
@@ -131,7 +123,9 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     private fun doChangeCategory(event: DealEvent.OnCategoryChange) {
         _state.update {
-            it.copy(category = event.value)
+            it.copy(
+                category = event.value
+            )
         }
     }
 
@@ -195,15 +189,21 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun getDeals() = viewModelScope.launch {
-        println("list: ${useCase.getDeals().deals}")
-        _state.value.copy(isLoading = true)
-        _state.update {
-            it.copy(
-                deals = useCase.getDeals().deals,
-                isLoading = false,
-                error = null,
-            )
+    fun getDeals() = viewModelScope.launch {
+        try {
+            _state.value = _state.value.copy(isLoading = true)
+            _state.update {
+                it.copy(categories = categoriesUseCase.getCategories().categories)
+            }
+            _state.update {
+                it.copy(
+                    deals = useCase.getDeals()?.deals ?: listOf(),
+                    isLoading = false,
+                    error = null,
+                )
+            }
+        } catch (e: Exception) {
+            println("Failed Deal View Model get Deals")
         }
     }
 

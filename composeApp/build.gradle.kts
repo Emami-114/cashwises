@@ -41,18 +41,9 @@ kotlin {
             implementation(libs.ktor.client.android)
             implementation(libs.androidx.appcompat)
             implementation(libs.kotlinx.coroutines.android)
-
-//            implementation(libs.calf.filepicker)
-//            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
-//            implementation("com.mohamedrejeb.calf:calf-file-picker:0.4.0")
-
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-//            implementation(libs.calf.filepicker)
-//            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
-//            implementation("com.mohamedrejeb.calf:calf-file-picker:0.4.0")
-
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -84,15 +75,16 @@ kotlin {
             // file picker
             implementation(libs.calf.filepicker)
             // image laoder
-            api("io.github.qdsfdhvh:image-loader:1.7.0")
-            api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.0")
-//            api("io.github.qdsfdhvh:image-loader-extension-blur:1.7.8")
+            api(libs.image.loader)
+            // rich text editor
+            implementation(libs.rich.text)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
             implementation(libs.ktor.client.okhttp)
-//            api("io.github.qdsfdhvh:image-loader-extension-imageio:1.7.8")
+//            api(libs.image.loader)
+
         }
     }
 }
@@ -129,6 +121,9 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
+}
+dependencies {
+    implementation(libs.androidx.media3.common)
 }
 
 compose.desktop {

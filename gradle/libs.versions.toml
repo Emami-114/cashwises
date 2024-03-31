@@ -5,11 +5,6 @@ android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.8.2"
 androidx-appcompat = "1.6.1"
-androidx-constraintlayout = "2.1.4"
-androidx-core-ktx = "1.12.0"
-androidx-espresso-core = "3.5.1"
-androidx-material = "1.11.0"
-androidx-test-junit = "1.1.5"
 compose = "1.6.4"
 compose-plugin = "1.6.0"
 junit = "4.13.2"
@@ -19,15 +14,19 @@ ktor = "2.3.8"
 moko-mvvm = "0.16.1"
 koin = "3.5.0"
 koinCompose = "1.1.0"
-
+imageLoader = "1.7.1"
+richText = "1.0.0-rc02"
 kotlinx-coroutines = "1.8.0"
 multiplatformSettings = "1.1.1"
 kotlinx-serialization = "1.6.2"
 buildConfig = "4.1.1"
 calf = "0.4.0"
+media3Common = "1.3.0"
 
 
 [libraries]
+image-loader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "imageLoader" }
+rich-text = { module = "com.mohamedrejeb.richeditor:richeditor-compose", version.ref = "richText" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
@@ -48,8 +47,8 @@ ktor-client-negotiation = { module = "io.ktor:ktor-client-content-negotiation", 
 ktor-client-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-client-cio= {module ="io.ktor:ktor-client-cio", version.ref = "ktor"}
-ktor-client-android= {module ="io.ktor:ktor-client-android", version.ref = "ktor"}
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 calf-filepicker = { module = "com.mohamedrejeb.calf:calf-file-picker", version.ref = "calf" }
@@ -60,7 +59,8 @@ moko-mvvm = { module = "dev.icerock.moko:mvvm-compose", version.ref = "moko-mvvm
 
 # DI
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCompose"}
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koinCompose" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3Common" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

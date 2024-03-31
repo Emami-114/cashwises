@@ -1,11 +1,6 @@
 package ui.search
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +15,11 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.InternalResourceApi
-import ui.components.CustomBackgroundView
+import org.koin.compose.koinInject
+import org.koin.dsl.koinApplication
+import ui.category.CreateCategory
+import ui.category.viewModel.CategoryViewModel
+import ui.components.CustomImagePicker
 import ui.components.CustomSearchView
 import ui.components.CustomTopAppBar
 
@@ -30,7 +29,6 @@ class SearchScreen() : Screen {
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
         var search by remember { mutableStateOf("") }
-
         Scaffold(
             topBar = {
                 CustomTopAppBar(modifier = Modifier.height(80.dp), title = "", rightAction = {
@@ -44,7 +42,7 @@ class SearchScreen() : Screen {
             },
 
             ) { paddingValues ->
-
+            CreateCategory()
         }
     }
 

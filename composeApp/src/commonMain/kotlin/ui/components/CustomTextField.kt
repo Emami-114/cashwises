@@ -53,7 +53,7 @@ fun CustomTextField(
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
     label: @Composable (() -> Unit)? = null,
-    placeholder: @Composable (() -> Unit)? = null,
+    placeholder: String = "",
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
@@ -68,8 +68,8 @@ fun CustomTextField(
 ) {
     var focus: Boolean by remember { mutableStateOf(false) }
     val animatedFocus by animateFloatAsState(
-        targetValue = if (focus) 0.20f else 0.0f,
-        animationSpec = tween(durationMillis = 360, easing = LinearEasing)
+        targetValue = if (focus) 0.6f else 0.0f,
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
     )
     val colors = textFieldColors(
         textColor = MaterialTheme.colorScheme.secondary,
@@ -78,7 +78,7 @@ fun CustomTextField(
         trailingIconColor = MaterialTheme.colorScheme.onSecondary,
         focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
         cursorColor = MaterialTheme.colorScheme.secondary,
-        backgroundColor = MaterialTheme.colorScheme.onSecondary.copy(
+        backgroundColor = MaterialTheme.colorScheme.surface.copy(
             alpha = animatedFocus
         ),
         focusedIndicatorColor = Color.Transparent,
@@ -96,10 +96,9 @@ fun CustomTextField(
     BasicTextField(
         value = value,
         modifier = modifier.fillMaxWidth()
-//            .height(90.dp)
-            .padding(horizontal = 15.dp)
             .clip(shape)
-            .background(colors.backgroundColor(enabled).value, shape).customBorder()
+            .background(colors.backgroundColor(enabled).value, shape)
+            .customBorder()
             .onFocusChanged { focus = it.isFocused }
             .indicatorLine(enabled, isError, interactionSource, colors)
             .defaultMinSize(
@@ -124,7 +123,7 @@ fun CustomTextField(
                 value = value,
                 visualTransformation = visualTransformation,
                 innerTextField = innerTextField,
-                placeholder = placeholder,
+                placeholder = { Text(placeholder, color = colors.placeholderColor(true).value) },
                 label = label,
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
