@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     private fun generateImageLoader(): ImageLoader {
         return ImageLoader {
             options {

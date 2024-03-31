@@ -14,13 +14,14 @@ data class CategoryModel(
     val title: String? = null,
     val thumbnail: String? = null,
     val published: Boolean? = null,
+    @SerialName("user_id")
     val userId: String? = null,
     val status: CategoryStatus? = null,
-    @SerialName("sub_categories")
-    val subCategories: List<String>? = null,
+    @SerialName("main_id")
+    val mainId: String? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
-    @SerialName("updatedAt")
+    @SerialName("updated_at")
     val updatedAt: String? = null
 )
 
@@ -28,7 +29,6 @@ data class CategoryModel(
 enum class CategoryStatus {
     @SerialName("main")
     MAIN,
-
     @SerialName("sub")
     SUB
 }

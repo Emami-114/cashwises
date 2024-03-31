@@ -14,7 +14,7 @@ import io.ktor.util.InternalAPI
 
 class ImageUploadRepository {
     suspend fun uploadImage(
-        imageModel: ImageModel,
+        imagesModel: List<ImageModel>,
         subDir: String = "",
         imagePath: (List<String>) -> Unit
     ) {
@@ -26,16 +26,18 @@ class ImageUploadRepository {
                 method = HttpMethod.Post
                 body = MultiPartFormDataContent(
                     formData {
-                        append("image",
-                            imageModel.byteArray,
-                            Headers.build {
-                                append(HttpHeaders.ContentType, "image/png")
-                                append(
-                                    HttpHeaders.ContentDisposition,
-                                    "filename=${imageModel.name}"
-                                )
-                            }
-                        )
+                        imagesModel.forEach { imageModel ->
+                            append("image",
+                                imageModel.byteArray,
+                                Headers.build {
+                                    append(HttpHeaders.ContentType, "image/png")
+                                    append(
+                                        HttpHeaders.ContentDisposition,
+                                        "filename=${imageModel.name}"
+                                    )
+                                }
+                            )
+                        }
                     }
                 )
             }

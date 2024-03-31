@@ -56,7 +56,7 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy((-10).dp)
         ) {
             val painter =
-                rememberImagePainter("${ApiConfig.BASE_URL}/image/${dealModel.thumbnail}")
+                rememberImagePainter(url = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}")
             Image(
                 painter = painter,
                 contentDescription = null,

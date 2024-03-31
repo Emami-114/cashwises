@@ -24,8 +24,9 @@ class CategoryUseCase : KoinComponent {
         imagePaths: (List<String>) -> Unit,
     ) {
         try {
-            val upload = imageRepository.uploadImage(imageModel,
-                subDir = "categories",
+            imageRepository.uploadImage(
+                listOf(imageModel),
+                subDir = "categories_images",
                 imagePath = { paths ->
                     if (paths.isNotEmpty()) {
                         imagePaths(paths)
@@ -34,11 +35,9 @@ class CategoryUseCase : KoinComponent {
                         throw Exception("oh, something went wrong!")
                     }
                 })
-
         } catch (e: Exception) {
             throw Exception("oh, something went wrong! ${e.message}")
         }
-
     }
 
     suspend fun createCategory(
@@ -54,6 +53,30 @@ class CategoryUseCase : KoinComponent {
             }
         } catch (e: Exception) {
             throw Exception("Failed create category useCase: ${e.message}")
+        }
+    }
+
+    suspend fun updateCategory(categoryModel: CategoryModel, onSuccess: () -> Unit) {
+        try {
+            repository.updateCategory(categoryModel).let { isSuccess ->
+                if (isSuccess) {
+                    onSuccess()
+                } else {
+                    throw Exception("Failed update category")
+                }
+            }
+        } catch (e: Exception) {
+            throw Exception("Failed Update category ${e.message}")
+        }
+    }
+
+    suspend fun deleteCategory(id: String, onSuccess: () -> Unit) {
+        repository.deleteCategory(id).let { isSuccess ->
+            if (isSuccess) {
+                onSuccess()
+            } else {
+                println("Failed deleting Category")
+            }
         }
     }
 

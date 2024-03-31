@@ -42,6 +42,8 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import data.repository.ApiConfig
 import domain.model.DealModel
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import ui.components.CustomButton
 import ui.components.CustomTopAppBar
 
@@ -94,7 +96,7 @@ fun DetailDealView(dealModel: DealModel, paddingValues: PaddingValues) {
                     }).padding(10.dp).padding(horizontal = 5.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            val imageUrl = "${ApiConfig.BASE_URL}image/${dealModel.thumbnail}"
+            val imageUrl = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}"
             AutoSizeBox(
                 url = imageUrl,
                 modifier = Modifier.fillMaxWidth()

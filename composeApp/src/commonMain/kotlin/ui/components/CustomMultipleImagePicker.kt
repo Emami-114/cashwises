@@ -6,11 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -22,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,7 +38,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mohamedrejeb.calf.core.LocalPlatformContext
@@ -53,69 +58,77 @@ import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
-fun CustomImagePicker(
+fun CustomMultipleImagePicker(
     modifier: Modifier = Modifier,
-    selectedImage: ImageModel?,
-    imageSize: Dp = 350.dp,
-    height: Dp = 150.dp,
     backGround: Color = MaterialTheme.colorScheme.onPrimary,
-    onImageChange: (ImageModel?) -> Unit
+    selectedImage: List<ImageModel> = listOf(),
+    onImageChange: (List<ImageModel>?) -> Unit
 ) {
+    val selectedItems =
+        remember { mutableStateListOf<ImageModel>().apply { addAll(selectedImage) } }
     val scopeCoroutine = rememberCoroutineScope()
     val context = LocalPlatformContext.current
     val pickerLaunch = rememberFilePickerLauncher(
         type = FilePickerFileType.Image,
-        selectionMode = FilePickerSelectionMode.Single,
+        selectionMode = FilePickerSelectionMode.Multiple,
         onResult = { kmpFiles ->
             scopeCoroutine.launch {
-                kmpFiles.firstOrNull()?.let { file ->
-                    onImageChange(
+                kmpFiles.forEach { image ->
+                    selectedItems.add(
                         ImageModel(
-                            name = file.getName(context) ?: "",
-                            path = file.getPath(context) ?: "",
-                            byteArray = file.readByteArray(context)
+                            name = image.getName(context) ?: "",
+                            path = image.getPath(context) ?: "",
+                            byteArray = image.readByteArray(context)
                         )
                     )
                 }
+                onImageChange(selectedItems.toList())
             }
         })
 
-    if (selectedImage != null) {
+    if (selectedItems.isEmpty().not()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier.size(imageSize),
-                contentAlignment = Alignment.Center
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Row(modifier = Modifier.clickable {
+                    pickerLaunch.launch()
+                }) {
+                    selectedItems.forEach { imageModel ->
+                        val painter = rememberImagePainter(imageModel.path)
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .size(140.dp)
+                                .customBorder()
+                                .clip(shape = MaterialTheme.shapes.large)
+                        )
+                    }
+                }
                 Icon(
                     Icons.Default.Close,
                     contentDescription = null,
                     tint = Color.Black,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .align(Alignment.Top)
                         .size(40.dp)
                         .zIndex(1f)
                         .noRippleClickable {
                             onImageChange(null)
-                        }
-                )
-                val painter = rememberImagePainter(selectedImage.path)
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .customBorder()
-                        .clip(shape = MaterialTheme.shapes.large)
-                        .clickable {
-                            pickerLaunch.launch()
+                            selectedItems.clear()
                         }
                 )
             }
+
         }
     } else {
         val stroke = Stroke(
@@ -125,7 +138,7 @@ fun CustomImagePicker(
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .heightIn(min = 70.dp, max = height)
+                .heightIn(min = 70.dp, max = 150.dp)
                 .drawBehind {
                     drawRoundRect(
                         color = md_theme_dark_surface,

@@ -32,46 +32,16 @@ class DealRepositoryImpl : DealRepository {
         } catch (e: Exception) {
             println("Failed repository get deals: ${e.message}")
             null
-    //            throw e
+            //            throw e
         }
     }
 
-    override suspend fun addDeal(
-        title: String,
-        description: String,
-        category: String?,
-        isFree: Boolean?,
-        price: Double?,
-        offerPrice: Double?,
-        published: Boolean?,
-        expirationDate: String?,
-        provider: String?,
-        providerUrl: String?,
-        thumbnail: String?,
-        images: List<String>?,
-        userId: String?,
-        videoUrl: String?,
-    ) {
+    override suspend fun addDeal(dealModel: DealModel) {
         try {
-            val body = DealModel(
-                title = title,
-                description = description,
-                category = category,
-                isFree = isFree,
-                price = price,
-                offerPrice = offerPrice,
-                published = published,
-                expirationDate = expirationDate,
-                provider = provider,
-                providerUrl = providerUrl,
-                thumbnail = thumbnail,
-                images = images,
-                userId = userId,
-                videoUrl = videoUrl,
-            )
-            client.post("${ApiConfig.BASE_URL}/deals/") {
+
+            client.post("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
-                setBody(body)
+                setBody(dealModel)
             }
         } catch (e: Exception) {
             throw e
@@ -93,35 +63,6 @@ class DealRepositoryImpl : DealRepository {
         images: List<String>?
     ) {
         TODO("Not yet implemented")
-    }
-
-    override suspend fun uploadImage(
-        byteArray: ByteArray,
-        fileName: String,
-        path: (String) -> Unit
-    ): Boolean {
-        @OptIn(InternalAPI::class)
-        try {
-            val response = client.submitForm {
-                url("${ApiConfig.BASE_URL}/image/")
-                method = HttpMethod.Post
-                body = MultiPartFormDataContent(
-                    formData {
-                        append("image",
-                            byteArray,
-                            Headers.build {
-                                append(HttpHeaders.ContentType, "image/png")
-                                append(HttpHeaders.ContentDisposition, "filename=${fileName}")
-                            }
-                        )
-                    }
-                )
-            }
-            path(response.body())
-            return response.status.value in (200..299)
-        } catch (e: Exception) {
-            return false
-        }
     }
 
     override suspend fun deleteDeal(id: String) {

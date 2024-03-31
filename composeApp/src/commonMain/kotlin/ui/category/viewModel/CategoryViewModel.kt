@@ -1,8 +1,8 @@
 package ui.category.viewModel
 
-import data.repository.ImageUploadRepository
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoryModel
+import domain.model.CategoryStatus
 import domain.model.ImageModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,12 +12,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.account.auth.registration.RegistrationEvent
 import useCase.CategoryUseCase
 
 class CategoryViewModel : ViewModel(), KoinComponent {
     private val useCase: CategoryUseCase by inject()
-    private val imageRepository = ImageUploadRepository()
     private val _state = MutableStateFlow(CategoryState())
     val state = _state.stateIn(
         viewModelScope,
@@ -28,13 +26,77 @@ class CategoryViewModel : ViewModel(), KoinComponent {
     fun onEvent(event: CategoryEvent) {
         when (event) {
             is CategoryEvent.OnCreateCategory -> doCreateCategory(event)
-            is CategoryEvent.OnUpdateCategory -> {}
+            is CategoryEvent.OnUpdateCategory -> doUpdateCategory(event)
+            is CategoryEvent.OnDeleteCategory -> {}
             is CategoryEvent.OnTitleChange -> doTitleChange(event)
             is CategoryEvent.OnImageChange -> doThumbnailChange(event)
             is CategoryEvent.OnStatusChange -> doStatusChange(event)
             is CategoryEvent.OnPublishedChange -> doPublishedChange(event)
-            is CategoryEvent.OnSubCategoriesChange -> doSubCategoriesChange(event)
+            is CategoryEvent.OnSelectedCatChange -> doMainIdChange(event)
             is CategoryEvent.OnDefaultState -> _state.value = CategoryState()
+        }
+    }
+
+    private fun doUpdateCategory(event: CategoryEvent.OnUpdateCategory) {
+        if (_state.value.isLoading) return
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true)
+            try {
+                if (_state.value.imageModel != null) {
+                    useCase.uploadImage(
+                        imageModel = _state.value.imageModel!!,
+                        imagePaths = { imagePath ->
+                            _state.value =
+                                _state.value.copy(thumbnail = imagePath.firstOrNull())
+                            val category = CategoryModel(
+                                title = _state.value.title,
+                                thumbnail = _state.value.thumbnail,
+                                published = _state.value.published,
+                                status = _state.value.status,
+                                mainId = _state.value.selectedCategory?.id,
+                                userId = null
+                            )
+                            viewModelScope.launch {
+                                useCase.updateCategory(category) {
+                                    _state.update {
+                                        it.copy(
+                                            updateSuccessfully = true,
+                                            errorText = null,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    )
+                } else {
+                    val category = CategoryModel(
+                        title = _state.value.title,
+                        thumbnail = _state.value.thumbnail,
+                        published = _state.value.published,
+                        status = _state.value.status,
+                        mainId = _state.value.selectedCategory?.id,
+                        userId = null
+                    )
+                    useCase.createCategory(category) {
+                        _state.update {
+                            it.copy(
+                                updateSuccessfully = true,
+                                errorText = null
+                            )
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        createdSuccessfully = false,
+                        errorText = e.message
+                    )
+                }
+                delay(4000)
+                _state.value = CategoryState()
+            }
         }
     }
 
@@ -56,7 +118,7 @@ class CategoryViewModel : ViewModel(), KoinComponent {
 
     private fun doCreateCategory(event: CategoryEvent.OnCreateCategory) {
         when {
-            _state.value.title.isEmpty() || _state.value.title.isBlank() -> {
+            _state.value.title.isNullOrEmpty() || _state.value.title.isNullOrBlank() -> {
                 _state.update {
                     it.copy(titleErrorText = "Title is blank or empty")
                 }
@@ -77,19 +139,13 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                                         title = _state.value.title,
                                         thumbnail = _state.value.thumbnail,
                                         published = _state.value.published,
-                                        status = _state.value.status,
-                                        subCategories = _state.value.subCategories,
+                                        status = if (_state.value.selectedCategory != null) CategoryStatus.SUB else CategoryStatus.MAIN,
+                                        mainId = if (_state.value.selectedCategory != null) _state.value.selectedCategory!!.id else _state.value.mainId,
                                         userId = null
                                     )
                                     viewModelScope.launch {
                                         useCase.createCategory(category) {
-                                            _state.update {
-                                                it.copy(
-                                                    createdSuccessfully = true,
-                                                    isLoading = false,
-                                                    errorText = null
-                                                )
-                                            }
+                                            _state.value = CategoryState()
                                         }
                                     }
                                 }
@@ -99,18 +155,12 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                                 title = _state.value.title,
                                 thumbnail = _state.value.thumbnail,
                                 published = _state.value.published,
-                                status = _state.value.status,
-                                subCategories = _state.value.subCategories,
+                                status = if (_state.value.selectedCategory != null) CategoryStatus.SUB else CategoryStatus.MAIN,
+                                mainId = if (_state.value.selectedCategory != null) _state.value.selectedCategory!!.id else _state.value.mainId,
                                 userId = null
                             )
                             useCase.createCategory(category) {
-                                _state.update {
-                                    it.copy(
-                                        createdSuccessfully = true,
-                                        isLoading = false,
-                                        errorText = null
-                                    )
-                                }
+                                _state.value = CategoryState()
                             }
                         }
                     } catch (e: Exception) {
@@ -162,10 +212,10 @@ class CategoryViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun doSubCategoriesChange(event: CategoryEvent.OnSubCategoriesChange) {
+    private fun doMainIdChange(event: CategoryEvent.OnSelectedCatChange) {
         _state.update {
             it.copy(
-                subCategories = event.value
+                selectedCategory = event.value
             )
         }
     }
