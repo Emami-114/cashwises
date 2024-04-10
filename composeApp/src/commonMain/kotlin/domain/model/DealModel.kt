@@ -1,7 +1,12 @@
 package domain.model
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.math.absoluteValue
 
 @Serializable
 data class DealsModel(
@@ -35,7 +40,9 @@ data class DealModel(
     val createdAt: String? = null,
     @SerialName("updated_at")
     val updatedAt: String? = null
-)
+) {
+    val currentTime = Clock.System.now().daysUntil(Instant.parse(createdAt ?: ""), timeZone = TimeZone.UTC).absoluteValue
+}
 
 //val exampleDeals = listOf<DealModel>(
 //    DealModel(

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import ui.components.customModiefier.noRippleClickable
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CustomSwitch(
+    modifier: Modifier = Modifier,
     title: String = "",
     value: Boolean,
     onValueChange: (Boolean) -> Unit
@@ -47,35 +49,38 @@ fun CustomSwitch(
         animationSpec = tween(600)
     )
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        androidx.compose.material.Text(
+        Text(
             title,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.secondary
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.weight(9f)
         )
-        Row(
-            modifier = Modifier.height(height)
-                .width(width)
-                .clip(RoundedCornerShape(height))
-                .background(animatedColor)
-                .noRippleClickable {
-                    onValueChange(!value)
-                },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .offset { IntOffset(x = animatedFloat.toInt(), y = 0) }
-                    .size(height - 4.dp)
-                    .clip(RoundedCornerShape(50.dp))
-                    .background(
-                        if (value) MaterialTheme.colorScheme.secondary else
-                            MaterialTheme.colorScheme.onSecondary
-                    )
-            )
+        Box(modifier = Modifier.weight(2f)) {
+            Row(
+                modifier = Modifier.height(height)
+                    .width(width)
+                    .clip(RoundedCornerShape(height))
+                    .background(animatedColor)
+                    .noRippleClickable {
+                        onValueChange(!value)
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .offset { IntOffset(x = animatedFloat.toInt(), y = 0) }
+                        .size(height - 4.dp)
+                        .clip(RoundedCornerShape(50.dp))
+                        .background(
+                            if (value) MaterialTheme.colorScheme.secondary else
+                                MaterialTheme.colorScheme.onSecondary
+                        )
+                )
+            }
         }
     }
 }

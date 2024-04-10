@@ -5,24 +5,32 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.company.app.theme.cw_dark_whiteText
+import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun CustomTopAppBar(
@@ -31,47 +39,54 @@ fun CustomTopAppBar(
     backButtonAction: (() -> Unit)? = null,
     rightAction: @Composable RowScope.() -> Unit = {},
     backgroundColor: Color = MaterialTheme.colorScheme.background,
-) {
-    Column {
-        Box(
-            modifier = modifier.fillMaxWidth()
+    textColor: Color = cw_dark_whiteText,
+    isDivider: Boolean = true,
+    ) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
                 .background(backgroundColor)
-                .height(50.dp)
-                .padding(horizontal = 10.dp),
-            contentAlignment = Alignment.Center
+                .padding(top = 30.dp)
+                .padding(horizontal = 15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (backButtonAction != null) {
+            if (backButtonAction != null) {
+                Row(modifier = Modifier.weight(2f)) {
                     Icon(
                         Icons.Default.ArrowBack,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.clickable {
+                        tint = textColor,
+                        modifier = Modifier.noRippleClickable {
                             backButtonAction()
                         }.size(28.dp)
                     )
                 }
-                Text(
-                    title, modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-
-                    )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    content = rightAction
-                )
+            } else {
+                Spacer(modifier = Modifier.weight(2f))
             }
-        }
-        CustomDivider()
-    }
+            Text(
+                title, modifier = Modifier.weight(6f),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                color = textColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
 
+                )
+            Row(
+                modifier = Modifier.weight(2f),
+                horizontalArrangement = Arrangement.End,
+                content = rightAction
+            )
+        }
+        if (isDivider) {
+            CustomDivider()
+        }
+    }
 }

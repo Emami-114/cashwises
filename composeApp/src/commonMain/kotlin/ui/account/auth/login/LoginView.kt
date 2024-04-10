@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Visibility
@@ -46,6 +48,8 @@ fun LogInView(toPasswordForget: () -> Unit) {
     val viewModel: LoginViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
+    var textExample by remember { mutableStateOf("") }
+    var passwordExample by remember { mutableStateOf("") }
     val navigator = LocalNavigator.currentOrThrow
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()

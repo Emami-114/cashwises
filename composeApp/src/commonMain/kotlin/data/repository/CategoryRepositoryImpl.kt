@@ -4,6 +4,7 @@ import domain.model.CategoriesModel
 import domain.model.CategoryModel
 import domain.repository.CategoryRepository
 import io.ktor.client.call.body
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
@@ -11,6 +12,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import ui.settings
 
 class CategoryRepositoryImpl : CategoryRepository {
     private val client = ApiConfig.httpClient
@@ -19,6 +21,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         try {
             val response = client.post("${baseUrl}/category") {
                 contentType(ContentType.Application.Json)
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
                 setBody(categoryModel)
             }
             return response.status.value in 200..300
@@ -30,7 +33,11 @@ class CategoryRepositoryImpl : CategoryRepository {
 
     override suspend fun getCategories(): CategoriesModel {
         try {
-            return client.get("${baseUrl}/categories").body()
+            val response = client.get("${baseUrl}/categories") {
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+            }
+
+            return response.body<CategoriesModel>()
         } catch (e: Exception) {
             throw e
         }
@@ -38,8 +45,9 @@ class CategoryRepositoryImpl : CategoryRepository {
 
     override suspend fun getCategory(id: String): CategoryModel {
         try {
-            return client.get("${baseUrl}/category/$id")
-                .body<CategoryModel>()
+            return client.get("${baseUrl}/category/$id") {
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+            }.body<CategoryModel>()
         } catch (e: Exception) {
             println("Failed get category with id ${e.message}")
             throw e
@@ -50,6 +58,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         try {
             val response = client.patch("${baseUrl}/category/${categoryModel.id}") {
                 contentType(ContentType.Application.Json)
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
                 setBody(categoryModel)
             }
             return response.status.value in 200..300
@@ -61,7 +70,9 @@ class CategoryRepositoryImpl : CategoryRepository {
 
     override suspend fun deleteCategory(id: String): Boolean {
         try {
-            val response = client.delete("${baseUrl}/category/$id")
+            val response = client.delete("${baseUrl}/category/$id") {
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+            }
             return response.status.value in 200..300
         } catch (e: Exception) {
             println("Failed deleting category")

@@ -7,6 +7,9 @@ import org.koin.core.component.inject
 
 class AuthUseCase : KoinComponent {
     private val repository: AuthRepository by inject()
+    suspend fun getCoockie() {
+        repository.coockie()
+    }
 
     suspend fun register(registerModel: RegisterModel, onSuccess: () -> Unit) {
         try {

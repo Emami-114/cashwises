@@ -85,7 +85,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CustomBackgroundView()
+//        CustomBackgroundView()
 
         FlowRow(
             modifier = Modifier.padding(10.dp).padding(horizontal = 10.dp)

@@ -1,10 +1,8 @@
 package ui.deals.ViewModel
 
-import data.repository.CategoryRepositoryImpl
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
-import domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
@@ -193,15 +192,19 @@ class DealsViewModel : ViewModel(), KoinComponent {
         try {
             _state.value = _state.value.copy(isLoading = true)
             _state.update {
-                it.copy(categories = categoriesUseCase.getCategories().categories)
-            }
-            _state.update {
                 it.copy(
-                    deals = useCase.getDeals()?.deals ?: listOf(),
+                    deals = useCase.getDeals(
+                        token = settings.getString("TOKEN2", "Not token found") ?: ""
+                    )?.deals
+                        ?: listOf(),
                     isLoading = false,
                     error = null,
                 )
             }
+            _state.update {
+                it.copy(categories = categoriesUseCase.getCategories().categories)
+            }
+            println("Token 2: ${settings.getString("TOKEN2", "Not token found")}")
         } catch (e: Exception) {
             println("Failed Deal View Model get Deals")
         }

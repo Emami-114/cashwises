@@ -172,14 +172,10 @@ internal fun AppTheme(
         SystemAppearance(!isDark)
         
         MaterialTheme(
-            colorScheme = if (isDark)
-                DarkColorScheme
-            else LightColorScheme,
+            colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
             typography = AppTypography,
             shapes = AppShapes,
-            content = {
-                Surface(content = content)
-            }
+            content = { Surface(content = content) }
         )
     }
 }

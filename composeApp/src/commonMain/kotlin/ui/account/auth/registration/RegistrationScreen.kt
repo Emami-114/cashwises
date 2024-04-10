@@ -317,7 +317,7 @@ fun RegistrationView(navigator: Navigator) {
                     )
 
                     CustomSwitch(
-                        "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
+                        title = "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
                         value = uiState.acceptedDataProtection
                     ) {
                         viewMode.onRegisterEvent(RegistrationEvent.OnAcceptedDataProtectChange(it))

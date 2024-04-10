@@ -18,5 +18,6 @@ data class CategoryState(
     val imageModel: ImageModel? = null,
     val status: CategoryStatus? = null,
     val updateSuccessfully: Boolean = false,
-    val selectedCategory: CategoryModel? = null
+    val selectedCategory: CategoryModel? = null,
+    var isUpdate: Boolean = false
 )

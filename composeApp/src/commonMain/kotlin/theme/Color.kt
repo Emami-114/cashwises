@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Color
 //Color palette was taken here: https://colorhunt.co/palettes/popular
 
 
-
 internal val md_theme_light_primary = Color(0xFF00687A)
 internal val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 internal val md_theme_light_primaryContainer = Color(0xFFABEDFF)
@@ -39,7 +38,7 @@ internal val md_theme_light_outlineVariant = Color(0xFFBFC8CB)
 internal val md_theme_light_scrim = Color(0xFF000000)
 
 // Button Color
-internal val md_theme_dark_primary = Color(0xFF006970)
+internal val md_theme_dark_primary = Color(0xFF049EFE)
 internal val md_theme_dark_onPrimary = Color(0xFF2A2E3A)
 
 internal val md_theme_dark_primaryContainer = Color(0xFF004E5C)
@@ -64,6 +63,7 @@ internal val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
 internal val md_theme_dark_background = Color(0xFF30333B)
 
 internal val md_theme_dark_onBackground = Color(0xFFFFE264)
+
 // Border color
 internal val md_theme_dark_surface = Color(0xFF3A3E4A)
 internal val md_theme_dark_onSurface = Color(0xFF3A3E4A)
@@ -84,3 +84,19 @@ internal val md_theme_dark_scrim = Color(0xFF000000)
 internal val md_theme_dark_green = Color(0xFF34B433)
 
 internal val seed = Color(0xFF2C3639)
+
+// Button Color
+internal val cw_dark_primary = Color(0xFF049EFE)
+internal val cw_dark_onPrimary = Color(0xFF2A2E3A)
+
+// Text Color Gray and With
+internal val cw_dark_whiteText = Color(0xFFe0e3e3)
+internal val cw_dark_grayText = Color(0xFF899393)
+internal val cw_dark_blackText = Color(0xFF2E2A2A)
+
+// background Color
+internal val cw_dark_background = Color(0xFF30333B)
+internal val cw_dark_onBackground = Color(0xFF232630)
+
+// Border color
+internal val cw_dark_borderColor = Color(0xFF3F4452)

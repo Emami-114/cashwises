@@ -1,10 +1,12 @@
 package ui.account.auth.registration.viewModel
 
+import androidx.compose.runtime.collectAsState
 import data.model.RegisterModel
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,11 +18,14 @@ import useCase.AuthUseCase
 
 class RegistrationViewModel : ViewModel(), KoinComponent {
     private val useCase: AuthUseCase by inject()
-
     private val _state = MutableStateFlow(RegistrationState())
-    val state = _state.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(5000L), RegistrationState()
-    )
+    val state = _state.asStateFlow()
+    init {
+        viewModelScope.launch {
+            useCase.getCoockie()
+
+        }
+    }
 
     fun onRegisterEvent(event: RegistrationEvent) {
         when (event) {

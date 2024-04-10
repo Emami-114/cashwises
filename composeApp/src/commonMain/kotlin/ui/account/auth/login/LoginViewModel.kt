@@ -14,13 +14,13 @@ import useCase.AuthUseCase
 
 class LoginViewModel : ViewModel(), KoinComponent {
     private val useCase: AuthUseCase by inject()
-
     private val _state = MutableStateFlow(LoginState())
-    val state = _state.asStateFlow().stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
-        LoginState()
-    )
+    val state = _state.asStateFlow()
+//    val state = _state.asStateFlow().stateIn(
+//        viewModelScope,
+//        SharingStarted.WhileSubscribed(5000L),
+//        LoginState()
+//    )
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -54,7 +54,6 @@ class LoginViewModel : ViewModel(), KoinComponent {
                 if (_state.value.isLoading) return
                 viewModelScope.launch {
                     _state.value = _state.value.copy(isLoading = true)
-
                     try {
                         useCase.login(
                             email = _state.value.emailText,

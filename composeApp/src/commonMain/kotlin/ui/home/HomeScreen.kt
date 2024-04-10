@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.MaterialTheme
@@ -21,8 +22,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import ui.components.CustomTopAppBar
-import ui.deals.CreateDealScreen
 import ui.deals.DealsView
+import ui.menu.TabBarScreen
 
 class HomeScreen : Screen {
     @Composable
@@ -43,7 +44,7 @@ class HomeScreen : Screen {
                             shape = MaterialTheme.shapes.extraLarge
                         ).clip(MaterialTheme.shapes.extraLarge)
                         .clickable(role = Role.Image) {
-                            navigator.push(CreateDealScreen())
+                            navigator.push(TabBarScreen())
                         },
                     contentAlignment = Alignment.Center
                 ) {
@@ -55,9 +56,7 @@ class HomeScreen : Screen {
                 }
             }
         ) {
-
             DealsView()
-
         }
     }
 }

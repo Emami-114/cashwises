@@ -19,7 +19,7 @@ class CategoryViewModel : ViewModel(), KoinComponent {
     private val _state = MutableStateFlow(CategoryState())
     val state = _state.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
+        SharingStarted.Lazily,
         CategoryState()
     )
 

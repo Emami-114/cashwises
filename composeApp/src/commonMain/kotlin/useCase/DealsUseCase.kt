@@ -7,13 +7,24 @@ import domain.model.ImageModel
 import domain.repository.DealRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ui.settings
 
 class DealsUseCase : KoinComponent {
     private val repository: DealRepository by inject()
     private val imageRepository = ImageUploadRepository()
-    suspend fun getDeals(): DealsModel? {
+    suspend fun getDeals(
+        query: String = "",
+        page: Int = 1,
+        limit: Int = 20,
+        token: String
+    ): DealsModel? {
         try {
-            return repository.getDeals()
+            return repository.getDeals(
+                query = query,
+                page = page,
+                limit = limit,
+                token = token
+            )
 
         } catch (e: Exception) {
             throw Exception("Oh, something went wrong!: ${e.message}")

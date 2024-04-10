@@ -8,5 +8,6 @@ data class RegisterModel(
     val name: String,
     val email: String,
     val password: String,
+    @SerialName("password_confirm")
     val passwordConfirm: String
 )

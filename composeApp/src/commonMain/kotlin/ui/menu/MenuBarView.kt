@@ -1,7 +1,6 @@
-package ui.menu.components
+package ui.menu
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,16 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.AdminPanelSettings
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,10 +30,11 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import ui.account.auth.registration.RegistrationScreen
 import ui.components.CustomBackgroundView
+import ui.menu.components.MenuBarItem
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun TabbarView(onClick: () -> Unit) {
+fun MenuBarView(onClick: () -> Unit) {
     val navigator: Navigator = LocalNavigator.currentOrThrow
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
@@ -62,50 +59,50 @@ fun TabbarView(onClick: () -> Unit) {
 //                    modifier = Modifier.size(40.dp).clickable { onClick() })
             }
 
-            TabBarItem(
+            MenuBarItem(
                 modifier = Modifier.height(60.dp),
-                title = TabBarEnum.LOGIN.title,
-                icon = TabBarEnum.LOGIN.icon
+                title = MenuBarEnum.LOGIN.title,
+                icon = MenuBarEnum.LOGIN.icon
             ) {
                 navigator.push(RegistrationScreen())
             }
 
-            TabBarItem(
+            MenuBarItem(
                 modifier = Modifier.height(60.dp),
-                title = TabBarEnum.PROFILE.title,
-                icon = TabBarEnum.PROFILE.icon
+                title = MenuBarEnum.PROFILE.title,
+                icon = MenuBarEnum.PROFILE.icon
             ) {}
-            TabBarItem(
+            MenuBarItem(
                 modifier = Modifier.height(60.dp),
-                title = TabBarEnum.SETTING.title,
-                icon = TabBarEnum.SETTING.icon
-            ) {}
-
-            TabBarItem(
-                modifier = Modifier.height(60.dp),
-                title = TabBarEnum.IMPRINT.title,
-                icon = TabBarEnum.IMPRINT.icon
+                title = MenuBarEnum.SETTING.title,
+                icon = MenuBarEnum.SETTING.icon
             ) {}
 
-            TabBarItem(
+            MenuBarItem(
                 modifier = Modifier.height(60.dp),
-                title = TabBarEnum.PRIVACYPOLICY.title,
-                icon = TabBarEnum.PRIVACYPOLICY.icon
+                title = MenuBarEnum.IMPRINT.title,
+                icon = MenuBarEnum.IMPRINT.icon
+            ) {}
+
+            MenuBarItem(
+                modifier = Modifier.height(60.dp),
+                title = MenuBarEnum.PRIVACYPOLICY.title,
+                icon = MenuBarEnum.PRIVACYPOLICY.icon
             ) {}
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            TabBarItem(
+            MenuBarItem(
                 modifier = Modifier.height(60.dp),
-                title = TabBarEnum.LOGOUT.title,
-                icon = TabBarEnum.LOGOUT.icon
+                title = MenuBarEnum.LOGOUT.title,
+                icon = MenuBarEnum.LOGOUT.icon
             ) {}
         }
     }
 
 }
 
-enum class TabBarEnum {
+enum class MenuBarEnum {
     LOGIN(title = "Login", icon = Icons.AutoMirrored.Filled.Login),
     PROFILE(title = "Profile", icon = Icons.Default.Person),
     SETTING(title = "Setting", icon = Icons.Default.Settings),

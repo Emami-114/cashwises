@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -54,39 +55,33 @@ import ui.components.customModiefier.noRippleClickable
 
 
 @Composable
-fun CreateCategory() {
-    val viewModel: CategoryViewModel = koinInject()
-    val uiState by viewModel.state.collectAsState()
+fun CreateCategory(
+    modifier: Modifier = Modifier,
+    viewModel: CategoryViewModel,
+    uiState: CategoryState,
+) {
 
-    Box(
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        modifier = modifier.fillMaxSize()
+            .padding(10.dp).padding(horizontal = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        CustomBackgroundView()
-        Row(modifier = Modifier.fillMaxWidth()) {
-            CategoriesView(viewModel, uiState, modifier = Modifier.weight(1f))
-            Column(
-                modifier = Modifier.fillMaxSize().weight(1f)
-                    .padding(10.dp).padding(horizontal = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                CustomImagePicker (selectedImage = uiState.imageModel){ image ->
-                    viewModel.doChangeImageModel(image)
-                }
-                CustomTextField(
-                    value = uiState.title ?: "",
-                    onValueChange = { viewModel.onEvent(CategoryEvent.OnTitleChange(it)) },
-                    placeholder = "Title"
-                )
-                MainCategoryList(uiState, onSelected = { category ->
-                    viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
-                })
-                CustomSwitch(title = "Published", value = uiState.published ?: false) {
-                    viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
-                }
-                CustomButton(title = "Create Category") {
-                    viewModel.onEvent(CategoryEvent.OnCreateCategory)
-                }
-            }
+        CustomImagePicker(selectedImage = uiState.imageModel) { image ->
+            viewModel.doChangeImageModel(image)
+        }
+        CustomTextField(
+            value = uiState.title ?: "",
+            onValueChange = { viewModel.onEvent(CategoryEvent.OnTitleChange(it)) },
+            placeholder = "Title"
+        )
+        MainCategoryList(uiState, onSelected = { category ->
+            viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
+        })
+        CustomSwitch(title = "Published", value = uiState.published ?: false) {
+            viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
+        }
+        CustomButton(title = "Create Category") {
+            viewModel.onEvent(CategoryEvent.OnCreateCategory)
         }
     }
 }

@@ -14,7 +14,8 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "${JavaVersion.VERSION_1_8}"
+                freeCompilerArgs += "-Xjdk-release=${JavaVersion.VERSION_1_8}"
             }
         }
     }
@@ -33,6 +34,12 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+            }
+        }
+
         val desktopMain by getting
 
         androidMain.dependencies {
@@ -43,7 +50,10 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
         }
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
+//            implementation(libs.ktor.client.darwin)
+            implementation("io.ktor:ktor-client-darwin:2.3.7")
+
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -51,6 +61,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
+            implementation(compose.components.uiToolingPreview)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
@@ -61,11 +72,15 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.client.serialization)
-            implementation(libs.ktor.client.cio)
+//            implementation(libs.ktor.client.cio)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.composeIcons.featherIcons)
 
             // MOKO
             implementation(libs.moko.mvvm)
+            // settings
             implementation(libs.multiplatformSettings)
+            implementation(libs.multiplatformSettings.noArg)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
 

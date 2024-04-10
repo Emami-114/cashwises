@@ -13,12 +13,12 @@ import io.ktor.http.HttpMethod
 import io.ktor.util.InternalAPI
 
 class ImageUploadRepository {
+    @OptIn(InternalAPI::class)
     suspend fun uploadImage(
         imagesModel: List<ImageModel>,
         subDir: String = "",
         imagePath: (List<String>) -> Unit
     ) {
-        @OptIn(InternalAPI::class)
         try {
             val response = ApiConfig.httpClient.submitForm {
                 url("${ApiConfig.BASE_URL}/images")
