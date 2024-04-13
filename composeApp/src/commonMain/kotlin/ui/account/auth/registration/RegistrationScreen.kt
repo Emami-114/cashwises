@@ -51,6 +51,7 @@ import ui.account.auth.login.LogInView
 import ui.account.auth.registration.viewModel.RegistrationViewModel
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
+import ui.components.CustomSwitch
 import ui.components.CustomTextField
 import ui.components.CustomTopAppBar
 import ui.components.customModiefier.noRippleClickable
@@ -192,7 +193,7 @@ fun RegistrationView(navigator: Navigator) {
     var passwordVisible by remember { mutableStateOf(false) }
     var passwordConfirmVisible by remember { mutableStateOf(false) }
     val viewMode: RegistrationViewModel = koinInject()
-    val uiState by viewMode.registrationState.collectAsState()
+    val uiState by viewMode.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()
@@ -222,7 +223,9 @@ fun RegistrationView(navigator: Navigator) {
 
             else -> {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+                    modifier = Modifier.fillMaxSize()
+                        .padding(10.dp)
+                        .padding(horizontal = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(15.dp)
                 ) {
                     CustomTextField(value = uiState.nameText,
@@ -313,25 +316,11 @@ fun RegistrationView(navigator: Navigator) {
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
                     )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    CustomSwitch(
+                        title = "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
+                        value = uiState.acceptedDataProtection
                     ) {
-                        Text(
-                            "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.weight(6f)
-                        )
-                        Switch(
-                            checked = uiState.acceptedDataProtection,
-                            onCheckedChange = {
-                                viewMode.onRegisterEvent(
-                                    RegistrationEvent.OnAcceptedDataProtectChange(
-                                        it
-                                    )
-                                )
-                            }, modifier = Modifier.weight(1f)
-                        )
+                        viewMode.onRegisterEvent(RegistrationEvent.OnAcceptedDataProtectChange(it))
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomButton(title = "Registration") {

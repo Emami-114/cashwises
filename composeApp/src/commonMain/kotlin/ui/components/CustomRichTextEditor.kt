@@ -76,12 +76,10 @@ fun CustomRichTextEditor(
     val subTitleSize = MaterialTheme.typography.displaySmall.fontSize
     val textRange by mutableStateOf(TextRange.Zero)
 
-    Scaffold(modifier = modifier) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(all = 20.dp)
-                .animateContentSize(),
+                .padding(all = 20.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -135,11 +133,11 @@ fun CustomRichTextEditor(
                 state = state,
                 shape = MaterialTheme.shapes.large,
                 colors = RichTextEditorDefaults.richTextEditorColors(
-                    textColor = MaterialTheme.colorScheme.secondary
+                    textColor = MaterialTheme.colorScheme.secondary,
+                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
                 )
             )
         }
-    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)

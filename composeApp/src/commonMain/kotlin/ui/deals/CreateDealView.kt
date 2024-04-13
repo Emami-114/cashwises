@@ -1,7 +1,7 @@
 package ui.deals
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -12,63 +12,84 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.mohamedrejeb.calf.core.LocalPlatformContext
-import com.mohamedrejeb.calf.io.getName
-import com.mohamedrejeb.calf.io.getPath
-import com.mohamedrejeb.calf.io.readByteArray
-import com.mohamedrejeb.calf.picker.FilePickerFileType
-import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
-import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
-import com.seiko.imageloader.rememberImagePainter
-import domain.model.ImageModel
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomImagePicker
+import ui.components.CustomMultipleImagePicker
 import ui.components.CustomRichTextEditor
 import ui.components.CustomTextField
+import ui.components.CustomTopAppBar
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsViewModel
+import ui.deals.components.MainAndSubCategoryList
+
+
+class CreateDealScreen : Screen {
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                CustomTopAppBar(title = "", backButtonAction = {
+                    navigator.pop()
+                })
+            }
+        ) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val scope = this
+                val maxWidth = scope.maxWidth
+                val maxHeight = scope.maxHeight
+                if (maxWidth > 800.dp) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        CreateDealView(modifier = Modifier.weight(1f))
+                        CreateDealView(modifier = Modifier.weight(1f))
+                    }
+                } else {
+                    CreateDealView(modifier = Modifier)
+                }
+            }
+        }
+    }
+
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AddDealView() {
+fun CreateDealView(modifier: Modifier = Modifier) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val richTextState = rememberRichTextState()
     val scrollState = rememberScrollState(0)
 
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
+    Box(
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        val scope = this
-        val maxWith = scope.maxWidth
-        val maxHeight = scope.maxHeight
-        CustomBackgroundView()
+//        CustomBackgroundView()
 
         FlowRow(
-            modifier = Modifier.verticalScroll(state = scrollState, true),
+            modifier = Modifier.padding(10.dp).padding(horizontal = 10.dp)
+                .verticalScroll(state = scrollState, true),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             maxItemsInEachRow = 3
@@ -76,25 +97,16 @@ fun AddDealView() {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-
-                CustomImagePicker{ image ->
-                    viewModel.doChangeImage(image)
+            ) {
+                Spacer(modifier = Modifier.height(20.dp))
+                CustomImagePicker(
+                    modifier = Modifier.padding(horizontal = 30.dp),
+                    selectedImage = uiState.thumbnailByte
+                ) { image ->
+                    viewModel.doChangeThumbnail(image)
                 }
-//                val painter =
-//                    rememberImagePainter(uiState.thumbnailByte?.path ?: "")
-//                if (uiState.thumbnailByte != null) {
-//                    Image(
-//                        painter, contentDescription = null,
-//                        contentScale = ContentScale.Crop,
-//                        modifier = Modifier
-//                            .height(if (maxWith > 800.dp) 500.dp else 300.dp)
-//                            .width(if (maxWith > 800.dp) 500.dp else 300.dp)
-//                            .clip(MaterialTheme.shapes.large)
-//                    )
-//                }
             }
+
             CustomRichTextEditor(
                 state = richTextState,
                 modifier = Modifier.fillMaxWidth()
@@ -114,14 +126,13 @@ fun AddDealView() {
                 placeholder = "Description",
                 modifier = Modifier.weight(1f)
             )
-
-            CustomTextField(
-                value = uiState.category ?: "",
-                onValueChange = { viewModel.onEvent(DealEvent.OnCategoryChange(it)) },
-                placeholder = "Category",
-                modifier = Modifier.weight(1f)
+            MainAndSubCategoryList(
+                uiState = uiState,
+                selectedCategories = uiState.category ?: listOf(),
+                onSelected = {
+                    viewModel.onEvent(DealEvent.OnCategoryChange(it))
+                },
             )
-
             Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 Switch(checked = uiState.isFree ?: false,
                     onCheckedChange = { viewModel.onEvent(DealEvent.OnIsFreeChange(it)) })
@@ -182,20 +193,25 @@ fun AddDealView() {
                 placeholder = "Video url",
                 modifier = Modifier.weight(1f)
             )
-
+            CustomMultipleImagePicker(
+                modifier = Modifier,
+                selectedImage = uiState.imagesByte ?: listOf()
+            ) { images ->
+                viewModel.doChangeImages(images)
+            }
             CustomButton(
+                isLoading = uiState.isLoading,
                 onClick = {
                     viewModel.onEvent(DealEvent.OnDescriptionChange(richTextState.toHtml()))
                     viewModel.onEvent(DealEvent.OnAction)
                     richTextState.clear()
                 },
                 title = "Create",
-                modifier = Modifier.fillMaxWidth().height(50.dp).padding(horizontal = 50.dp)
+                modifier = Modifier.fillMaxWidth().height(50.dp)
             )
             Spacer(modifier = Modifier.height(150.dp))
         }
     }
-
 }
 
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.company.app.theme.cw_dark_background
 
 @Composable
 fun CustomBackgroundView() {
@@ -24,17 +25,18 @@ fun CustomBackgroundView() {
             modifier =
             Modifier.fillMaxSize()
                 .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.2f),
-                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.03f),
-                            MaterialTheme.colorScheme.background,
-                            MaterialTheme.colorScheme.background,
-                            MaterialTheme.colorScheme.background,
-                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.03f),
-                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.2f),
-                        )
-                    ),
+                    cw_dark_background
+//                    brush = Brush.linearGradient(
+//                        colors = listOf(
+//                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.2f),
+//                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.03f),
+//                            MaterialTheme.colorScheme.background,
+//                            MaterialTheme.colorScheme.background,
+//                            MaterialTheme.colorScheme.background,
+//                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.03f),
+//                            MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.2f),
+//                        )
+//                    ),
                 )
         )
 //

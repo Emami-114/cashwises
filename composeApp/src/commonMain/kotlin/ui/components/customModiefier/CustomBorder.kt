@@ -10,10 +10,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.company.app.theme.cw_dark_borderColor
 
 @Composable
 fun Modifier.customBorder(
-    color: Color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.4f),
+    color: Color = cw_dark_borderColor,
     width: Dp = 1.dp,
     shape: Shape = MaterialTheme.shapes.large
 ): Modifier = composed {

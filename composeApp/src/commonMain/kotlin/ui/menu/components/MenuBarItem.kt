@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
-fun TabBarItem(modifier: Modifier = Modifier, title: String, icon: ImageVector, onClick: () -> Unit) {
+fun MenuBarItem(modifier: Modifier = Modifier, title: String, icon: ImageVector, onClick: () -> Unit) {
     Box(
         modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp),
         contentAlignment = Alignment.Center

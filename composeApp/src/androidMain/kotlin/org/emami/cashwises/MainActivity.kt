@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import com.seiko.imageloader.ImageLoader
@@ -32,14 +33,14 @@ class AndroidApp : Application() {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             CompositionLocalProvider(
                 LocalImageLoader provides remember { generateImageLoader() },
-            ) {
-                App()
-            }
+            ) { App() }
         }
     }
+
     private fun generateImageLoader(): ImageLoader {
         return ImageLoader {
             options {

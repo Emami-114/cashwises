@@ -21,11 +21,8 @@ data class UserModel(
 enum class UserRole {
     @SerialName("admin")
     ADMIN,
-
     @SerialName("creator")
     CREATOR,
-
     @SerialName("customer")
     CUSTOMER
-
 }

@@ -1,73 +1,60 @@
 package data.repository
 
+import data.repository.ApiConfig.httpClient
 import domain.model.DealModel
 import domain.model.DealsModel
 import domain.repository.DealRepository
 import io.ktor.client.call.body
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
-import io.ktor.util.InternalAPI
-import okio.Path.Companion.toPath
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import ui.settings
+
 
 class DealRepositoryImpl : DealRepository {
-    private val client = ApiConfig.httpClient
+    private val client = httpClient
 
-    override suspend fun getDeals(): DealsModel {
-        try {
-            val response = client.get("${ApiConfig.BASE_URL}/deals")
-            return response.body<DealsModel>()
+    @OptIn(DelicateCoroutinesApi::class)
+    override suspend fun getDeals(
+        query: String,
+        page: Int,
+        limit: Int,
+    ): DealsModel? {
+        return try {
+            val response = client.get("${ApiConfig.BASE_URL}/deals") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                parameter("query", query)
+                parameter("page", page)
+                parameter("limit", limit)
+            }
+            println("Token von get deals ${settings.getString("TOKEN2", "Token not found")}")
+            response.body<DealsModel>()
         } catch (e: Exception) {
-            throw e
+            println("Failed repository get deals: ${e.message}")
+            null
+            //            throw e
         }
     }
 
-    override suspend fun addDeal(
-        title: String,
-        description: String,
-        category: String?,
-        isFree: Boolean?,
-        price: Double?,
-        offerPrice: Double?,
-        published: Boolean?,
-        expirationDate: String?,
-        provider: String?,
-        providerUrl: String?,
-        thumbnail: String?,
-        images: List<String>?,
-        userId: String?,
-        videoUrl: String?,
-    ) {
+    override suspend fun addDeal(dealModel: DealModel) {
         try {
-            val body = DealModel(
-                title = title,
-                description = description,
-                category = category,
-                isFree = isFree,
-                price = price,
-                offerPrice = offerPrice,
-                published = published,
-                expirationDate = expirationDate,
-                provider = provider,
-                providerUrl = providerUrl,
-                thumbnail = thumbnail,
-                images = images,
-                userId = userId,
-                videoUrl = videoUrl,
-            )
-            client.post("${ApiConfig.BASE_URL}/deals/") {
+            client.post("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
-                setBody(body)
+                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+
+                setBody(dealModel)
             }
         } catch (e: Exception) {
             throw e
@@ -91,36 +78,10 @@ class DealRepositoryImpl : DealRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun uploadImage(
-        byteArray: ByteArray,
-        fileName: String,
-        path: (String) -> Unit
-    ): Boolean {
-        @OptIn(InternalAPI::class)
-        try {
-            val response = client.submitForm {
-                url("${ApiConfig.BASE_URL}/image/")
-                method = HttpMethod.Post
-                body = MultiPartFormDataContent(
-                    formData {
-                        append("image",
-                            byteArray,
-                            Headers.build {
-                                append(HttpHeaders.ContentType, "image/png")
-                                append(HttpHeaders.ContentDisposition, "filename=${fileName}")
-                            }
-                        )
-                    }
-                )
-            }
-            path(response.body())
-            return response.status.value in (200..299)
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
     override suspend fun deleteDeal(id: String) {
-        client.delete("${ApiConfig.BASE_URL}/deals/$id")
+        client.delete("${ApiConfig.BASE_URL}/deals/$id") {
+            bearerAuth(settings.getString("TOKEN2", "Token not found"))
+        }
+
     }
 }

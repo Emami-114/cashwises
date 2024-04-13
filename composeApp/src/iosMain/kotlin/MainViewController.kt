@@ -13,11 +13,12 @@ import ui.App
 
 fun MainViewController() = ComposeUIViewController {
     CompositionLocalProvider(
-    LocalImageLoader provides remember { generateImageLoader() },
-) {
-    App()
+        LocalImageLoader provides remember { generateImageLoader() },
+    ) {
+        App()
+    }
 }
-}
+
 fun generateImageLoader(): ImageLoader {
     return ImageLoader {
         components {

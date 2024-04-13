@@ -14,7 +14,8 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "${JavaVersion.VERSION_1_8}"
+                freeCompilerArgs += "-Xjdk-release=${JavaVersion.VERSION_1_8}"
             }
         }
     }
@@ -33,6 +34,12 @@ kotlin {
     }
 
     sourceSets {
+        all {
+            languageSettings {
+                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+            }
+        }
+
         val desktopMain by getting
 
         androidMain.dependencies {
@@ -41,18 +48,9 @@ kotlin {
             implementation(libs.ktor.client.android)
             implementation(libs.androidx.appcompat)
             implementation(libs.kotlinx.coroutines.android)
-
-//            implementation(libs.calf.filepicker)
-//            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
-//            implementation("com.mohamedrejeb.calf:calf-file-picker:0.4.0")
-
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-//            implementation(libs.calf.filepicker)
-//            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
-//            implementation("com.mohamedrejeb.calf:calf-file-picker:0.4.0")
-
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -60,6 +58,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
+//            implementation(compose.components.uiToolingPreview)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
@@ -70,11 +69,14 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.client.serialization)
-            implementation(libs.ktor.client.cio)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.composeIcons.featherIcons)
 
             // MOKO
             implementation(libs.moko.mvvm)
+            // settings
             implementation(libs.multiplatformSettings)
+            implementation(libs.multiplatformSettings.noArg)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
 
@@ -84,18 +86,16 @@ kotlin {
             // file picker
             implementation(libs.calf.filepicker)
             // image laoder
-            api("io.github.qdsfdhvh:image-loader:1.7.1")
-            api("io.github.qdsfdhvh:image-loader-extension-moko-resources:1.7.1")
-//            api("io.github.qdsfdhvh:image-loader-extension-blur:1.7.8")
-
+            api(libs.image.loader)
             // rich text editor
-            implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc01")
+            implementation(libs.rich.text)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
             implementation(libs.ktor.client.okhttp)
-//            api("io.github.qdsfdhvh:image-loader-extension-imageio:1.7.8")
+//            api(libs.image.loader)
+
         }
     }
 }

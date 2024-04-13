@@ -1,12 +1,11 @@
 package ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +22,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+ import compose.icons.FeatherIcons
+ import compose.icons.feathericons.ChevronLeft
+ import org.company.app.theme.cw_dark_background
+import org.company.app.theme.cw_dark_whiteText
+import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun CustomTopAppBar(
@@ -30,48 +34,55 @@ fun CustomTopAppBar(
     title: String,
     backButtonAction: (() -> Unit)? = null,
     rightAction: @Composable RowScope.() -> Unit = {},
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    backgroundColor: Color = cw_dark_background,
+    textColor: Color = cw_dark_whiteText,
+    isDivider: Boolean = true,
 ) {
-    Column {
-        Box(
-            modifier = modifier.fillMaxWidth()
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
                 .background(backgroundColor)
-                .height(50.dp)
-                .padding(horizontal = 10.dp),
-            contentAlignment = Alignment.Center
+                .padding(top = 30.dp)
+                .padding(horizontal = 15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (backButtonAction != null) {
+            if (backButtonAction != null) {
+                Row(modifier = Modifier.weight(2f)) {
                     Icon(
-                        Icons.Default.ArrowBack,
+                        FeatherIcons.ChevronLeft,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.clickable {
+                        tint = textColor,
+                        modifier = Modifier.noRippleClickable {
                             backButtonAction()
                         }.size(28.dp)
                     )
                 }
-                Text(
-                    title, modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.secondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-
-                    )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    content = rightAction
-                )
+            } else {
+                Spacer(modifier = Modifier.weight(2f))
             }
-        }
-        CustomDivider()
-    }
+            Text(
+                title, modifier = Modifier.weight(6f),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                color = textColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
 
+                )
+            Row(
+                modifier = Modifier.weight(2f),
+                horizontalArrangement = Arrangement.End,
+                content = rightAction
+            )
+        }
+        if (isDivider) {
+            CustomDivider()
+        }
+    }
 }
