@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import org.company.app.theme.cw_dark_primary
 import ui.components.customModiefier.noRippleClickable
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -44,7 +45,7 @@ fun CustomSwitch(
         animationSpec = tween(200, easing = LinearEasing)
     )
     val animatedColor by animateColorAsState(
-        targetValue = if (value) MaterialTheme.colorScheme.primary
+        targetValue = if (value) cw_dark_primary
         else MaterialTheme.colorScheme.onSurface,
         animationSpec = tween(600)
     )

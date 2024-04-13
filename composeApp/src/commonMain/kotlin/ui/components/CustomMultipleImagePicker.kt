@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -23,12 +22,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,9 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mohamedrejeb.calf.core.LocalPlatformContext
@@ -51,16 +44,19 @@ import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import com.seiko.imageloader.rememberImagePainter
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.UploadCloud
 import domain.model.ImageModel
 import kotlinx.coroutines.launch
-import org.company.app.theme.md_theme_dark_surface
+import org.company.app.theme.cw_dark_borderColor
+import org.company.app.theme.cw_dark_onBackground
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun CustomMultipleImagePicker(
     modifier: Modifier = Modifier,
-    backGround: Color = MaterialTheme.colorScheme.onPrimary,
+    backGround: Color = cw_dark_onBackground,
     selectedImage: List<ImageModel> = listOf(),
     onImageChange: (List<ImageModel>?) -> Unit
 ) {
@@ -85,14 +81,12 @@ fun CustomMultipleImagePicker(
                 onImageChange(selectedItems.toList())
             }
         })
-
     if (selectedItems.isEmpty().not()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -132,7 +126,7 @@ fun CustomMultipleImagePicker(
         }
     } else {
         val stroke = Stroke(
-            width = 3f,
+            width = 5f,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
         )
         Card(
@@ -141,7 +135,7 @@ fun CustomMultipleImagePicker(
                 .heightIn(min = 70.dp, max = 150.dp)
                 .drawBehind {
                     drawRoundRect(
-                        color = md_theme_dark_surface,
+                        color = cw_dark_borderColor,
                         style = stroke,
                         cornerRadius = CornerRadius(16.dp.toPx())
                     )
@@ -163,7 +157,7 @@ fun CustomMultipleImagePicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    Icons.Default.CloudUpload,
+                    FeatherIcons.UploadCloud,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(50.dp)

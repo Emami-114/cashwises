@@ -16,14 +16,12 @@ class DealsUseCase : KoinComponent {
         query: String = "",
         page: Int = 1,
         limit: Int = 20,
-        token: String
     ): DealsModel? {
         try {
             return repository.getDeals(
                 query = query,
                 page = page,
                 limit = limit,
-                token = token
             )
 
         } catch (e: Exception) {

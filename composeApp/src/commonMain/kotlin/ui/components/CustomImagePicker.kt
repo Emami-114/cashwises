@@ -21,11 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,9 +42,12 @@ import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import com.seiko.imageloader.rememberImagePainter
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.UploadCloud
 import domain.model.ImageModel
 import kotlinx.coroutines.launch
-import org.company.app.theme.md_theme_dark_surface
+import org.company.app.theme.cw_dark_borderColor
+import org.company.app.theme.cw_dark_onBackground
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
@@ -58,7 +57,7 @@ fun CustomImagePicker(
     selectedImage: ImageModel?,
     imageSize: Dp = 350.dp,
     height: Dp = 150.dp,
-    backGround: Color = MaterialTheme.colorScheme.onPrimary,
+    backGround: Color = cw_dark_onBackground,
     onImageChange: (ImageModel?) -> Unit
 ) {
     val scopeCoroutine = rememberCoroutineScope()
@@ -119,20 +118,21 @@ fun CustomImagePicker(
         }
     } else {
         val stroke = Stroke(
-            width = 3f,
+            width = 5f,
             pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
         )
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .heightIn(min = 70.dp, max = height)
                 .drawBehind {
                     drawRoundRect(
-                        color = md_theme_dark_surface,
+                        color = cw_dark_borderColor,
                         style = stroke,
                         cornerRadius = CornerRadius(16.dp.toPx())
                     )
-                }.clip(MaterialTheme.shapes.large)
+                }
+                .heightIn(min = 70.dp, max = height)
+                .clip(MaterialTheme.shapes.large)
                 .clickable {
                     pickerLaunch.launch()
                 },
@@ -150,7 +150,7 @@ fun CustomImagePicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    Icons.Default.CloudUpload,
+                    FeatherIcons.UploadCloud,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(50.dp)

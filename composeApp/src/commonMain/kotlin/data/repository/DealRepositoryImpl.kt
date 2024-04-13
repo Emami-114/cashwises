@@ -8,6 +8,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
@@ -23,17 +24,20 @@ import ui.settings
 
 class DealRepositoryImpl : DealRepository {
     private val client = httpClient
+
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getDeals(
         query: String,
         page: Int,
         limit: Int,
-        token: String
     ): DealsModel? {
         return try {
             val response = client.get("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                parameter("query", query)
+                parameter("page", page)
+                parameter("limit", limit)
             }
             println("Token von get deals ${settings.getString("TOKEN2", "Token not found")}")
             response.body<DealsModel>()

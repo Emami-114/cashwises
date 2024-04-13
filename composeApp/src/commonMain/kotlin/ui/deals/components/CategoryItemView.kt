@@ -27,9 +27,7 @@ import ui.components.customModiefier.customBorder
 @Composable
 fun CategoryItemView(modifier: Modifier = Modifier, categoryModel: CategoryModel) {
     Column(
-        modifier = modifier.customBorder().shadow(1.dp, shape = MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.background, shape = MaterialTheme.shapes.large)
-            .clip(MaterialTheme.shapes.large),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         val painter =
@@ -38,7 +36,11 @@ fun CategoryItemView(modifier: Modifier = Modifier, categoryModel: CategoryModel
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.weight(8f)
+            modifier = Modifier
+                .fillMaxSize()
+                .customBorder()
+                .shadow(3.dp, shape = MaterialTheme.shapes.large)
+                .clip(MaterialTheme.shapes.large).weight(8f)
         )
         categoryModel.title?.let { title ->
             Text(

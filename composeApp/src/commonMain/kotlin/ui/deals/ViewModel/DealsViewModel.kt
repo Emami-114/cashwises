@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ui.deals.DetailDealScreen
 import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
@@ -29,7 +30,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
     init {
         getDeals()
     }
-
+fun doChangeDetailView(dealModel: DealModel?) {
+    _state.update {
+        it.copy(
+            dealModel = dealModel
+        )
+    }
+}
     fun onEvent(event: DealEvent) {
         when (event) {
             is DealEvent.OnTitleChange -> doChangeTitle(event)
@@ -193,9 +200,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
             _state.value = _state.value.copy(isLoading = true)
             _state.update {
                 it.copy(
-                    deals = useCase.getDeals(
-                        token = settings.getString("TOKEN2", "Not token found") ?: ""
-                    )?.deals
+                    deals = useCase.getDeals()?.deals
                         ?: listOf(),
                     isLoading = false,
                     error = null,

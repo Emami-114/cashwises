@@ -46,16 +46,20 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomSearchView
 import ui.components.CustomTopAppBar
 import ui.components.ProductRow
+import ui.deals.DetailDealView
 import ui.deals.components.CategoryItemView
+import ui.menu.BottomBarView
+import ui.menu.BottomBarViewEnum
 import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
-class SearchScreen() : Screen {
+class SearchScreen : Screen {
     @OptIn(InternalResourceApi::class, ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
         val navigator: Navigator = LocalNavigator.currentOrThrow
+        var currentTab by remember { mutableStateOf(BottomBarViewEnum.SEARCH) }
         var search by remember { mutableStateOf("") }
         val viewModel: SearchScreenViewModel = koinInject()
         val uiState by viewModel.state.collectAsState()
@@ -64,16 +68,18 @@ class SearchScreen() : Screen {
         }
         Scaffold(
             topBar = {
-                CustomTopAppBar(modifier = Modifier.height(80.dp), title = "", rightAction = {
-                    CustomSearchView(
-                        text = search,
-                        onTextChange = { search = it }, onSearchClick = { search = it },
-                        onFocused = {
+                CustomSearchTopAppBar(
+                    searchText = uiState.searchQuery,
+                    onSearchTextChange = { searchText ->
+                        viewModel.doChangeSearchText(searchText)
+                        if (searchText.count() > 3) {
+                            viewModel.doSearch()
                         }
-                    )
-                })
+                    }, backButtonAction = {
+                        navigator.pop()
+                    }
+                )
             },
-
             ) { paddingValues ->
             BoxWithConstraints {
                 val scope = this
@@ -85,18 +91,10 @@ class SearchScreen() : Screen {
                     else 3
                 CustomBackgroundView()
                 Column {
-                    CustomSearchView(
-                        text = uiState.searchQuery,
-                        onTextChange = { viewModel.doChangeSearchText(it) },
-                        onSearchClick = { _ ->
-                            viewModel.doSearch()
-                        }
-                    ) { _ -> }
-                    Spacer(modifier = Modifier.height(5.dp))
-
+                    Spacer(modifier = Modifier.height(15.dp))
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(column),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.fillMaxSize()
                             .padding(paddingValues)
@@ -106,7 +104,8 @@ class SearchScreen() : Screen {
                             uiState.deals != null && uiState.searchQuery.isEmpty().not() -> {
                                 if (uiState.deals != null) {
                                     items(uiState.deals!!) { deals ->
-                                        ProductRow(deals) {}
+                                        ProductRow(deals) {
+                                        }
                                     }
                                 }
                             }
@@ -150,7 +149,7 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
     fun doSearch() = viewModelScope.launch {
         _state.update {
             it.copy(
-                deals = dealUseCase.getDeals(query = _state.value.searchQuery, token = "")?.deals
+                deals = dealUseCase.getDeals(query = _state.value.searchQuery)?.deals
             )
         }
     }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,23 +63,31 @@ class DetailDealScreen(val dealModel: DealModel) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val scope = this
-            val maxWidth = scope.maxWidth
-            CustomTopAppBar(modifier = Modifier.zIndex(1f).fillMaxWidth(),
-                title = dealModel.title,
-                backgroundColor = Color.Transparent,
-                textColor = cw_dark_blackText,
-                isDivider = false,
-                backButtonAction = {
-                    navigator.pop()
-                })
-            DetailDealView(
-                modifier = Modifier,
-                dealModel = dealModel,
-                paddingValues = PaddingValues(top = 0.dp),
-                maxWidth = maxWidth
-            )
+        Scaffold(bottomBar = {
+            CustomButton(
+                modifier = Modifier.fillMaxWidth().height(50.dp), title = "To Deal"
+            ) {
+
+            }
+        }) {
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val scope = this
+                val maxWidth = scope.maxWidth
+                CustomTopAppBar(modifier = Modifier.zIndex(1f).fillMaxWidth(),
+                    title = dealModel.title,
+                    backgroundColor = Color.Transparent,
+                    textColor = cw_dark_blackText,
+                    isDivider = false,
+                    backButtonAction = {
+                        navigator.pop()
+                    })
+                DetailDealView(
+                    modifier = Modifier,
+                    dealModel = dealModel,
+                    paddingValues = PaddingValues(top = 0.dp),
+                    maxWidth = maxWidth
+                )
+            }
         }
     }
 }
@@ -100,7 +109,7 @@ fun DetailDealView(
     Column(
         modifier = modifier
             .padding(paddingValues)
-            .verticalScroll(scrollState)
+            .verticalScroll(scrollState),
 //            .draggable(
 //                orientation = Orientation.Vertical,
 //                state = rememberDraggableState { delta ->
@@ -108,7 +117,6 @@ fun DetailDealView(
 //                    scrollState.scrollBy(-delta)
 //                }
 //            })
-        ,
         verticalArrangement = Arrangement.spacedBy(20.dp),
 
         ) {
@@ -141,11 +149,7 @@ fun DetailDealView(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surface
                 )
             )
-            CustomButton(
-                modifier = Modifier.fillMaxWidth().height(50.dp), title = "To Deal"
-            ) {
 
-            }
         }
         Spacer(modifier = Modifier.height(70.dp))
     }

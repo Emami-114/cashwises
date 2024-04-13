@@ -50,10 +50,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
         }
         iosMain.dependencies {
-//            implementation(libs.ktor.client.darwin)
-            implementation("io.ktor:ktor-client-darwin:2.3.7")
-
-
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -61,7 +58,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
-            implementation(compose.components.uiToolingPreview)
+//            implementation(compose.components.uiToolingPreview)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
@@ -72,7 +69,6 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.client.serialization)
-//            implementation(libs.ktor.client.cio)
             implementation(libs.kotlinx.datetime)
             implementation(libs.composeIcons.featherIcons)
 

@@ -41,7 +41,8 @@ data class DealModel(
     @SerialName("updated_at")
     val updatedAt: String? = null
 ) {
-    val currentTime = Clock.System.now().daysUntil(Instant.parse(createdAt ?: ""), timeZone = TimeZone.UTC).absoluteValue
+    val currentTime = Clock.System.now()
+        .daysUntil(Instant.parse(createdAt ?: ""), timeZone = TimeZone.UTC).absoluteValue
 }
 
 //val exampleDeals = listOf<DealModel>(

@@ -4,6 +4,7 @@ import domain.model.CategoryModel
 import domain.model.DealModel
 import domain.model.ImageModel
 import kotlinx.serialization.SerialName
+import ui.deals.DetailDealScreen
 
 data class DealsState(
     val id: String = "",
@@ -25,7 +26,7 @@ data class DealsState(
     val images: List<String>? = null,
     val userId: String? = null,
     val videoUrl: String? = null,
-
+    val dealModel: DealModel? = null,
     val thumbnailByte: ImageModel? = null,
     var imagesByte: List<ImageModel>? = null
 )

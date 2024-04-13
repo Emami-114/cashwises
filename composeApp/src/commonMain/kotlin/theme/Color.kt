@@ -87,7 +87,7 @@ internal val seed = Color(0xFF2C3639)
 
 // Button Color
 internal val cw_dark_primary = Color(0xFF049EFE)
-internal val cw_dark_onPrimary = Color(0xFF2A2E3A)
+internal val cw_dark_onPrimary = Color(0xFF545867)
 
 // Text Color Gray and With
 internal val cw_dark_whiteText = Color(0xFFe0e3e3)
@@ -95,8 +95,8 @@ internal val cw_dark_grayText = Color(0xFF899393)
 internal val cw_dark_blackText = Color(0xFF2E2A2A)
 
 // background Color
-internal val cw_dark_background = Color(0xFF30333B)
+internal val cw_dark_background = Color(0xFF252831)
 internal val cw_dark_onBackground = Color(0xFF232630)
 
 // Border color
-internal val cw_dark_borderColor = Color(0xFF3F4452)
+internal val cw_dark_borderColor = Color(0xFF33363E)

@@ -20,12 +20,10 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,25 +32,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.component.setupDefaultComponents
-import com.seiko.imageloader.defaultImageResultMemoryCache
-import com.seiko.imageloader.model.ImageAction
 import com.seiko.imageloader.rememberImagePainter
-import com.seiko.imageloader.rememberImageSuccessPainter
-import com.seiko.imageloader.ui.AutoSizeBox
 import data.repository.ApiConfig
 import domain.model.DealModel
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.imageResource
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.noRippleClickable
 
 @OptIn(ExperimentalResourceApi::class)
@@ -174,9 +160,6 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
                     )
                 }
             }
-
-
         }
-
     }
 }

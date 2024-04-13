@@ -41,6 +41,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.company.app.theme.cw_dark_grayText
+import org.company.app.theme.cw_dark_onBackground
+import org.company.app.theme.cw_dark_whiteText
 import ui.components.customModiefier.customBorder
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -68,17 +71,17 @@ fun CustomTextField(
 ) {
     var focus: Boolean by remember { mutableStateOf(false) }
     val animatedFocus by animateFloatAsState(
-        targetValue = if (focus) 0.6f else 0.0f,
+        targetValue = if (focus) 0f else 1f,
         animationSpec = tween(durationMillis = 300, easing = LinearEasing)
     )
     val colors = textFieldColors(
-        textColor = MaterialTheme.colorScheme.secondary,
-        placeholderColor = MaterialTheme.colorScheme.onSecondary,
-        leadingIconColor = MaterialTheme.colorScheme.onSecondary,
-        trailingIconColor = MaterialTheme.colorScheme.onSecondary,
-        focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondary,
+        textColor = cw_dark_whiteText,
+        placeholderColor = cw_dark_grayText,
+        leadingIconColor = cw_dark_grayText,
+        trailingIconColor = cw_dark_grayText,
+        focusedTrailingIconColor = cw_dark_grayText,
         cursorColor = MaterialTheme.colorScheme.secondary,
-        backgroundColor = MaterialTheme.colorScheme.surface.copy(
+        backgroundColor = cw_dark_onBackground.copy(
             alpha = animatedFocus
         ),
         focusedIndicatorColor = Color.Transparent,

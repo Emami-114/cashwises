@@ -1,6 +1,9 @@
 package ui.menu
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
@@ -79,11 +82,17 @@ class TabBarScreen() : Screen {
                 if (maxWidth < 800.dp) {
                     AnimatedVisibility(
                         visible = isExpanded,
-                        modifier = Modifier.width(300.dp).fillMaxHeight()
+                        modifier = Modifier
+                            .width(300.dp)
+                            .fillMaxHeight()
                             .background(MaterialTheme.colorScheme.background)
                             .zIndex(1f),
-                        enter = slideInHorizontally(initialOffsetX = { -it / 2 }),
-                        exit = slideOutHorizontally(targetOffsetX = { -it / 2 })
+                        enter = slideInHorizontally(initialOffsetX = { -it / 2 }) + fadeIn(
+                            animationSpec = tween(100)
+                        ),
+                        exit = slideOutHorizontally(targetOffsetX = { -it / 2 }) + fadeOut(
+                            animationSpec = tween(100)
+                        )
                     ) {
                         TabBarView(currentItem, modifier = Modifier) { tabItem ->
                             currentItem = tabItem

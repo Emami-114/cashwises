@@ -1,8 +1,10 @@
 package ui.deals
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.FontResource
 import org.jetbrains.compose.resources.Resource
@@ -43,7 +46,7 @@ fun DealsView() {
     LaunchedEffect(Unit) {
         viewModel.getDeals()
     }
-    var rememberLazyGridState = rememberLazyGridState()
+    val rememberLazyGridState = rememberLazyGridState()
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
