@@ -35,11 +35,16 @@ import androidx.compose.ui.zIndex
 import com.seiko.imageloader.rememberImagePainter
 import data.repository.ApiConfig
 import domain.model.DealModel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import ui.components.customModiefier.noRippleClickable
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -82,6 +87,7 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
                         )
                     }
                 }
+
                 val painter =
                     rememberImagePainter("${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}")
                 Image(
@@ -142,10 +148,13 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val currentDate =
-                        if (dealModel.currentTime > 0) "${dealModel.currentTime}T" else "Heute"
+                    val currentDate = Clock.System.now()
+                        .daysUntil(
+                            Instant.parse(dealModel.createdAt ?: ""),
+                            timeZone = TimeZone.UTC
+                        ).absoluteValue
                     Text(
-                        text = currentDate,
+                        text = if (currentDate > 0) "${currentDate}T" else "Heute",
                         fontSize = 10.sp,
                         color = cw_dark_grayText,
                         fontWeight = FontWeight.Medium

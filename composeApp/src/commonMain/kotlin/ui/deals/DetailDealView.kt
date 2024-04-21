@@ -56,6 +56,7 @@ import org.company.app.theme.cw_dark_blackText
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import ui.components.CustomButton
+import ui.components.CustomImagesSlider
 import ui.components.CustomTopAppBar
 
 class DetailDealScreen(val dealModel: DealModel) : Screen {
@@ -118,18 +119,19 @@ fun DetailDealView(
 //                }
 //            })
         verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
 
-        ) {
-        val imagePainter =
-            rememberImagePainter("${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}")
-        Image(
-            painter = imagePainter,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.fillMaxWidth(if (maxWidth < 700.dp) 1f else 0.6f)
-                .height(350.dp).align(Alignment.CenterHorizontally)
-                .clip(MaterialTheme.shapes.large)
-        )
+        CustomImagesSlider(thumbnail = dealModel.thumbnail!!, paths = dealModel.images)
+//        val imagePainter =
+//            rememberImagePainter("${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}")
+//        Image(
+//            painter = imagePainter,
+//            contentDescription = null,
+//            contentScale = ContentScale.FillBounds,
+//            modifier = Modifier.fillMaxWidth(if (maxWidth < 700.dp) 1f else 0.6f)
+//                .height(350.dp).align(Alignment.CenterHorizontally)
+//                .clip(MaterialTheme.shapes.large)
+//        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -149,7 +151,6 @@ fun DetailDealView(
                     unfocusedBorderColor = MaterialTheme.colorScheme.surface
                 )
             )
-
         }
         Spacer(modifier = Modifier.height(70.dp))
     }

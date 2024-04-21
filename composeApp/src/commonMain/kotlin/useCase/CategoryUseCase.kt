@@ -21,15 +21,15 @@ class CategoryUseCase : KoinComponent {
 
     suspend fun uploadImage(
         imageModel: ImageModel,
-        imagePaths: (List<String>) -> Unit,
+        imagePaths: (String) -> Unit,
     ) {
         try {
             imageRepository.uploadImage(
-                listOf(imageModel),
+                imageModel,
                 subDir = "categories_images",
-                imagePath = { paths ->
-                    if (paths.isNotEmpty()) {
-                        imagePaths(paths)
+                imagePath = { path ->
+                    if (path.isNotEmpty()) {
+                        imagePaths(path)
                     } else {
                         println("Failed upload image")
                         throw Exception("oh, something went wrong!")

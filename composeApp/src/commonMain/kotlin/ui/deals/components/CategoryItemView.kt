@@ -38,8 +38,8 @@ fun CategoryItemView(modifier: Modifier = Modifier, categoryModel: CategoryModel
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxSize()
-                .customBorder()
                 .shadow(3.dp, shape = MaterialTheme.shapes.large)
+                .customBorder()
                 .clip(MaterialTheme.shapes.large).weight(8f)
         )
         categoryModel.title?.let { title ->

@@ -105,7 +105,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     private fun doEmailChange(event: RegistrationEvent.OnEmailChange) {
         _state.update {
             it.copy(
-                emailText = event.value,
+                emailText = event.value.lowercase(),
                 passwordError = null
             )
         }

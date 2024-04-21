@@ -7,7 +7,7 @@ import kotlinx.serialization.SerialName
 interface DealRepository {
     suspend fun getDeals(query: String, page: Int, limit: Int): DealsModel?
 
-    suspend fun addDeal(dealModel: DealModel)
+    suspend fun addDeal(dealModel: DealModel): Boolean
 
     suspend fun updateDeal(
         title: String,

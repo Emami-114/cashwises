@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import ui.components.CustomBackgroundView
+import ui.components.CustomImagesSlider
 import ui.deals.CreateDealView
 
 object NotificationTab : Tab {
@@ -17,7 +18,6 @@ object NotificationTab : Tab {
     override fun Content() {
         Box(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
-            CreateDealView()
         }
     }
 

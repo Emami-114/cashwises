@@ -86,7 +86,7 @@ class LoginViewModel : ViewModel(), KoinComponent {
     private fun doEmailChange(event: LoginEvent.OnEmailChange) {
         _state.update {
             it.copy(
-                emailText = event.value,
+                emailText = event.value.lowercase(),
                 emailError = null
             )
         }
