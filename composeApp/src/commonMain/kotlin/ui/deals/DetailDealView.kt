@@ -120,18 +120,7 @@ fun DetailDealView(
 //            })
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-
         CustomImagesSlider(thumbnail = dealModel.thumbnail!!, paths = dealModel.images)
-//        val imagePainter =
-//            rememberImagePainter("${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}")
-//        Image(
-//            painter = imagePainter,
-//            contentDescription = null,
-//            contentScale = ContentScale.FillBounds,
-//            modifier = Modifier.fillMaxWidth(if (maxWidth < 700.dp) 1f else 0.6f)
-//                .height(350.dp).align(Alignment.CenterHorizontally)
-//                .clip(MaterialTheme.shapes.large)
-//        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()

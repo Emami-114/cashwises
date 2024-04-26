@@ -2,6 +2,7 @@ package ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,8 +16,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddLink
@@ -32,6 +37,7 @@ import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.FormatUnderlined
 import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.ParagraphStyle
@@ -63,8 +70,20 @@ import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
-import org.company.app.theme.md_theme_dark_green
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Droplet
+import org.company.app.theme.cw_dark_background
+import org.company.app.theme.cw_dark_blackText
+import org.company.app.theme.cw_dark_borderColor
+import org.company.app.theme.cw_dark_grayText
+import org.company.app.theme.cw_dark_green
+import org.company.app.theme.cw_dark_onBackground
+import org.company.app.theme.cw_dark_onPrimary
+import org.company.app.theme.cw_dark_primary
+import org.company.app.theme.cw_dark_red
+import org.company.app.theme.cw_dark_whiteText
 import org.company.app.theme.md_theme_dark_primary
+import ui.components.customModiefier.customBorder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalRichTextApi::class)
 @Composable
@@ -76,68 +95,68 @@ fun CustomRichTextEditor(
     val subTitleSize = MaterialTheme.typography.displaySmall.fontSize
     val textRange by mutableStateOf(TextRange.Zero)
 
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(all = 20.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            EditorControls(
-                modifier = Modifier,
-                state = state,
-                onBoldClick = {
-                    state.toggleSpanStyle(SpanStyle(fontWeight = FontWeight.Bold))
-                },
-                onItalicClick = {
-                    state.toggleSpanStyle(SpanStyle(fontStyle = FontStyle.Italic))
-                },
-                onUnderlineClick = {
-                    state.toggleSpanStyle(SpanStyle(textDecoration = TextDecoration.Underline))
-                },
-                onTitleClick = {
-                    state.toggleSpanStyle(SpanStyle(fontSize = titleSize))
-                },
-                onSubtitleClick = {
-                    state.toggleSpanStyle(SpanStyle(fontSize = subTitleSize))
-                },
-                onTextColorClick = { color ->
-                    state.toggleSpanStyle(SpanStyle(color = color))
-                },
-                onStartAlignClick = {
-                    state.toggleParagraphStyle(ParagraphStyle(textAlign = TextAlign.Start))
-                },
-                onEndAlignClick = {
-                    state.toggleParagraphStyle(ParagraphStyle(textAlign = TextAlign.End))
-                },
-                onCenterAlignClick = {
-                    state.toggleParagraphStyle(ParagraphStyle(textAlign = TextAlign.Center))
-                },
-                onFormatNumberClick = {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 20.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        EditorControls(
+            modifier = Modifier,
+            state = state,
+            onBoldClick = {
+                state.toggleSpanStyle(SpanStyle(fontWeight = FontWeight.Bold))
+            },
+            onItalicClick = {
+                state.toggleSpanStyle(SpanStyle(fontStyle = FontStyle.Italic))
+            },
+            onUnderlineClick = {
+                state.toggleSpanStyle(SpanStyle(textDecoration = TextDecoration.Underline))
+            },
+            onTitleClick = {
+                state.toggleSpanStyle(SpanStyle(fontSize = titleSize))
+            },
+            onSubtitleClick = {
+                state.toggleSpanStyle(SpanStyle(fontSize = subTitleSize))
+            },
+            onTextColorClick = { color ->
+                state.toggleSpanStyle(SpanStyle(color = color))
+            },
+            onStartAlignClick = {
+                state.toggleParagraphStyle(ParagraphStyle(textAlign = TextAlign.Start))
+            },
+            onEndAlignClick = {
+                state.toggleParagraphStyle(ParagraphStyle(textAlign = TextAlign.End))
+            },
+            onCenterAlignClick = {
+                state.toggleParagraphStyle(ParagraphStyle(textAlign = TextAlign.Center))
+            },
+            onFormatNumberClick = {
 
-                },
-                onFormatBulletedClick = {
-                    if (state.isUnorderedList) {
-                        state.removeUnorderedList()
-                    } else {
-                        state.addUnorderedList()
-                    }
-                },
-                onExportClick = {
-                    println("Editor ** ${state.toHtml()}")
+            },
+            onFormatBulletedClick = {
+                if (state.isUnorderedList) {
+                    state.removeUnorderedList()
+                } else {
+                    state.addUnorderedList()
                 }
+            },
+            onExportClick = {
+                println("Editor ** ${state.toHtml()}")
+            }
+        )
+        RichTextEditor(
+            modifier = modifier
+                .fillMaxWidth(),
+            state = state,
+            shape = MaterialTheme.shapes.large,
+            colors = RichTextEditorDefaults.richTextEditorColors(
+                textColor = MaterialTheme.colorScheme.secondary,
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
             )
-            RichTextEditor(
-                modifier = modifier
-                    .fillMaxWidth(),
-                state = state,
-                shape = MaterialTheme.shapes.large,
-                colors = RichTextEditorDefaults.richTextEditorColors(
-                    textColor = MaterialTheme.colorScheme.secondary,
-                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)
-                )
-            )
-        }
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -163,9 +182,6 @@ fun EditorControls(
     var underlineSelected by rememberSaveable { mutableStateOf(false) }
     var titleSelected by rememberSaveable { mutableStateOf(false) }
     var subtitleSelected by rememberSaveable { mutableStateOf(false) }
-    var textColorRedSelected by rememberSaveable { mutableStateOf(false) }
-    var textColorGreenSelected by rememberSaveable { mutableStateOf(false) }
-    var textColorPrimarySelected by rememberSaveable { mutableStateOf(false) }
     var linkSelected by rememberSaveable { mutableStateOf(false) }
     var formatListNumber by rememberSaveable { mutableStateOf(false) }
     var formatListBulleted by rememberSaveable { mutableStateOf(false) }
@@ -222,42 +238,10 @@ fun EditorControls(
             onClick = onSubtitleClick,
             icon = Icons.Default.FormatSize
         )
-        ControlWrapper(
-            selected = textColorRedSelected,
-            selectedColor = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
-            unselectedColor = MaterialTheme.colorScheme.error.copy(alpha = 0.6f),
-            onChangeClick = {
-                textColorRedSelected = it
-                textColorPrimarySelected = false
-                textColorGreenSelected = false
-            },
-            onClick = { onTextColorClick(Color.Red) },
-            icon = Icons.Default.FormatColorFill
-        )
-        ControlWrapper(
-            selected = textColorGreenSelected,
-            selectedColor = md_theme_dark_green.copy(alpha = 1f),
-            unselectedColor = md_theme_dark_green.copy(alpha = 0.7f),
-            onChangeClick = {
-                textColorGreenSelected = it
-                textColorPrimarySelected = false
-                textColorRedSelected = false
-            },
-            onClick = { onTextColorClick(md_theme_dark_green) },
-            icon = Icons.Default.FormatColorFill
-        )
-        ControlWrapper(
-            selected = textColorPrimarySelected,
-            selectedColor = md_theme_dark_primary.copy(alpha = 1f),
-            unselectedColor = md_theme_dark_primary.copy(alpha = 0.7f),
-            onChangeClick = {
-                textColorPrimarySelected = it
-                textColorGreenSelected = false
-                textColorRedSelected = false
-            },
-            onClick = { onTextColorClick(md_theme_dark_primary) },
-            icon = Icons.Default.FormatColorFill
-        )
+        CustomColorPicker { color ->
+            onTextColorClick(color)
+        }
+
         ControlWrapper(
             selected = linkSelected,
             onChangeClick = { linkSelected = it },
@@ -312,14 +296,6 @@ fun EditorControls(
             },
             icon = Icons.Default.FormatListBulleted
         )
-
-//        ControlWrapper(
-//            selected = true,
-//            selectedColor = MaterialTheme.colorScheme.tertiary,
-//            onChangeClick = { },
-//            onClick = onExportClick,
-//            icon = Icons.Default.Save
-//        )
     }
 }
 
@@ -328,14 +304,14 @@ fun EditorControls(
 fun ControlWrapper(
     selected: Boolean,
     selectedColor: Color = MaterialTheme.colorScheme.primary,
-    unselectedColor: Color = MaterialTheme.colorScheme.onSecondary,
+    unselectedColor: Color = cw_dark_onPrimary,
     onChangeClick: (Boolean) -> Unit,
     onClick: () -> Unit,
     icon: ImageVector = Icons.Default.Add
 ) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(size = 6.dp))
+            .clip(RoundedCornerShape(size = 8.dp))
             .clickable {
                 onClick()
                 onChangeClick(!selected)
@@ -346,8 +322,8 @@ fun ControlWrapper(
             )
             .border(
                 width = 1.dp,
-                color = Color.LightGray,
-                shape = RoundedCornerShape(size = 6.dp)
+                color = cw_dark_borderColor,
+                shape = RoundedCornerShape(size = 8.dp)
             )
             .padding(all = 8.dp),
         contentAlignment = Alignment.Center
@@ -355,7 +331,7 @@ fun ControlWrapper(
         Icon(
             icon,
             contentDescription = null,
-            tint = if (selected) MaterialTheme.colorScheme.secondary else selectedColor
+            tint = cw_dark_whiteText
         )
     }
 }
@@ -411,6 +387,52 @@ fun LinkDialog(
 
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CustomColorPicker(selectedColor: (Color) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val colors = listOf(
+        cw_dark_background, cw_dark_primary, cw_dark_onPrimary, cw_dark_whiteText,
+        cw_dark_grayText, cw_dark_blackText, cw_dark_green, cw_dark_red
+    )
+    var selected by remember { mutableStateOf(cw_dark_whiteText) }
+    Box(modifier = Modifier.clip(MaterialTheme.shapes.medium)
+        .background(selected)
+        .clickable { expanded = !expanded }
+        .size(40.dp)
+        .customBorder(shape = MaterialTheme.shapes.medium)
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .size(150.dp)
+                .background(cw_dark_onBackground)
+                .padding(5.dp)
+        ) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                colors.forEach { color: Color ->
+                    Box(
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .size(30.dp)
+                            .background(color)
+                            .clickable {
+                                selectedColor(color)
+                                selected = color
+                                expanded = false
+                            }
+                    )
+                }
+            }
+
         }
     }
 }
