@@ -23,20 +23,22 @@ class DealsViewModel : ViewModel(), KoinComponent {
     val state = _state.asStateFlow()
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
+            SharingStarted.Lazily,
             DealsState()
         )
 
     init {
         getDeals()
     }
-fun doChangeDetailView(dealModel: DealModel?) {
-    _state.update {
-        it.copy(
-            dealModel = dealModel
-        )
+
+    fun doChangeDetailView(dealModel: DealModel?) {
+        _state.update {
+            it.copy(
+                dealModel = dealModel
+            )
+        }
     }
-}
+
     fun onEvent(event: DealEvent) {
         when (event) {
             is DealEvent.OnTitleChange -> doChangeTitle(event)
@@ -72,27 +74,25 @@ fun doChangeDetailView(dealModel: DealModel?) {
 
     private fun doCreateDeal(event: DealEvent.OnAction) {
         if (_state.value.isLoading) return
-
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-
             if (_state.value.thumbnailByte != null) {
-                useCase.uploadImage(listOf(_state.value.thumbnailByte!!)) { path ->
+                useCase.uploadImage(_state.value.thumbnailByte!!) { path ->
                     _state.update {
-                        it.copy(thumbnail = path.firstOrNull())
+                        it.copy(thumbnail = path)
                     }
                 }
             }
-//            if (_state.value.imagesByte != null) {
-//                useCase.uploadImage(_state.value.imagesByte!!) { imagesPath ->
-//                    _state.update {
-//                        it.copy(
-//                            images = imagesPath
-//                        )
-//                    }
-//                    println("image path von upload image $imagesPath")
-//                }
-//            }
+            if (_state.value.imagesByte != null) {
+                useCase.uploadImages(_state.value.imagesByte!!) { imagesPath ->
+                    _state.update {
+                        it.copy(
+                            images = imagesPath
+                        )
+                    }
+                    println("image path von upload image $imagesPath")
+                }
+            }
             val deal = DealModel(
                 title = _state.value.title,
                 description = _state.value.description,
@@ -109,9 +109,10 @@ fun doChangeDetailView(dealModel: DealModel?) {
                 userId = _state.value.userId,
                 videoUrl = _state.value.videoUrl,
             )
-            useCase.addDeals(dealModel = deal)
-            onEvent(event = DealEvent.OnSetDefaultState)
-            println("Deals mit image $deal")
+            useCase.addDeals(dealModel = deal) {
+                onEvent(event = DealEvent.OnSetDefaultState)
+                println("Deals mit image $deal")
+            }
         }
     }
 

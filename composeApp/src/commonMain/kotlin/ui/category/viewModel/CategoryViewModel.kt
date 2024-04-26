@@ -47,7 +47,7 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                         imageModel = _state.value.imageModel!!,
                         imagePaths = { imagePath ->
                             _state.value =
-                                _state.value.copy(thumbnail = imagePath.firstOrNull())
+                                _state.value.copy(thumbnail = imagePath)
                             val category = CategoryModel(
                                 title = _state.value.title,
                                 thumbnail = _state.value.thumbnail,
@@ -134,7 +134,7 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                                 imageModel = _state.value.imageModel!!,
                                 imagePaths = { imagePath ->
                                     _state.value =
-                                        _state.value.copy(thumbnail = imagePath.firstOrNull())
+                                        _state.value.copy(thumbnail = imagePath)
                                     val category = CategoryModel(
                                         title = _state.value.title,
                                         thumbnail = _state.value.thumbnail,

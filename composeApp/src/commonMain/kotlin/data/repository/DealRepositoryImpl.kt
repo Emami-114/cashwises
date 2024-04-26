@@ -48,14 +48,13 @@ class DealRepositoryImpl : DealRepository {
         }
     }
 
-    override suspend fun addDeal(dealModel: DealModel) {
-        try {
+    override suspend fun addDeal(dealModel: DealModel): Boolean {
+        return try {
             client.post("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(settings.getString("TOKEN2", "Token not found"))
-
                 setBody(dealModel)
-            }
+            }.status.value in 200..300
         } catch (e: Exception) {
             throw e
         }

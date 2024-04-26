@@ -29,12 +29,32 @@ class DealsUseCase : KoinComponent {
         }
     }
 
-    suspend fun uploadImage(
+    suspend fun uploadImages(
         imagesModel: List<ImageModel>,
         imagePaths: (List<String>) -> Unit,
     ) {
         try {
-            imageRepository.uploadImage(imagesModel,
+            imageRepository.uploadImages(imagesModel,
+                subDir = "deals_images",
+                imagePaths = { paths ->
+                    if (paths.isNotEmpty()) {
+                        imagePaths(paths)
+                    } else {
+                        println("Failed upload image")
+                        throw Exception("oh, something went wrong!")
+                    }
+                })
+        } catch (e: Exception) {
+            throw Exception("oh, something went wrong! ${e.message}")
+        }
+    }
+
+    suspend fun uploadImage(
+        imageModel: ImageModel,
+        imagePaths: (String) -> Unit,
+    ) {
+        try {
+            imageRepository.uploadImage(imageModel,
                 subDir = "deals_images",
                 imagePath = { paths ->
                     if (paths.isNotEmpty()) {
@@ -50,11 +70,18 @@ class DealsUseCase : KoinComponent {
     }
 
     suspend fun addDeals(
-        dealModel: DealModel
+        dealModel: DealModel,
+        onSuccess: () -> Unit
     ) {
-        repository.addDeal(
-            dealModel
-        )
+        try {
+            repository.addDeal(dealModel).let { isSuccess ->
+                if (isSuccess) {
+                    onSuccess()
+                }
+            }
+        } catch (e: Exception) {
+            throw Exception("oh, something went wrong! ${e.message}")
+        }
     }
 
     suspend fun deleteDeal(id: String) {

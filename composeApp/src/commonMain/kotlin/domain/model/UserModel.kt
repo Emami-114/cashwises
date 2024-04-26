@@ -12,6 +12,8 @@ data class UserModel(
     val role: UserRole,
     val photo: String,
     val verified: Boolean = false,
+    @SerialName("verification_code")
+    val verificationCode: String? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
     @SerialName("updated_at")
@@ -21,8 +23,10 @@ data class UserModel(
 enum class UserRole {
     @SerialName("admin")
     ADMIN,
+
     @SerialName("creator")
     CREATOR,
+
     @SerialName("customer")
     CUSTOMER
 }

@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 
 object ApiConfig {
     const val BASE_URL = "https://cashwises.backend.api.cwcash.de/api"
-    const val BASE_URL2 = "http://192.168.178.22:8000/api"
+//    const val BASE_URL = "http://192.168.178.22:8000/api"
 
     val httpClient = HttpClient {
         install(ContentNegotiation) {

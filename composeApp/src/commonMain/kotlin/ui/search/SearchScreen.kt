@@ -63,9 +63,6 @@ class SearchScreen : Screen {
         var search by remember { mutableStateOf("") }
         val viewModel: SearchScreenViewModel = koinInject()
         val uiState by viewModel.state.collectAsState()
-        LaunchedEffect(Unit) {
-            println("Settings: ${settings.getString("test", "")}")
-        }
         Scaffold(
             topBar = {
                 CustomSearchTopAppBar(
