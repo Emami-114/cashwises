@@ -1,8 +1,6 @@
 package ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,38 +10,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddLink
-import androidx.compose.material.icons.filled.FormatAlignCenter
-import androidx.compose.material.icons.filled.FormatAlignLeft
-import androidx.compose.material.icons.filled.FormatAlignRight
-import androidx.compose.material.icons.filled.FormatBold
-import androidx.compose.material.icons.filled.FormatColorFill
-import androidx.compose.material.icons.filled.FormatItalic
-import androidx.compose.material.icons.filled.FormatListBulleted
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.FormatSize
-import androidx.compose.material.icons.filled.FormatUnderlined
-import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.ParagraphStyle
@@ -65,13 +41,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import cashwises.composeapp.generated.resources.Res
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.Droplet
+import compose.icons.TablerIcons
+import compose.icons.tablericons.AlignCenter
+import compose.icons.tablericons.AlignLeft
+import compose.icons.tablericons.AlignRight
+import compose.icons.tablericons.Bold
+import compose.icons.tablericons.Italic
+import compose.icons.tablericons.LetterT
+import compose.icons.tablericons.Link
+import compose.icons.tablericons.List
+import compose.icons.tablericons.Underline
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_blackText
 import org.company.app.theme.cw_dark_borderColor
@@ -82,7 +67,6 @@ import org.company.app.theme.cw_dark_onPrimary
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
-import org.company.app.theme.md_theme_dark_primary
 import ui.components.customModiefier.customBorder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalRichTextApi::class)
@@ -212,31 +196,31 @@ fun EditorControls(
             selected = boldSelected,
             onChangeClick = { boldSelected = it },
             onClick = onBoldClick,
-            icon = Icons.Default.FormatBold
+            icon = TablerIcons.Bold
         )
         ControlWrapper(
             selected = italicSelected,
             onChangeClick = { italicSelected = it },
             onClick = onItalicClick,
-            icon = Icons.Default.FormatItalic
+            icon = TablerIcons.Italic
         )
         ControlWrapper(
             selected = underlineSelected,
             onChangeClick = { underlineSelected = it },
             onClick = onUnderlineClick,
-            icon = Icons.Default.FormatUnderlined
+            icon = TablerIcons.Underline
         )
         ControlWrapper(
             selected = titleSelected,
             onChangeClick = { titleSelected = it },
             onClick = onTitleClick,
-            icon = Icons.Default.Title
+            icon = TablerIcons.LetterT
         )
         ControlWrapper(
             selected = subtitleSelected,
             onChangeClick = { subtitleSelected = it },
             onClick = onSubtitleClick,
-            icon = Icons.Default.FormatSize
+            icon = TablerIcons.LetterT
         )
         CustomColorPicker { color ->
             onTextColorClick(color)
@@ -246,25 +230,25 @@ fun EditorControls(
             selected = linkSelected,
             onChangeClick = { linkSelected = it },
             onClick = { showLinkDialog.value = true },
-            icon = Icons.Default.AddLink
+            icon = TablerIcons.Link
         )
         ControlWrapper(
             selected = alignmentSelected == 0,
             onChangeClick = { alignmentSelected = 0 },
             onClick = onStartAlignClick,
-            icon = Icons.Default.FormatAlignLeft
+            icon = TablerIcons.AlignLeft
         )
         ControlWrapper(
             selected = alignmentSelected == 1,
             onChangeClick = { alignmentSelected = 1 },
             onClick = onCenterAlignClick,
-            icon = Icons.Default.FormatAlignCenter
+            icon = TablerIcons.AlignCenter
         )
         ControlWrapper(
             selected = alignmentSelected == 2,
             onChangeClick = { alignmentSelected = 2 },
             onClick = onEndAlignClick,
-            icon = Icons.Default.FormatAlignRight
+            icon = TablerIcons.AlignRight
         )
         ControlWrapper(
             selected = formatListNumber,
@@ -280,7 +264,7 @@ fun EditorControls(
                 }
 //                onFormatNumberClick()
             },
-            icon = Icons.Default.FormatListNumbered
+            icon = TablerIcons.List
         )
         ControlWrapper(
             selected = formatListBulleted,
@@ -294,7 +278,7 @@ fun EditorControls(
                     state.removeUnorderedList()
                 }
             },
-            icon = Icons.Default.FormatListBulleted
+            icon = TablerIcons.List
         )
     }
 }
@@ -307,7 +291,7 @@ fun ControlWrapper(
     unselectedColor: Color = cw_dark_onPrimary,
     onChangeClick: (Boolean) -> Unit,
     onClick: () -> Unit,
-    icon: ImageVector = Icons.Default.Add
+    icon: ImageVector
 ) {
     Box(
         modifier = Modifier

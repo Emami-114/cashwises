@@ -12,9 +12,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,12 +27,10 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
-import domain.model.CategoryModel
 import domain.model.DealModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,14 +40,9 @@ import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ui.components.CustomBackgroundView
-import ui.components.CustomSearchView
-import ui.components.CustomTopAppBar
 import ui.components.ProductRow
-import ui.deals.DetailDealView
 import ui.deals.components.CategoryItemView
-import ui.menu.BottomBarView
 import ui.menu.BottomBarViewEnum
-import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
@@ -106,7 +98,6 @@ class SearchScreen : Screen {
                                     }
                                 }
                             }
-
                             else -> {
                                 uiState.categories?.categories?.let { categories ->
                                     items(categories) { category ->

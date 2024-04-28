@@ -1,7 +1,31 @@
 <resources>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">Open github</string>
-    <string name="run">Run</string>
-    <string name="stop">Stop</string>
-    <string name="theme">Theme</string>
+    <!-- Http Error -->
+    <string name="not_found_error">The requested resource was not found.</string>
+    <string name="bad_request_error">The request could not be processed. Please check your entries and try again</string>
+    <string name="unauthorized_error">You are not authorized. Please ensure that you are logged in and have the required authorizations.</string>
+    <string name="conflict_error">The requested action could not be completed because there is a conflict with an existing resource.</string>
+
+    <!-- Authentication String -->
+    <string name="auth_verification_title">Verification Code</string>
+    <string name="auth_verification_description">Please, enter the verification code we send to your E-mail</string>
+    <string name="auth_verification_not_receive">Did not receive the code? Resend</string>
+    <string name="auth_verification_required">Verification code is required</string>
+
+    <string name="username_required_error">Username required. Please enter a username.</string>
+    <string name="password_must_be_6characters_error">Password must be at least 6 characters long.</string>
+    <string name="password_confirm_not_match_error">The password and the confirmation do not match. Please make sure that both passwords match.</string>
+    <string name="invalid_email_address_error">Invalid e-mail address. Please enter a valid e-mail address.</string>
+    <string name="accept_data_protection_error">Please accept the data protection regulations.</string>
+    <string name="accept_data_protection_description">I accept the privacy policy and the terms of use</string>
+    <string name="privacy_policy_placeholder">privacy policy</string>
+    <string name="terms_of_use_placeholder">terms of use</string>
+    <string name="password_required_error">Password required</string>
+    <string name="password_forget">Password forget?</string>
+    <!--  Global Strings  -->
+    <string name="btn_send">Send</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="password_confirm">Password confirm</string>
 </resources>

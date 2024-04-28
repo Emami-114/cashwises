@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Switch
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,7 +31,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import org.koin.compose.koinInject
-import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomImagePicker
 import ui.components.CustomMultipleImagePicker
@@ -70,7 +69,6 @@ class CreateDealScreen : Screen {
             }
         }
     }
-
 }
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,17 +15,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,11 +34,15 @@ import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Edit
+import compose.icons.tablericons.LayoutGrid
+import compose.icons.tablericons.LayoutGridAdd
+import compose.icons.tablericons.Plus
 import domain.model.CategoryModel
 import org.koin.compose.koinInject
 import ui.category.CategoriesView
 import ui.category.CreateCategory
-import ui.category.viewModel.CategoryEvent
 import ui.category.viewModel.CategoryViewModel
 import ui.components.CustomBackgroundView
 import ui.components.CustomTopAppBar
@@ -183,10 +181,10 @@ fun TabBarView(
 }
 
 enum class TabItemEnum(var title: String, var icon: ImageVector) {
-    CREATE_DEAL(title = "Create Deal", icon = Icons.Default.Add),
-    CATEGORIES(title = "Categories", icon = Icons.Default.Category),
-    CREATE_CATEGORY(title = "Create Category", icon = Icons.Default.LibraryAdd),
-    EDIT_DEAL(title = "Edit Deal", icon = Icons.Default.Edit),
-    EDIT_CATEGORY(title = "Edit Category", icon = Icons.Default.Edit);
+    CREATE_DEAL(title = "Create Deal", icon = TablerIcons.Plus),
+    CATEGORIES(title = "Categories", icon = TablerIcons.LayoutGrid),
+    CREATE_CATEGORY(title = "Create Category", icon = TablerIcons.LayoutGridAdd),
+    EDIT_DEAL(title = "Edit Deal", icon = TablerIcons.Edit),
+    EDIT_CATEGORY(title = "Edit Category", icon = TablerIcons.Edit);
 
 }

@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,13 +22,12 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import ui.account.AccountScreen
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Plus
 import ui.components.CustomTopAppBar
 import ui.deals.DealsView
-import ui.menu.BottomBarView
 import ui.menu.BottomBarViewEnum
 import ui.menu.TabBarScreen
-import ui.search.SearchScreen
 
 class HomeScreen : Screen {
     @Composable
@@ -57,14 +54,15 @@ class HomeScreen : Screen {
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        Icons.Default.Add,
+                        TablerIcons.Plus,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
-        ) {
-            DealsView()
+        ) { paddingValue ->
+            DealsView(paddingValue)
+
 //            when (currentTab) {
 //                BottomBarViewEnum.HOME -> DealsView()
 //                BottomBarViewEnum.SEARCH -> SearchScreen()

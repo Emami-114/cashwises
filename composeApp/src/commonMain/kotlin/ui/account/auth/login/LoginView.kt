@@ -9,19 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +30,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.btn_login
+import cashwises.composeapp.generated.resources.password
+import cashwises.composeapp.generated.resources.password_forget
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Eye
+import compose.icons.tablericons.EyeOff
+import compose.icons.tablericons.Lock
+import compose.icons.tablericons.Mail
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.components.CustomButton
 import ui.components.CustomTextField
@@ -48,8 +50,6 @@ fun LogInView(toPasswordForget: () -> Unit) {
     val viewModel: LoginViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
-    var textExample by remember { mutableStateOf("") }
-    var passwordExample by remember { mutableStateOf("") }
     val navigator = LocalNavigator.currentOrThrow
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()
@@ -83,9 +83,11 @@ fun LogInView(toPasswordForget: () -> Unit) {
                         value = uiState.emailText,
                         onValueChange = { viewModel.onEvent(LoginEvent.OnEmailChange(it)) },
                         placeholder = "E-mail",
+                        label = { Text("E-mail") },
                         leadingIcon = {
-                            Icon(Icons.Default.Mail, contentDescription = null)
+                            Icon(TablerIcons.Mail, contentDescription = null)
                         },
+                        errorText = uiState.emailError,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
@@ -95,12 +97,14 @@ fun LogInView(toPasswordForget: () -> Unit) {
                     CustomTextField(
                         value = uiState.passwordText,
                         onValueChange = { viewModel.onEvent(LoginEvent.OnPasswordChange(it)) },
-                        placeholder = "Password",
+                        placeholder = stringResource(Res.string.password),
                         leadingIcon = {
-                            Icon(Icons.Outlined.Lock, contentDescription = null)
+                            Icon(TablerIcons.Lock, contentDescription = null)
                         },
+                        errorText = uiState.passwordError,
+                        label = { Text(stringResource(Res.string.password)) },
                         trailingIcon = {
-                            Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            Icon(if (passwordVisible) TablerIcons.Eye else TablerIcons.EyeOff,
                                 contentDescription = null,
                                 modifier = Modifier.noRippleClickable {
                                     passwordVisible = !passwordVisible
@@ -116,13 +120,14 @@ fun LogInView(toPasswordForget: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    CustomButton(title = "Login") {
+                    CustomButton(title = stringResource(Res.string.btn_login)) {
                         viewModel.onEvent(LoginEvent.OnLogin)
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Text("Password forget?",
+                    Text(
+                        stringResource(Res.string.password_forget),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,

@@ -20,11 +20,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.Bell
-import compose.icons.feathericons.Home
-import compose.icons.feathericons.Search
-import compose.icons.feathericons.User
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Bell
+import compose.icons.tablericons.Home
+import compose.icons.tablericons.Search
+import compose.icons.tablericons.User
 import org.company.app.theme.cw_dark_background
 import ui.account.AccountTab
 import ui.components.customModiefier.customBorder
@@ -62,8 +62,8 @@ fun BottomBarView(currentTab: BottomBarViewEnum, selectedTab: (BottomBarViewEnum
 enum class BottomBarViewEnum(
     val title: String, val icon: ImageVector, val tab: Tab
 ) {
-    HOME(title = "Home", icon = FeatherIcons.Home, tab = HomeTab),
-    SEARCH(title = "Search", icon = FeatherIcons.Search, tab = SearchTab),
-    NOTIFICATION(title = "Notification", icon = FeatherIcons.Bell, tab = NotificationTab),
-    ACCOUNT(title = "Account", icon = FeatherIcons.User, tab = AccountTab)
+    HOME(title = "Home", icon = TablerIcons.Home, tab = HomeTab),
+    SEARCH(title = "Search", icon = TablerIcons.Search, tab = SearchTab),
+    NOTIFICATION(title = "Notification", icon = TablerIcons.Bell, tab = NotificationTab),
+    ACCOUNT(title = "Account", icon = TablerIcons.User, tab = AccountTab)
 }

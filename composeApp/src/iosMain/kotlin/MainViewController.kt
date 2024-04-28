@@ -1,4 +1,5 @@
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
 import com.seiko.imageloader.ImageLoader
@@ -11,7 +12,12 @@ import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
 import ui.App
 
-fun MainViewController() = ComposeUIViewController {
+@OptIn(ExperimentalComposeApi::class)
+fun MainViewController() = ComposeUIViewController(
+    configure = {
+        platformLayers = true
+    }
+) {
     CompositionLocalProvider(
         LocalImageLoader provides remember { generateImageLoader() },
     ) {

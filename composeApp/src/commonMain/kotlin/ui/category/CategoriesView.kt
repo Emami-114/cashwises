@@ -16,18 +16,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.internal.enableLiveLiterals
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +37,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seiko.imageloader.rememberImagePainter
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Edit
 import data.repository.ApiConfig
 import domain.model.CategoryModel
 import domain.model.CategoryStatus
@@ -112,7 +111,7 @@ fun CategoryItem(
                             Spacer(modifier = Modifier.width(30.dp))
                             CategoryItemHeader(categoryModel, height = 40.dp) { onClick() }
                         }
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }
@@ -159,7 +158,7 @@ fun CategoryItemHeader(
             horizontalArrangement = Arrangement.End
         ) {
             Icon(
-                Icons.Default.EditNote,
+                TablerIcons.Edit,
                 contentDescription = null,
                 modifier = Modifier.noRippleClickable(onEdit),
                 tint = MaterialTheme.colorScheme.onSecondary

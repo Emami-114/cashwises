@@ -1,30 +1,27 @@
 package ui.components
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuDefaults.textFieldColors
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TextFieldDefaults.MinWidth
-import androidx.compose.material.TextFieldDefaults.indicatorLine
-import androidx.compose.material.TextFieldDefaults.textFieldWithLabelPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,13 +37,14 @@ import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_onBackground
+import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
 import ui.components.customModiefier.customBorder
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
     value: String,
@@ -68,75 +66,88 @@ fun CustomTextField(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = MaterialTheme.shapes.large,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    errorText: String? = null,
+    contentPadding: PaddingValues = TextFieldDefaults.contentPaddingWithLabel()
 ) {
     var focus: Boolean by remember { mutableStateOf(false) }
-    val animatedFocus by animateFloatAsState(
-        targetValue = if (focus) 0f else 1f,
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+    val colorAnimated by animateColorAsState(
+        targetValue = if (focus) cw_dark_grayText.copy(alpha = 0.6f) else cw_dark_borderColor,
+        animationSpec = tween(200, easing = EaseInOut)
     )
-    val colors = textFieldColors(
-        textColor = cw_dark_whiteText,
-        placeholderColor = cw_dark_grayText,
-        leadingIconColor = cw_dark_grayText,
-        trailingIconColor = cw_dark_grayText,
+    val colors = TextFieldDefaults.colors(
+        focusedContainerColor = cw_dark_onBackground,
+        unfocusedContainerColor = cw_dark_onBackground,
+        focusedTextColor = cw_dark_whiteText,
+        unfocusedTextColor = cw_dark_whiteText,
         focusedTrailingIconColor = cw_dark_grayText,
-        cursorColor = MaterialTheme.colorScheme.secondary,
-        backgroundColor = cw_dark_onBackground.copy(
-            alpha = animatedFocus
-        ),
+        unfocusedTrailingIconColor = cw_dark_grayText,
+        focusedLeadingIconColor = cw_dark_grayText,
+        unfocusedLeadingIconColor = cw_dark_grayText,
+        cursorColor = cw_dark_whiteText,
         focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
         disabledIndicatorColor = Color.Transparent,
-
-        )
-    // If color is not provided via the text style, use content color as a default
+        unfocusedIndicatorColor = Color.Transparent,
+        focusedPlaceholderColor = cw_dark_grayText,
+        unfocusedPlaceholderColor = cw_dark_grayText
+    )
     val textColor = textStyle.color.takeOrElse {
-        colors.textColor(enabled).value
+        colors.focusedTextColor
     }
     val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
-
-    @OptIn(ExperimentalMaterialApi::class)
-    BasicTextField(
-        value = value,
-        modifier = modifier.fillMaxWidth()
-            .clip(shape)
-            .background(colors.backgroundColor(enabled).value, shape)
-            .customBorder()
-            .onFocusChanged { focus = it.isFocused }
-            .indicatorLine(enabled, isError, interactionSource, colors)
-            .defaultMinSize(
-                minWidth = TextFieldDefaults.MinWidth,
-                minHeight = TextFieldDefaults.MinHeight
-            ),
-        onValueChange = onValueChange,
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = mergedTextStyle,
-        cursorBrush = SolidColor(colors.cursorColor(isError).value),
-        visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        interactionSource = interactionSource,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
-        decorationBox = @Composable { innerTextField ->
-            // places leading icon, text field with label and placeholder, trailing icon
-            TextFieldDefaults.TextFieldDecorationBox(
-                value = value,
-                visualTransformation = visualTransformation,
-                innerTextField = innerTextField,
-                placeholder = { Text(placeholder, color = colors.placeholderColor(true).value) },
-                label = label,
-                leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon,
-                singleLine = singleLine,
-                enabled = enabled,
-                isError = isError,
-                interactionSource = interactionSource,
-                colors = colors,
-                contentPadding = textFieldWithLabelPadding()
+    Column {
+        BasicTextField(
+            value = value,
+            modifier = modifier.fillMaxWidth()
+                .clip(shape)
+                .background(cw_dark_onBackground, shape)
+                .customBorder(color = if (errorText != null) cw_dark_red else colorAnimated)
+                .onFocusChanged { focus = it.isFocused }
+                .defaultMinSize(
+                    minWidth = TextFieldDefaults.MinWidth,
+                    minHeight = TextFieldDefaults.MinHeight
+                ),
+            onValueChange = onValueChange,
+            enabled = enabled,
+            readOnly = readOnly,
+            textStyle = mergedTextStyle,
+            cursorBrush = SolidColor(colors.cursorColor),
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            interactionSource = interactionSource,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
+            decorationBox = @Composable { innerTextField ->
+                TextFieldDefaults.DecorationBox(
+                    value = value,
+                    visualTransformation = visualTransformation,
+                    innerTextField = innerTextField,
+                    placeholder = { Text(placeholder) },
+                    leadingIcon = leadingIcon,
+                    trailingIcon = trailingIcon,
+                    prefix = prefix,
+                    suffix = suffix,
+                    shape = shape,
+                    singleLine = singleLine,
+                    enabled = enabled,
+                    isError = isError,
+                    interactionSource = interactionSource,
+                    colors = colors,
+                    contentPadding = contentPadding
+                )
+            }
+        )
+        if (errorText != null) {
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                errorText,
+                style = MaterialTheme.typography.labelSmall,
+                color = cw_dark_red,
+                modifier = Modifier.padding(horizontal = 10.dp)
             )
         }
-    )
+    }
 }
