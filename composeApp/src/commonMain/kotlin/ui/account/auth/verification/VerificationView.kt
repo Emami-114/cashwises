@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.auth_verification_description
 import cashwises.composeapp.generated.resources.auth_verification_not_receive

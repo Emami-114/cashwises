@@ -3,6 +3,7 @@ package ui.deals.ViewModel
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,11 +22,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
     private val _state = MutableStateFlow(DealsState())
     private val categoriesUseCase: CategoryUseCase by inject()
     val state = _state.asStateFlow()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Lazily,
-            DealsState()
-        )
+//        .stateIn(
+//            viewModelScope,
+//            SharingStarted.Lazily,
+//            DealsState()
+//        )
 
     init {
         getDeals()
@@ -109,9 +110,26 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 userId = _state.value.userId,
                 videoUrl = _state.value.videoUrl,
             )
-            useCase.addDeals(dealModel = deal) {
-                onEvent(event = DealEvent.OnSetDefaultState)
-                println("Deals mit image $deal")
+            try {
+                useCase.addDeals(dealModel = deal) {
+                    _state.update {
+                        it.copy(
+                            dealCreatedSuccess = true,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                    println("Deals mit image $deal")
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        error = e.message,
+                        isLoading = false,
+                    )
+                }
+                delay(4000)
+                onEvent(DealEvent.OnSetDefaultState)
             }
         }
     }
@@ -210,9 +228,15 @@ class DealsViewModel : ViewModel(), KoinComponent {
             _state.update {
                 it.copy(categories = categoriesUseCase.getCategories().categories)
             }
-            println("Token 2: ${settings.getString("TOKEN2", "Not token found")}")
         } catch (e: Exception) {
-            println("Failed Deal View Model get Deals")
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    error = e.message
+                )
+            }
+            delay(4000)
+            onEvent(DealEvent.OnSetDefaultState)
         }
     }
 

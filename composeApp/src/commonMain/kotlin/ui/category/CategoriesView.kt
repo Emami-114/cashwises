@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ import ui.category.viewModel.CategoryEvent
 import ui.category.viewModel.CategoryState
 import ui.category.viewModel.CategoryViewModel
 import ui.components.CustomDivider
+import ui.components.CustomPopUp
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
@@ -60,21 +62,51 @@ fun CategoriesView(
         viewModel.getCategories()
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(uiState.categories.filter { it.status == CategoryStatus.MAIN }) { category ->
-                CategoryItem(uiState, category) {
-                    uiState.isUpdate = true
-                    viewModel.onEvent(CategoryEvent.OnTitleChange(category.title ?: ""))
-                    viewModel.onEvent(CategoryEvent.OnPublishedChange(category.published ?: false))
-                    onClick()
+    when {
+        uiState.isLoading -> {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        uiState.errorText != null -> {
+            CustomPopUp(
+                present = true,
+                onDismissDisable = false,
+                message = uiState.errorText,
+                cancelAction = {
+                    viewModel.onEvent(CategoryEvent.OnDefaultState)
+                })
+        }
+
+        else -> {
+            Box(modifier = modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(uiState.categories.filter { it.status == CategoryStatus.MAIN }) { category ->
+                        CategoryItem(uiState, category) {
+                            uiState.isUpdate = true
+                            viewModel.onEvent(CategoryEvent.OnTitleChange(category.title ?: ""))
+                            viewModel.onEvent(
+                                CategoryEvent.OnPublishedChange(
+                                    category.published ?: false
+                                )
+                            )
+                            onClick()
+                        }
+                    }
                 }
             }
         }
     }
+
+
 }
 
 @Composable

@@ -15,18 +15,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
+import domain.model.DealModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.ProductRow
 import ui.deals.ViewModel.DealsViewModel
 
+
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun DealsView(paddingValues: PaddingValues) {
+fun DealsView(paddingValues: PaddingValues, selectedDeal: (DealModel) -> Unit) {
     val viewModel: DealsViewModel = koinInject()
-    val navigator = LocalNavigator.current
     val uiState by viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.getDeals()
@@ -54,7 +54,7 @@ fun DealsView(paddingValues: PaddingValues) {
         ) {
             items(uiState.deals) { deal ->
                 ProductRow(deal, onClick = {
-                    navigator?.push(DetailDealScreen(dealModel = deal))
+                    selectedDeal(deal)
                 })
             }
         }

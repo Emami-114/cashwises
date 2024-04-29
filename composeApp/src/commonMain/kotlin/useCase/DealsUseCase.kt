@@ -25,7 +25,7 @@ class DealsUseCase : KoinComponent {
             )
 
         } catch (e: Exception) {
-            throw Exception("Oh, something went wrong!: ${e.message}")
+            throw e
         }
     }
 
@@ -45,7 +45,7 @@ class DealsUseCase : KoinComponent {
                     }
                 })
         } catch (e: Exception) {
-            throw Exception("oh, something went wrong! ${e.message}")
+            throw e
         }
     }
 
@@ -65,7 +65,7 @@ class DealsUseCase : KoinComponent {
                     }
                 })
         } catch (e: Exception) {
-            throw Exception("oh, something went wrong! ${e.message}")
+            throw e
         }
     }
 
@@ -80,7 +80,7 @@ class DealsUseCase : KoinComponent {
                 }
             }
         } catch (e: Exception) {
-            throw Exception("oh, something went wrong! ${e.message}")
+            throw e
         }
     }
 

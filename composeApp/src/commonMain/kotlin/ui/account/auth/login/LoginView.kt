@@ -28,8 +28,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.password
@@ -42,15 +40,15 @@ import compose.icons.tablericons.Mail
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.components.CustomButton
+import ui.components.CustomPopUp
 import ui.components.CustomTextField
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
-fun LogInView(toPasswordForget: () -> Unit) {
+fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
     val viewModel: LoginViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
-    val navigator = LocalNavigator.currentOrThrow
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()
         when {
@@ -65,11 +63,12 @@ fun LogInView(toPasswordForget: () -> Unit) {
             }
 
             uiState.isLoginSuccess -> {
-                navigator.pop()
+                toHome()
+                viewModel.onEvent(LoginEvent.OnSetDefaultState)
             }
 
             uiState.errorMessage.isNullOrEmpty().not() -> {
-
+                CustomPopUp(true, onDismissDisable = true, message = uiState.errorMessage ?: "")
             }
 
             else -> {

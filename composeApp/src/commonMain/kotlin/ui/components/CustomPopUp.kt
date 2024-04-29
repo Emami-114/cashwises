@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.bad_request_error
 import org.company.app.theme.cw_dark_blackText
@@ -37,7 +38,8 @@ fun CustomPopUp(
     onDismissDisable: Boolean = false,
     message: String = "",
     cancelTitle: String = "Ok",
-    onAction: (@Composable RowScope.() -> Unit)? = null
+    cancelAction: () -> Unit = {},
+    acceptAction: (@Composable RowScope.() -> Unit)? = null
 ) {
     var dialogPresent by remember { mutableStateOf(present) }
     AnimatedVisibility(visible = dialogPresent) {
@@ -50,7 +52,7 @@ fun CustomPopUp(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(20.dp)
             ) {
-                Text(stringResource(Res.string.bad_request_error), color = cw_dark_blackText)
+                Text(message, color = cw_dark_blackText, fontSize = 14.sp)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -60,9 +62,12 @@ fun CustomPopUp(
                             .height(35.dp)
                             .weight(5f),
                         title = cancelTitle,
-                    ) { dialogPresent = false }
-                    if (onAction != null) {
-                        Row(content = onAction, modifier = Modifier.height(35.dp).weight(5f))
+                    ) {
+                        dialogPresent = false
+                        cancelAction()
+                    }
+                    if (acceptAction != null) {
+                        Row(content = acceptAction, modifier = Modifier.height(35.dp).weight(5f))
                     }
                 }
 

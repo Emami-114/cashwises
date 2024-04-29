@@ -56,14 +56,14 @@ fun CustomSwitch(
     )
     Column {
         Row(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier,
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(modifier = Modifier.weight(8f)) {
                 Text(
                     title,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary,
                 )
             }

@@ -15,10 +15,10 @@ data class DealsState(
     val title: String = "",
     val description: String = "",
     var category: List<String>? = null,
-    val isFree: Boolean? = null,
+    val isFree: Boolean = false,
     val price: String? = null,
     val offerPrice: String? = null,
-    val published: Boolean? = null,
+    val published: Boolean = true,
     val expirationDate: String? = null,
     val provider: String? = null,
     val providerUrl: String? = null,
@@ -28,5 +28,6 @@ data class DealsState(
     val videoUrl: String? = null,
     val dealModel: DealModel? = null,
     val thumbnailByte: ImageModel? = null,
-    var imagesByte: List<ImageModel>? = null
+    var imagesByte: List<ImageModel>? = null,
+    val dealCreatedSuccess: Boolean = false
 )

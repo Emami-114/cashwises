@@ -81,9 +81,8 @@ kotlin {
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
-            implementation(libs.voyager.navigation)
-            implementation(libs.voyager.tab)
-            implementation(libs.voyager.transition)
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha02")
+
             // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)

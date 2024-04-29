@@ -19,6 +19,7 @@
     <string name="privacy_policy_placeholder">Datenschutzbestimmungen</string>
     <string name="terms_of_use_placeholder">Nutzungsbedingungen</string>
     <string name="password_required_error">Passwort erforderlich</string>
+    <string name="login_failed_error">Anmeldung fehlgeschlagen. Der Benutzername oder das Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.</string>
     <string name="password_forget">Passwort vergessen?</string>
 
 

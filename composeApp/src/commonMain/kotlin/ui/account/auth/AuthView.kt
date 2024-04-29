@@ -26,9 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
@@ -44,127 +41,126 @@ import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
 
-class AuthScreen : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val registerViewModel: RegistrationViewModel = koinInject()
-        val registeUiState by registerViewModel.state.collectAsState()
+@Composable
+fun AuthView(onBack: () -> Unit) {
+    val registerViewModel: RegistrationViewModel = koinInject()
+    val registeUiState by registerViewModel.state.collectAsState()
 
-        var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
-        var animationState by remember { mutableStateOf(false) }
+    var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
+    var animationState by remember { mutableStateOf(false) }
 
-        Scaffold(topBar = {
-            CustomTopAppBar(title = currentView.name, backButtonAction = {
-                navigator.pop()
-            })
-        }) { paddingValue ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                CustomBackgroundView()
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(paddingValue).padding(top = 20.dp)
-                ) {
-                    if (currentView != AuthEnum.PASSWORDFORGET && !registeUiState.isRegistrationSuccess) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
-                            CustomButton(
-                                modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
-                                    .height(40.dp),
-                                color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
-                                title = stringResource(Res.string.btn_login)
-                            ) { currentView = AuthEnum.LOGIN }
-                            CustomButton(
-                                modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
-                                    .height(40.dp),
-                                color = if (currentView.name == AuthEnum.REGISTRATION.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
-                                title = stringResource(Res.string.btn_register)
-                            ) {
-                                currentView = AuthEnum.REGISTRATION
-                                animationState = true
-                            }
+    Scaffold(topBar = {
+        CustomTopAppBar(title = currentView.name, backButtonAction = {
+            onBack()
+        })
+    }) { paddingValue ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            CustomBackgroundView()
+            Column(
+                modifier = Modifier.fillMaxSize().padding(paddingValue).padding(top = 20.dp)
+            ) {
+                if (currentView != AuthEnum.PASSWORDFORGET && !registeUiState.isRegistrationSuccess) {
+                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
+                        CustomButton(
+                            modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
+                                .height(40.dp),
+                            color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
+                            title = stringResource(Res.string.btn_login)
+                        ) { currentView = AuthEnum.LOGIN }
+                        CustomButton(
+                            modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
+                                .height(40.dp),
+                            color = if (currentView.name == AuthEnum.REGISTRATION.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
+                            title = stringResource(Res.string.btn_register)
+                        ) {
+                            currentView = AuthEnum.REGISTRATION
+                            animationState = true
                         }
                     }
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    when {
-                        registeUiState.isLoading -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSecondary)
-                            }
-                        }
-
-                        registeUiState.errorMessage.isNullOrEmpty().not() -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                CustomPopUp(
-                                    present = registeUiState.errorMessage != null,
-                                    message = registeUiState.errorMessage ?: "",
-                                )
-                            }
-                        }
-
-                        registeUiState.isRegistrationSuccess -> {
-                            VerificationView(errorMessage = registeUiState.verificationCodeError) {
-                                registerViewModel.doVerification(it) {
-                                    navigator.pop()
-                                }
-                            }
-                        }
-
-                        else -> {
-                            when (currentView) {
-                                AuthEnum.LOGIN -> {
-                                    AnimatedVisibility(
-                                        visible = currentView == AuthEnum.LOGIN,
-                                        enter = slideInHorizontally(animationSpec = tween(1000)),
-                                        exit = slideOutHorizontally(
-                                            targetOffsetX = { -it },
-                                            animationSpec = tween(durationMillis = 300)
-                                        ) + shrinkVertically(
-                                            animationSpec = tween(delayMillis = 300)
-                                        )
-                                    ) {
-                                        LogInView() {
-                                            currentView = AuthEnum.PASSWORDFORGET
-                                        }
-                                    }
-                                }
-
-                                AuthEnum.REGISTRATION -> {
-                                    AnimatedVisibility(
-                                        visible = currentView == AuthEnum.REGISTRATION,
-                                        enter = slideInHorizontally(animationSpec = tween(1000)),
-                                        exit = slideOutHorizontally(
-                                            targetOffsetX = { -it },
-                                            animationSpec = tween(durationMillis = 300)
-                                        ) + shrinkVertically(
-                                            animationSpec = tween(delayMillis = 300)
-                                        )
-                                    ) {
-                                        RegistrationView(viewModel = registerViewModel,
-                                            uiState = registeUiState,
-                                            toVerification = {
-                                                println("Test: to Verification ")
-                                            })
-                                    }
-                                }
-
-                                AuthEnum.PASSWORDFORGET -> {
-                                    PasswordForget() {
-                                        currentView = AuthEnum.LOGIN
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                 }
+                Spacer(modifier = Modifier.height(15.dp))
+
+                when {
+                    registeUiState.isLoading -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.onSecondary)
+                        }
+                    }
+
+                    registeUiState.errorMessage.isNullOrEmpty().not() -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CustomPopUp(
+                                present = registeUiState.errorMessage != null,
+                                message = registeUiState.errorMessage ?: "",
+                            )
+                        }
+                    }
+
+                    registeUiState.isRegistrationSuccess -> {
+                        VerificationView(errorMessage = registeUiState.verificationCodeError) {
+                            registerViewModel.doVerification(it) {
+//                                    navigator.pop()
+                            }
+                        }
+                    }
+
+                    else -> {
+                        when (currentView) {
+                            AuthEnum.LOGIN -> {
+                                AnimatedVisibility(
+                                    visible = currentView == AuthEnum.LOGIN,
+                                    enter = slideInHorizontally(animationSpec = tween(1000)),
+                                    exit = slideOutHorizontally(
+                                        targetOffsetX = { -it },
+                                        animationSpec = tween(durationMillis = 300)
+                                    ) + shrinkVertically(
+                                        animationSpec = tween(delayMillis = 300)
+                                    )
+                                ) {
+                                    LogInView(toPasswordForget = {
+                                        currentView = AuthEnum.PASSWORDFORGET
+                                    }, toHome = {
+                                        onBack()
+                                    })
+                                }
+                            }
+
+                            AuthEnum.REGISTRATION -> {
+                                AnimatedVisibility(
+                                    visible = currentView == AuthEnum.REGISTRATION,
+                                    enter = slideInHorizontally(animationSpec = tween(1000)),
+                                    exit = slideOutHorizontally(
+                                        targetOffsetX = { -it },
+                                        animationSpec = tween(durationMillis = 300)
+                                    ) + shrinkVertically(
+                                        animationSpec = tween(delayMillis = 300)
+                                    )
+                                ) {
+                                    RegistrationView(viewModel = registerViewModel,
+                                        uiState = registeUiState,
+                                        toVerification = {
+                                            println("Test: to Verification ")
+                                        })
+                                }
+                            }
+
+                            AuthEnum.PASSWORDFORGET -> {
+                                PasswordForget() {
+                                    currentView = AuthEnum.LOGIN
+                                }
+                            }
+                        }
+                    }
+                }
+
             }
         }
     }

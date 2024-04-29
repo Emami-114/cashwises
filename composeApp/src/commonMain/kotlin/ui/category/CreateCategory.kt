@@ -39,6 +39,7 @@ import ui.category.viewModel.CategoryState
 import ui.category.viewModel.CategoryViewModel
 import ui.components.CustomButton
 import ui.components.CustomImagePicker
+import ui.components.CustomPopUp
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
 import ui.components.customModiefier.customBorder
@@ -52,29 +53,42 @@ fun CreateCategory(
     uiState: CategoryState,
 ) {
 
-    Column(
-        modifier = modifier.fillMaxSize()
-            .padding(10.dp).padding(horizontal = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        CustomImagePicker(selectedImage = uiState.imageModel) { image ->
-            viewModel.doChangeImageModel(image)
+    when {
+        uiState.errorText != null -> {
+            CustomPopUp(present = true, onDismissDisable = true, message = uiState.errorText)
         }
-        CustomTextField(
-            value = uiState.title ?: "",
-            onValueChange = { viewModel.onEvent(CategoryEvent.OnTitleChange(it)) },
-            placeholder = "Title"
-        )
-        MainCategoryList(uiState, onSelected = { category ->
-            viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
-        })
-        CustomSwitch(title = "Published", value = uiState.published ?: false) {
-            viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
+
+        uiState.createdSuccessfully || uiState.updateSuccessfully -> {
+            viewModel.onEvent(CategoryEvent.OnDefaultState)
         }
-        CustomButton(title = "Create Category") {
-            viewModel.onEvent(CategoryEvent.OnCreateCategory)
+
+        else -> {
+            Column(
+                modifier = modifier.fillMaxSize()
+                    .padding(10.dp).padding(horizontal = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                CustomImagePicker(selectedImage = uiState.imageModel) { image ->
+                    viewModel.doChangeImageModel(image)
+                }
+                CustomTextField(
+                    value = uiState.title ?: "",
+                    onValueChange = { viewModel.onEvent(CategoryEvent.OnTitleChange(it)) },
+                    placeholder = "Title"
+                )
+                MainCategoryList(uiState, onSelected = { category ->
+                    viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
+                })
+                CustomSwitch(title = "Published", value = uiState.published ?: false) {
+                    viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
+                }
+                CustomButton(title = "Create Category") {
+                    viewModel.onEvent(CategoryEvent.OnCreateCategory)
+                }
+            }
         }
     }
+
 }
 
 @Composable

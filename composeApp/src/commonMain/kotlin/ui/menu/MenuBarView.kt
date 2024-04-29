@@ -11,15 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.compose_multiplatform
 import compose.icons.TablerIcons
@@ -28,16 +24,18 @@ import compose.icons.tablericons.Login
 import compose.icons.tablericons.Logout
 import compose.icons.tablericons.Settings
 import compose.icons.tablericons.User
+import data.repository.AuthRepositoryImpl
+import domain.repository.AuthRepository
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import ui.account.auth.AuthScreen
 import ui.components.CustomBackgroundView
 import ui.menu.components.MenuBarItem
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MenuBarView(onClick: () -> Unit) {
-    val navigator: Navigator = LocalNavigator.currentOrThrow
+fun MenuBarView(onClick: (MenuBarEnum) -> Unit) {
+    val scope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
         Column(
@@ -61,7 +59,7 @@ fun MenuBarView(onClick: () -> Unit) {
                 title = MenuBarEnum.LOGIN.title,
                 icon = MenuBarEnum.LOGIN.icon
             ) {
-                navigator.push(AuthScreen())
+                onClick(MenuBarEnum.LOGIN)
             }
 
             MenuBarItem(
@@ -69,6 +67,7 @@ fun MenuBarView(onClick: () -> Unit) {
                 title = MenuBarEnum.PROFILE.title,
                 icon = MenuBarEnum.PROFILE.icon
             ) {
+                onClick(MenuBarEnum.PROFILE)
 
             }
             MenuBarItem(
@@ -95,7 +94,11 @@ fun MenuBarView(onClick: () -> Unit) {
                 modifier = Modifier.height(60.dp),
                 title = MenuBarEnum.LOGOUT.title,
                 icon = MenuBarEnum.LOGOUT.icon
-            ) {}
+            ) {
+                scope.launch {
+                    AuthRepositoryImpl().logout()
+                }
+            }
         }
     }
 

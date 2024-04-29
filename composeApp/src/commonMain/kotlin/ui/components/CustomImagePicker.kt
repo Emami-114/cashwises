@@ -78,40 +78,26 @@ fun CustomImagePicker(
         })
 
     if (selectedImage != null) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth(),
-            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier.size(imageSize),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    TablerIcons.X,
-                    contentDescription = null,
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(40.dp)
-                        .zIndex(1f)
-                        .noRippleClickable {
-                            onImageChange(null)
-                        }
-                )
-                val painter = rememberImagePainter(selectedImage.path)
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .customBorder()
-                        .clip(shape = MaterialTheme.shapes.large)
-                        .clickable {
-                            pickerLaunch.launch()
-                        }
-                )
+            val painter = rememberImagePainter(selectedImage.path)
+            Image(
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .heightIn(max = 300.dp)
+                    .customBorder()
+                    .clip(shape = MaterialTheme.shapes.large)
+                    .clickable {
+                        pickerLaunch.launch()
+                    }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            CustomButton(title = "Remove") {
+                onImageChange(null)
             }
         }
     } else {

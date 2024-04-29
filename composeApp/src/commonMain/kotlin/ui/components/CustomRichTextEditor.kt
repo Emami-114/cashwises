@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.BasicAlertDialog
@@ -20,7 +24,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,7 +46,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cashwises.composeapp.generated.resources.Res
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.RichTextState
@@ -56,6 +66,8 @@ import compose.icons.tablericons.Italic
 import compose.icons.tablericons.LetterT
 import compose.icons.tablericons.Link
 import compose.icons.tablericons.List
+import compose.icons.tablericons.Minus
+import compose.icons.tablericons.Plus
 import compose.icons.tablericons.Underline
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_blackText
@@ -101,8 +113,8 @@ fun CustomRichTextEditor(
             onTitleClick = {
                 state.toggleSpanStyle(SpanStyle(fontSize = titleSize))
             },
-            onSubtitleClick = {
-                state.toggleSpanStyle(SpanStyle(fontSize = subTitleSize))
+            onSubtitleClick = { fontSize ->
+                state.toggleSpanStyle(SpanStyle(fontSize = fontSize))
             },
             onTextColorClick = { color ->
                 state.toggleSpanStyle(SpanStyle(color = color))
@@ -152,7 +164,7 @@ fun EditorControls(
     onItalicClick: () -> Unit,
     onUnderlineClick: () -> Unit,
     onTitleClick: () -> Unit,
-    onSubtitleClick: () -> Unit,
+    onSubtitleClick: (TextUnit) -> Unit,
     onTextColorClick: (color: Color) -> Unit,
     onStartAlignClick: () -> Unit,
     onEndAlignClick: () -> Unit,
@@ -216,12 +228,13 @@ fun EditorControls(
             onClick = onTitleClick,
             icon = TablerIcons.LetterT
         )
-        ControlWrapper(
-            selected = subtitleSelected,
-            onChangeClick = { subtitleSelected = it },
-            onClick = onSubtitleClick,
-            icon = TablerIcons.LetterT
-        )
+//        ControlWrapper(
+//            selected = subtitleSelected,
+//            onChangeClick = { subtitleSelected = it },
+//            onClick = onSubtitleClick,
+//            icon = TablerIcons.LetterT
+//        )
+        FontSizeChoise(onSubtitleClick)
         CustomColorPicker { color ->
             onTextColorClick(color)
         }
@@ -283,6 +296,46 @@ fun EditorControls(
     }
 }
 
+@Composable
+fun FontSizeChoise(fontSize: (TextUnit) -> Unit) {
+    var size by remember { mutableStateOf(12) }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.width(100.dp).height(50.dp)
+    ) {
+        Icon(
+            TablerIcons.Minus,
+            contentDescription = null,
+            tint = cw_dark_whiteText,
+            modifier = Modifier.clickable {
+                size -= 1
+                fontSize(size.sp)
+            })
+        Box(
+            modifier = Modifier.customBorder(shape = MaterialTheme.shapes.small)
+                .background(cw_dark_onBackground, shape = MaterialTheme.shapes.small)
+                .padding(5.dp).padding(horizontal = 5.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "$size",
+                fontSize = 13.sp,
+                color = cw_dark_whiteText,
+                modifier = Modifier.width(20.dp).height(30.dp),
+                textAlign = TextAlign.Center
+            )
+        }
+        Icon(
+            TablerIcons.Plus,
+            contentDescription = null,
+            tint = cw_dark_whiteText,
+            modifier = Modifier.clickable {
+                size += 1
+                fontSize(size.sp)
+            })
+    }
+}
 
 @Composable
 fun ControlWrapper(

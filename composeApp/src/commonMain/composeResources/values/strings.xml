@@ -20,6 +20,7 @@
     <string name="privacy_policy_placeholder">privacy policy</string>
     <string name="terms_of_use_placeholder">terms of use</string>
     <string name="password_required_error">Password required</string>
+    <string name="login_failed_error">Login failed. The username or password is incorrect. Please check your entries and try again.</string>
     <string name="password_forget">Password forget?</string>
     <!--  Global Strings  -->
     <string name="btn_send">Send</string>

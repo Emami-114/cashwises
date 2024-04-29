@@ -2,6 +2,7 @@ package ui.account.auth.login
 
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.invalid_email_address_error
+import cashwises.composeapp.generated.resources.login_failed_error
 import cashwises.composeapp.generated.resources.password_required_error
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
@@ -20,11 +21,13 @@ import utils.isValidEmail
 class LoginViewModel : ViewModel(), KoinComponent {
     private val useCase: AuthUseCase by inject()
     private val _state = MutableStateFlow(LoginState())
-    val state = _state.asStateFlow().stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        LoginState()
-    )
+
+    //    val state = _state.asStateFlow().stateIn(
+//        viewModelScope,
+//        SharingStarted.Lazily,
+//        LoginState()
+//    )
+    val state = _state.asStateFlow()
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -78,15 +81,17 @@ class LoginViewModel : ViewModel(), KoinComponent {
                             }
                         }
                     } catch (e: Exception) {
-                        _state.update {
-                            it.copy(
-                                isLoginSuccess = false,
-                                isLoading = false,
-                                errorMessage = e.message ?: "Some error"
-                            )
+                        viewModelScope.launch {
+                            _state.update {
+                                it.copy(
+                                    isLoginSuccess = false,
+                                    isLoading = false,
+                                    errorMessage = getString(Res.string.login_failed_error)
+                                )
+                            }
+                            delay(4000)
+                            _state.value = LoginState()
                         }
-                        delay(4000)
-                        _state.value = LoginState()
                     }
                 }
             }

@@ -6,6 +6,7 @@ import data.model.VerificationModel
 import domain.repository.AuthRepository
 import io.ktor.client.call.body
 import io.ktor.client.plugins.cookies.cookies
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -70,7 +71,8 @@ class AuthRepositoryImpl : AuthRepository {
 
     override suspend fun logout() {
         client.post("${baseUrl}/api/auth/logout") {
-
+            contentType(ContentType.Application.Json)
+            bearerAuth(settings.getString("TOKEN2", "Token not found"))
         }
     }
 }
