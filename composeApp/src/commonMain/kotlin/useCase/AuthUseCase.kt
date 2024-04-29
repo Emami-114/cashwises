@@ -7,9 +7,6 @@ import org.koin.core.component.inject
 
 class AuthUseCase : KoinComponent {
     private val repository: AuthRepository by inject()
-    suspend fun getCoockie() {
-        repository.coockie()
-    }
 
     suspend fun register(registerModel: RegisterModel, onSuccess: () -> Unit) {
         try {
@@ -17,11 +14,11 @@ class AuthUseCase : KoinComponent {
                 if (isSuccess) {
                     onSuccess()
                 } else {
-                    throw Exception("Oh, something went wrong!")
+                    false
                 }
             }
         } catch (e: Exception) {
-            throw Exception("Error doRegistration: ${e.message}")
+            throw Exception(e.message)
         }
     }
 
@@ -36,6 +33,18 @@ class AuthUseCase : KoinComponent {
             }
         } catch (e: Exception) {
             throw Exception("Error wit login ${e.message}")
+        }
+    }
+
+    suspend fun verification(email: String, code: String, onSuccess: () -> Unit) {
+        try {
+            repository.verification(email, code).let { isSuccess ->
+                if (isSuccess) {
+                    onSuccess()
+                }
+            }
+        } catch (e: Exception) {
+            throw e
         }
     }
 }

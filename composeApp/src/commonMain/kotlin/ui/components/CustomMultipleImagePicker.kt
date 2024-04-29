@@ -13,14 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -44,8 +41,9 @@ import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import com.seiko.imageloader.rememberImagePainter
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.UploadCloud
+import compose.icons.TablerIcons
+import compose.icons.tablericons.CloudUpload
+import compose.icons.tablericons.X
 import domain.model.ImageModel
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_borderColor
@@ -109,7 +107,7 @@ fun CustomMultipleImagePicker(
                     }
                 }
                 Icon(
-                    Icons.Default.Close,
+                    TablerIcons.X,
                     contentDescription = null,
                     tint = Color.Black,
                     modifier = Modifier
@@ -157,7 +155,7 @@ fun CustomMultipleImagePicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    FeatherIcons.UploadCloud,
+                    TablerIcons.CloudUpload,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(50.dp)

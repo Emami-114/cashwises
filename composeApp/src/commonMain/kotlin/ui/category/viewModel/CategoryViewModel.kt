@@ -7,6 +7,7 @@ import domain.model.ImageModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,11 +18,7 @@ import useCase.CategoryUseCase
 class CategoryViewModel : ViewModel(), KoinComponent {
     private val useCase: CategoryUseCase by inject()
     private val _state = MutableStateFlow(CategoryState())
-    val state = _state.stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        CategoryState()
-    )
+    val state = _state.asStateFlow()
 
     fun onEvent(event: CategoryEvent) {
         when (event) {
@@ -95,16 +92,29 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                     )
                 }
                 delay(4000)
-                _state.value = CategoryState()
+                onEvent(CategoryEvent.OnDefaultState)
             }
         }
     }
 
     fun getCategories() = viewModelScope.launch {
-        _state.update {
-            it.copy(
-                categories = useCase.getCategories().categories
-            )
+        _state.update { it.copy(isLoading = true) }
+        try {
+            _state.update {
+                it.copy(
+                    categories = useCase.getCategories().categories,
+                    isLoading = false
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    errorText = e.message,
+                    isLoading = false
+                )
+            }
+            delay(4000)
+            onEvent(CategoryEvent.OnDefaultState)
         }
     }
 

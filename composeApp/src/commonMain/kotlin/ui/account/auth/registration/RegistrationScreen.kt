@@ -1,34 +1,19 @@
 package ui.account.auth.registration
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,109 +27,29 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import org.koin.compose.koinInject
-import ui.account.auth.login.LogInView
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.accept_data_protection_description
+import cashwises.composeapp.generated.resources.btn_login
+import cashwises.composeapp.generated.resources.btn_register
+import cashwises.composeapp.generated.resources.password
+import cashwises.composeapp.generated.resources.password_confirm
+import cashwises.composeapp.generated.resources.privacy_policy_placeholder
+import cashwises.composeapp.generated.resources.terms_of_use_placeholder
+import cashwises.composeapp.generated.resources.username
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Eye
+import compose.icons.tablericons.EyeOff
+import compose.icons.tablericons.Lock
+import compose.icons.tablericons.Mail
+import compose.icons.tablericons.User
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import ui.account.auth.registration.viewModel.RegistrationViewModel
-import ui.components.CustomBackgroundView
 import ui.components.CustomButton
+import ui.components.CustomPopUp
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
-import ui.components.CustomTopAppBar
 import ui.components.customModiefier.noRippleClickable
-
-class RegistrationScreen : Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
-        var animationState by remember { mutableStateOf(false) }
-        Scaffold(topBar = {
-            CustomTopAppBar(title = currentView.name, backButtonAction = {
-                navigator.pop()
-            })
-        }) { paddingValue ->
-            Box(modifier = Modifier.fillMaxSize()) {
-                CustomBackgroundView()
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(paddingValue).padding(top = 20.dp)
-                ) {
-                    if (currentView != AuthEnum.PASSWORDFORGET) {
-                        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
-                            CustomButton(
-                                modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
-                                    .height(40.dp),
-                                color = if (currentView.name == AuthEnum.LOGIN.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
-                                title = "Login"
-                            ) { currentView = AuthEnum.LOGIN }
-                            CustomButton(
-                                modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
-                                    .height(40.dp),
-                                color = if (currentView.name == AuthEnum.REGISTRATION.name) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
-                                title = "Registration"
-                            ) {
-                                currentView = AuthEnum.REGISTRATION
-                                animationState = true
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    when (currentView) {
-                        AuthEnum.LOGIN -> {
-                            AnimatedVisibility(
-                                visible = currentView == AuthEnum.LOGIN,
-                                enter = slideInHorizontally(animationSpec = tween(1000)),
-                                exit = slideOutHorizontally(
-                                    targetOffsetX = { -it },
-                                    animationSpec = tween(durationMillis = 300)
-                                ) + shrinkVertically(
-                                    animationSpec = tween(delayMillis = 300)
-                                )
-                            ) {
-                                LogInView() {
-                                    currentView = AuthEnum.PASSWORDFORGET
-                                }
-                            }
-                        }
-
-                        AuthEnum.REGISTRATION -> {
-                            AnimatedVisibility(
-                                visible = currentView == AuthEnum.REGISTRATION,
-                                enter = slideInHorizontally(animationSpec = tween(1000)),
-                                exit = slideOutHorizontally(
-                                    targetOffsetX = { -it },
-                                    animationSpec = tween(durationMillis = 300)
-                                ) + shrinkVertically(
-                                    animationSpec = tween(delayMillis = 300)
-                                )
-                            ) {
-                                RegistrationView(navigator)
-                            }
-                        }
-
-                        AuthEnum.PASSWORDFORGET -> {
-                            PasswordForget() {
-                                currentView = AuthEnum.LOGIN
-                            }
-                        }
-                    }
-
-                }
-            }
-
-//            RegistrationView(navigator)
-        }
-    }
-}
-
-enum class AuthEnum() {
-    LOGIN, REGISTRATION, PASSWORDFORGET
-}
 
 @Composable
 fun PasswordForget(backToLogin: () -> Unit) {
@@ -161,8 +66,9 @@ fun PasswordForget(backToLogin: () -> Unit) {
                 value = email,
                 onValueChange = { email = it },
                 placeholder = "E-mail",
+                label = { Text("E-mail") },
                 leadingIcon = {
-                    Icon(Icons.Default.Mail, contentDescription = null)
+                    Icon(TablerIcons.Mail, contentDescription = null)
                 },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
@@ -170,11 +76,10 @@ fun PasswordForget(backToLogin: () -> Unit) {
                     keyboardType = KeyboardType.Email
                 )
             )
-//            Spacer(modifier = Modifier.height(15.dp))
             CustomButton(title = "Password reset") {
-
             }
-            Text("Login",
+            Text(
+                stringResource(Res.string.btn_login),
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -189,11 +94,14 @@ fun PasswordForget(backToLogin: () -> Unit) {
 }
 
 @Composable
-fun RegistrationView(navigator: Navigator) {
+fun RegistrationView(
+    viewModel: RegistrationViewModel,
+    uiState: RegistrationState,
+    toVerification: () -> Unit
+) {
     var passwordVisible by remember { mutableStateOf(false) }
     var passwordConfirmVisible by remember { mutableStateOf(false) }
-    val viewMode: RegistrationViewModel = koinInject()
-    val uiState by viewMode.state.collectAsState()
+
 
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()
@@ -208,19 +116,6 @@ fun RegistrationView(navigator: Navigator) {
                 }
             }
 
-            uiState.errorMessage.isNullOrEmpty().not() -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = uiState.errorMessage.orEmpty(),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-
             else -> {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -230,56 +125,62 @@ fun RegistrationView(navigator: Navigator) {
                 ) {
                     CustomTextField(value = uiState.nameText,
                         onValueChange = {
-                            viewMode.onRegisterEvent(
+                            viewModel.onRegisterEvent(
                                 RegistrationEvent.OnUserNameChange(
                                     it
                                 )
                             )
                         },
-                        placeholder = "Username",
+                        errorText = uiState.nameError,
+                        placeholder = stringResource(Res.string.username),
+                        label = { Text(stringResource(Res.string.username)) },
                         leadingIcon = {
-                            Icon(Icons.Default.Person, contentDescription = null)
+                            Icon(TablerIcons.User, contentDescription = null)
                         })
                     CustomTextField(
                         value = uiState.emailText,
                         onValueChange = {
-                            viewMode.onRegisterEvent(
+                            viewModel.onRegisterEvent(
                                 RegistrationEvent.OnEmailChange(
                                     it
                                 )
                             )
                         },
                         placeholder = "E-mail",
+                        label = { Text("E-mail") },
                         leadingIcon = {
-                            Icon(Icons.Default.Mail, contentDescription = null)
+                            Icon(TablerIcons.Mail, contentDescription = null)
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
                             keyboardType = KeyboardType.Email
-                        )
+                        ),
+                        errorText = uiState.emailError
                     )
 
                     CustomTextField(
                         value = uiState.passwordText,
                         onValueChange = {
-                            viewMode.onRegisterEvent(
+                            viewModel.onRegisterEvent(
                                 RegistrationEvent.OnPasswordChange(
                                     it
                                 )
                             )
                         },
-                        placeholder = "Password",
+                        placeholder = stringResource(Res.string.password),
+                        label = { Text(stringResource(Res.string.password)) },
                         leadingIcon = {
-                            Icon(Icons.Outlined.Lock, contentDescription = null)
+                            Icon(TablerIcons.Lock, contentDescription = null)
                         },
                         trailingIcon = {
-                            Icon(if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            Icon(if (passwordVisible) TablerIcons.Eye else TablerIcons.EyeOff,
                                 contentDescription = null,
                                 modifier = Modifier.noRippleClickable {
                                     passwordVisible = !passwordVisible
                                 })
                         },
+                        errorText = uiState.passwordError,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
@@ -291,18 +192,20 @@ fun RegistrationView(navigator: Navigator) {
                     CustomTextField(
                         value = uiState.passwordConfirm,
                         onValueChange = {
-                            viewMode.onRegisterEvent(
+                            viewModel.onRegisterEvent(
                                 RegistrationEvent.OnPasswordConfirmChange(
                                     it
                                 )
                             )
                         },
-                        placeholder = "Password repeat",
+                        placeholder = stringResource(Res.string.password_confirm),
+                        label = { Text(stringResource(Res.string.password_confirm)) },
                         leadingIcon = {
-                            Icon(Icons.Outlined.Lock, contentDescription = null)
+                            Icon(TablerIcons.Mail, contentDescription = null)
                         },
+                        errorText = uiState.passwordConfirmError,
                         trailingIcon = {
-                            Icon(if (passwordConfirmVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            Icon(if (passwordConfirmVisible) TablerIcons.Eye else TablerIcons.EyeOff,
                                 contentDescription = null,
                                 modifier = Modifier.noRippleClickable {
                                     passwordConfirmVisible = !passwordConfirmVisible
@@ -313,18 +216,23 @@ fun RegistrationView(navigator: Navigator) {
                             autoCorrect = false,
                             keyboardType = KeyboardType.Password
                         ),
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
+                        visualTransformation = if (passwordConfirmVisible) VisualTransformation.None else PasswordVisualTransformation()
                     )
 
                     CustomSwitch(
-                        title = "Ich akzeptiere die Datenschutzerklärung und dir Nutzungbedingungen",
-                        value = uiState.acceptedDataProtection
+                        title = stringResource(Res.string.accept_data_protection_description),
+                        value = uiState.acceptedDataProtection,
+                        errorText = uiState.acceptedDataProtectionError
                     ) {
-                        viewMode.onRegisterEvent(RegistrationEvent.OnAcceptedDataProtectChange(it))
+                        viewModel.onRegisterEvent(RegistrationEvent.OnAcceptedDataProtectChange(it))
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    CustomButton(title = "Registration") {
-                        viewMode.onRegisterEvent(RegistrationEvent.OnRegistration)
+                    CustomButton(title = stringResource(Res.string.btn_register)) {
+                        if (uiState.isRegistrationSuccess) {
+                            toVerification()
+                        } else {
+                            viewModel.onRegisterEvent(RegistrationEvent.OnRegistration)
+                        }
                     }
                 }
             }

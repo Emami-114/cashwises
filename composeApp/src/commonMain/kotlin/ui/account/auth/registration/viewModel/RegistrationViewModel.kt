@@ -1,32 +1,33 @@
 package ui.account.auth.registration.viewModel
 
-import androidx.compose.runtime.collectAsState
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.accept_data_protection_error
+import cashwises.composeapp.generated.resources.auth_verification_required
+import cashwises.composeapp.generated.resources.invalid_email_address_error
+import cashwises.composeapp.generated.resources.password_confirm_not_match_error
+import cashwises.composeapp.generated.resources.password_must_be_6characters_error
+import cashwises.composeapp.generated.resources.username_required_error
 import data.model.RegisterModel
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ui.account.auth.registration.RegistrationEvent
 import ui.account.auth.registration.RegistrationState
 import useCase.AuthUseCase
+import utils.isValidEmail
 
 class RegistrationViewModel : ViewModel(), KoinComponent {
     private val useCase: AuthUseCase by inject()
     private val _state = MutableStateFlow(RegistrationState())
     val state = _state.asStateFlow()
-    init {
-        viewModelScope.launch {
-            useCase.getCoockie()
 
-        }
-    }
-
+    val toVerification: () -> Unit = {}
     fun onRegisterEvent(event: RegistrationEvent) {
         when (event) {
             is RegistrationEvent.OnRegistration -> doRegistration(event)
@@ -41,9 +42,46 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
 
     private fun doRegistration(event: RegistrationEvent.OnRegistration) {
         when {
-            _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() -> {
-                _state.update {
-                    it.copy(emailError = "Email is blank or empty")
+            _state.value.nameText.isEmpty() || _state.value.nameText.isBlank() -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(nameError = getString(Res.string.username_required_error))
+                    }
+                }
+            }
+
+            _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() || !isValidEmail(
+                _state.value.emailText
+            ) -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(emailError = getString(Res.string.invalid_email_address_error))
+                    }
+                }
+            }
+
+
+            _state.value.passwordText.length < 6 || _state.value.passwordText.isEmpty() || _state.value.passwordText.isBlank() -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(passwordError = getString(Res.string.password_must_be_6characters_error))
+                    }
+                }
+            }
+
+            _state.value.passwordConfirm != _state.value.passwordText -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(passwordConfirmError = getString(Res.string.password_confirm_not_match_error))
+                    }
+                }
+            }
+
+            !_state.value.acceptedDataProtection -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(acceptedDataProtectionError = getString(Res.string.accept_data_protection_error))
+                    }
                 }
             }
 
@@ -67,7 +105,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                                     errorMessage = null
                                 )
                             }
-
+                            toVerification()
                         }
                     } catch (e: Exception) {
                         _state.update {
@@ -85,10 +123,43 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun doVerification(code: String, onSuccess: () -> Unit) {
+        when {
+            _state.value.verificationCode.isEmpty() -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(verificationCodeError = getString(Res.string.auth_verification_required))
+                    }
+                }
+            }
+
+            else -> {
+                if (_state.value.isLoading) return
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(isLoading = true)
+                    try {
+                        useCase.verification(
+                            email = _state.value.emailText,
+                            code = code
+                        ) {
+                            _state.value = RegistrationState()
+                            onSuccess()
+                        }
+                    } catch (e: Exception) {
+                        _state.update { it.copy(errorMessage = e.message) }
+                        delay(4000)
+                        _state.value = RegistrationState()
+                    }
+                }
+            }
+        }
+    }
+
     private fun doAcceptedDataProtectChange(event: RegistrationEvent.OnAcceptedDataProtectChange) {
         _state.update {
             it.copy(
-                acceptedDataProtection = event.value
+                acceptedDataProtection = event.value,
+                acceptedDataProtectionError = null
             )
         }
     }
@@ -106,7 +177,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
         _state.update {
             it.copy(
                 emailText = event.value.lowercase(),
-                passwordError = null
+                emailError = null
             )
         }
     }
@@ -124,9 +195,8 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
         _state.update {
             it.copy(
                 passwordConfirm = event.value,
-                passwordError = null
+                passwordConfirmError = null
             )
         }
     }
-
 }

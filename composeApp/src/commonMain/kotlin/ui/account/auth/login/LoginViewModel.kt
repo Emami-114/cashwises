@@ -1,5 +1,9 @@
 package ui.account.auth.login
 
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.invalid_email_address_error
+import cashwises.composeapp.generated.resources.login_failed_error
+import cashwises.composeapp.generated.resources.password_required_error
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,19 +12,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import useCase.AuthUseCase
+import utils.isValidEmail
 
 class LoginViewModel : ViewModel(), KoinComponent {
     private val useCase: AuthUseCase by inject()
     private val _state = MutableStateFlow(LoginState())
-    val state = _state.asStateFlow()
-//    val state = _state.asStateFlow().stateIn(
+
+    //    val state = _state.asStateFlow().stateIn(
 //        viewModelScope,
-//        SharingStarted.WhileSubscribed(5000L),
+//        SharingStarted.Lazily,
 //        LoginState()
 //    )
+    val state = _state.asStateFlow()
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -34,19 +41,25 @@ class LoginViewModel : ViewModel(), KoinComponent {
 
     private fun doLogin(event: LoginEvent.OnLogin) {
         when {
-            _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() -> {
-                _state.update {
-                    it.copy(
-                        emailError = "Email is blank or empty"
-                    )
+            _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() || !isValidEmail(
+                _state.value.emailText
+            ) -> {
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            emailError = getString(Res.string.invalid_email_address_error)
+                        )
+                    }
                 }
             }
 
             _state.value.passwordText.isBlank() || _state.value.passwordText.isBlank() -> {
-                _state.update {
-                    it.copy(
-                        passwordError = "Email is blank or empty"
-                    )
+                viewModelScope.launch {
+                    _state.update {
+                        it.copy(
+                            passwordError = getString(Res.string.password_required_error)
+                        )
+                    }
                 }
             }
 
@@ -68,15 +81,17 @@ class LoginViewModel : ViewModel(), KoinComponent {
                             }
                         }
                     } catch (e: Exception) {
-                        _state.update {
-                            it.copy(
-                                isLoginSuccess = false,
-                                isLoading = false,
-                                errorMessage = e.message ?: "Some error"
-                            )
+                        viewModelScope.launch {
+                            _state.update {
+                                it.copy(
+                                    isLoginSuccess = false,
+                                    isLoading = false,
+                                    errorMessage = getString(Res.string.login_failed_error)
+                                )
+                            }
+                            delay(4000)
+                            _state.value = LoginState()
                         }
-                        delay(4000)
-                        _state.value = LoginState()
                     }
                 }
             }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -45,8 +46,9 @@ fun CustomImagesSlider(
     val pagerState = rememberPagerState(pageCount = { imagesPath?.count() ?: 0 })
     val scope = rememberCoroutineScope()
 
-    Column(modifier = modifier
-        .height(300.dp)
+    Column(
+        modifier = modifier
+            .heightIn(max = 370.dp)
     ) {
         HorizontalPager(
             state = pagerState,

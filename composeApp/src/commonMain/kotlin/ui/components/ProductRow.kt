@@ -13,17 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.seiko.imageloader.rememberImagePainter
+import compose.icons.TablerIcons
+import compose.icons.tablericons.ExternalLink
+import compose.icons.tablericons.Flame
 import data.repository.ApiConfig
 import domain.model.DealModel
 import kotlinx.datetime.Clock
@@ -77,7 +76,7 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
                     }
                     if (offerPercent > 25) {
                         Icon(
-                            Icons.Default.LocalFireDepartment,
+                            TablerIcons.Flame,
                             contentDescription = null,
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
@@ -160,7 +159,7 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
                         fontWeight = FontWeight.Medium
                     )
                     Icon(
-                        imageVector = Icons.Default.OpenInNew,
+                        imageVector = TablerIcons.ExternalLink,
                         contentDescription = null,
                         tint = cw_dark_primary,
                         modifier = Modifier.size(25.dp).noRippleClickable {

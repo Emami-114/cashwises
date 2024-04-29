@@ -1,0 +1,35 @@
+<resources>
+    <!--    Http Error-->
+    <string name="not_found_error">Die angeforderte Ressource wurde nicht gefunden.</string>
+    <string name="bad_request_error"> Die Anfrage konnte nicht verarbeitet werden. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut</string>
+    <string name="unauthorized_error">Sie sind nicht autorisiert. Bitte stellen Sie sicher, dass Sie angemeldet sind und über die erforderlichen Berechtigungen verfügen.</string>
+    <string name="conflict_error">Die angeforderte Aktion konnte nicht abgeschlossen werden, da ein Konflikt mit einer vorhandenen Ressource besteht.</string>
+    <!-- Authentication String -->
+    <string name="auth_verification_title">Verifizierungscode</string>
+    <string name="auth_verification_description">Bitte geben Sie den Verifizierungscode ein, den wir Ihnen per E-Mail zusenden.</string>
+    <string name="auth_verification_not_receive">Sie haben den Code nicht erhalten? Erneut senden</string>
+    <string name="auth_verification_required">Verifizierungscode ist erforderlich</string>
+
+    <string name="username_required_error">Benutzername erforderlich. Bitte geben Sie einen Benutzernamen ein.</string>
+    <string name="password_must_be_6characters_error">Das Passwort muss mindestens 6 Zeichen lang sein.</string>
+    <string name="password_confirm_not_match_error">Das Passwort und die Bestätigung stimmen nicht überein. Bitte stellen Sie sicher, dass beide Passwörter übereinstimmen.</string>
+    <string name="invalid_email_address_error">Ungültige E-Mail Adresse. Bitte geben Sie eine gültige E-Mail-Adresse ein.</string>
+    <string name="accept_data_protection_error">Bitte akzeptieren Sie die Datenschutzbestimmungen.</string>
+    <string name="accept_data_protection_description">Ich akzeptiere die Datenschutzerklärung und die Nutzungsbedingungen</string>
+    <string name="privacy_policy_placeholder">Datenschutzbestimmungen</string>
+    <string name="terms_of_use_placeholder">Nutzungsbedingungen</string>
+    <string name="password_required_error">Passwort erforderlich</string>
+    <string name="login_failed_error">Anmeldung fehlgeschlagen. Der Benutzername oder das Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.</string>
+    <string name="password_forget">Passwort vergessen?</string>
+
+
+    <!--  Global Strings  -->
+    <string name="button_send">Senden</string>
+    <string name="btn_register">Registrieren</string>
+    <string name="btn_login">Anmelden</string>
+    <string name="username">Benutzername</string>
+    <string name="password">Passwort</string>
+    <string name="password_confirm">Passwort bestätigen</string>
+
+
+</resources>

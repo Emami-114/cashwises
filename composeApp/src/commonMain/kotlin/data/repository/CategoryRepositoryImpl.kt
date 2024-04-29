@@ -26,7 +26,6 @@ class CategoryRepositoryImpl : CategoryRepository {
             }
             return response.status.value in 200..300
         } catch (e: Exception) {
-            println("Failed create Category")
             throw e
         }
     }
@@ -49,7 +48,6 @@ class CategoryRepositoryImpl : CategoryRepository {
                 bearerAuth(settings.getString("TOKEN2", "Token not found"))
             }.body<CategoryModel>()
         } catch (e: Exception) {
-            println("Failed get category with id ${e.message}")
             throw e
         }
     }
@@ -63,7 +61,6 @@ class CategoryRepositoryImpl : CategoryRepository {
             }
             return response.status.value in 200..300
         } catch (e: Exception) {
-            println("Failed update Category")
             throw e
         }
     }
@@ -75,7 +72,6 @@ class CategoryRepositoryImpl : CategoryRepository {
             }
             return response.status.value in 200..300
         } catch (e: Exception) {
-            println("Failed deleting category")
             throw e
         }
     }

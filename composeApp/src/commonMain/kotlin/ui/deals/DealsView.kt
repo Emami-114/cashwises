@@ -1,47 +1,32 @@
 package ui.deals
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import domain.model.DealModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.FontResource
-import org.jetbrains.compose.resources.Resource
-import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.ProductRow
 import ui.deals.ViewModel.DealsViewModel
-import org.jetbrains.compose.resources.stringResource
+
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun DealsView() {
+fun DealsView(paddingValues: PaddingValues, selectedDeal: (DealModel) -> Unit) {
     val viewModel: DealsViewModel = koinInject()
-    val navigator = LocalNavigator.current
     val uiState by viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.getDeals()
@@ -64,14 +49,14 @@ fun DealsView() {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier
+                .padding(paddingValues)
                 .padding(all = 5.dp)
         ) {
             items(uiState.deals) { deal ->
                 ProductRow(deal, onClick = {
-                    navigator?.push(DetailDealScreen(dealModel = deal))
+                    selectedDeal(deal)
                 })
             }
         }
     }
-
 }

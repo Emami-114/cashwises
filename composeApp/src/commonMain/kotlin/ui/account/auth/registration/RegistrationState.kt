@@ -7,9 +7,13 @@ data class RegistrationState(
     val passwordText: String = "",
     val passwordConfirm: String = "",
     val acceptedDataProtection: Boolean = false,
+    val acceptedDataProtectionError: String? = null,
     val nameError: String? = null,
     val emailError: String? = null,
     val passwordError: String? = null,
+    val passwordConfirmError: String? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val verificationCodeError: String? = null,
+    var verificationCode: List<String> = List(4) { "" }
 )

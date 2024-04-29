@@ -15,7 +15,7 @@ class CategoryUseCase : KoinComponent {
         try {
             return repository.getCategories()
         } catch (e: Exception) {
-            throw Exception("Oh, something went wrong!")
+            throw e
         }
     }
 
@@ -31,12 +31,11 @@ class CategoryUseCase : KoinComponent {
                     if (path.isNotEmpty()) {
                         imagePaths(path)
                     } else {
-                        println("Failed upload image")
                         throw Exception("oh, something went wrong!")
                     }
                 })
         } catch (e: Exception) {
-            throw Exception("oh, something went wrong! ${e.message}")
+            throw e
         }
     }
 
@@ -52,7 +51,7 @@ class CategoryUseCase : KoinComponent {
                 }
             }
         } catch (e: Exception) {
-            throw Exception("Failed create category useCase: ${e.message}")
+            throw e
         }
     }
 
@@ -66,7 +65,7 @@ class CategoryUseCase : KoinComponent {
                 }
             }
         } catch (e: Exception) {
-            throw Exception("Failed Update category ${e.message}")
+            throw e
         }
     }
 

@@ -39,12 +39,10 @@ class DealRepositoryImpl : DealRepository {
                 parameter("page", page)
                 parameter("limit", limit)
             }
-            println("Token von get deals ${settings.getString("TOKEN2", "Token not found")}")
             response.body<DealsModel>()
         } catch (e: Exception) {
             println("Failed repository get deals: ${e.message}")
-            null
-            //            throw e
+            throw e
         }
     }
 

@@ -12,14 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,8 +39,9 @@ import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import com.seiko.imageloader.rememberImagePainter
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.UploadCloud
+import compose.icons.TablerIcons
+import compose.icons.tablericons.CloudUpload
+import compose.icons.tablericons.X
 import domain.model.ImageModel
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_borderColor
@@ -80,40 +78,26 @@ fun CustomImagePicker(
         })
 
     if (selectedImage != null) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth(),
-            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier.size(imageSize),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = null,
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(40.dp)
-                        .zIndex(1f)
-                        .noRippleClickable {
-                            onImageChange(null)
-                        }
-                )
-                val painter = rememberImagePainter(selectedImage.path)
-                Image(
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .customBorder()
-                        .clip(shape = MaterialTheme.shapes.large)
-                        .clickable {
-                            pickerLaunch.launch()
-                        }
-                )
+            val painter = rememberImagePainter(selectedImage.path)
+            Image(
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .heightIn(max = 300.dp)
+                    .customBorder()
+                    .clip(shape = MaterialTheme.shapes.large)
+                    .clickable {
+                        pickerLaunch.launch()
+                    }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            CustomButton(title = "Remove") {
+                onImageChange(null)
             }
         }
     } else {
@@ -150,7 +134,7 @@ fun CustomImagePicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    FeatherIcons.UploadCloud,
+                    TablerIcons.CloudUpload,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(50.dp)
