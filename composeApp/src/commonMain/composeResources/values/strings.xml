@@ -22,6 +22,12 @@
     <string name="password_required_error">Password required</string>
     <string name="login_failed_error">Login failed. The username or password is incorrect. Please check your entries and try again.</string>
     <string name="password_forget">Password forget?</string>
+
+    <!--  Deals String  -->
+    <string name="offers_ends_in_some_day">Offers ends in %1$s day</string>
+    <string name="some_day_ago">%1$s day ago</string>
+    <string name="offers_ends_today">Offers ends today</string>
+
     <!--  Global Strings  -->
     <string name="btn_send">Send</string>
     <string name="btn_register">Register</string>
@@ -29,4 +35,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="password_confirm">Password confirm</string>
+    <string name="today">Today</string>
+    <string name="free">Free</string>
+
 </resources>

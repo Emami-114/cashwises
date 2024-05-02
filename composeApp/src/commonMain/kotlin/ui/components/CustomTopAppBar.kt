@@ -2,6 +2,7 @@ package ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronLeft
 import org.company.app.theme.cw_dark_background
+import org.company.app.theme.cw_dark_blackText
 import org.company.app.theme.cw_dark_whiteText
 import ui.components.customModiefier.noRippleClickable
 
@@ -31,9 +33,10 @@ fun CustomTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     backButtonAction: (() -> Unit)? = null,
+    hasBackButtonBackground: Boolean = false,
     rightAction: @Composable RowScope.() -> Unit = {},
     backgroundColor: Color = cw_dark_background,
-    textColor: Color = cw_dark_whiteText,
+    textColor: Color = if (hasBackButtonBackground) cw_dark_blackText else cw_dark_whiteText,
     isDivider: Boolean = true,
 ) {
     Column(
@@ -43,7 +46,7 @@ fun CustomTopAppBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(90.dp)
                 .background(backgroundColor)
                 .padding(top = 30.dp)
                 .padding(horizontal = 15.dp),
@@ -51,15 +54,25 @@ fun CustomTopAppBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (backButtonAction != null) {
-                Row(modifier = Modifier.weight(2f)) {
-                    Icon(
-                        TablerIcons.ChevronLeft,
-                        contentDescription = null,
-                        tint = textColor,
-                        modifier = Modifier.noRippleClickable {
-                            backButtonAction()
-                        }.size(28.dp)
-                    )
+                Box(modifier = Modifier.weight(2f), contentAlignment = Alignment.CenterStart) {
+                    Box(
+                        modifier = Modifier.size(30.dp)
+                            .background(
+                                if (hasBackButtonBackground)
+                                    cw_dark_whiteText else Color.Transparent,
+                                shape = MaterialTheme.shapes.extraLarge
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            TablerIcons.ChevronLeft,
+                            contentDescription = null,
+                            tint = textColor,
+                            modifier = Modifier.noRippleClickable {
+                                backButtonAction()
+                            }.size(25.dp)
+                        )
+                    }
                 }
             } else {
                 Spacer(modifier = Modifier.weight(2f))

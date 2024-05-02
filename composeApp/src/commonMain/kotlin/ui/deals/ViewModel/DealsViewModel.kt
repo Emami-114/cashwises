@@ -32,10 +32,10 @@ class DealsViewModel : ViewModel(), KoinComponent {
         getDeals()
     }
 
-    fun doChangeDetailView(dealModel: DealModel?) {
+    fun doChangeSelectedDeal(dealModel: DealModel?) {
         _state.update {
             it.copy(
-                dealModel = dealModel
+                selectedDeal = dealModel
             )
         }
     }

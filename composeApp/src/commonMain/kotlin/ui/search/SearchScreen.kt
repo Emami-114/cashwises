@@ -44,7 +44,7 @@ import useCase.DealsUseCase
 
 @OptIn(InternalResourceApi::class, ExperimentalResourceApi::class)
 @Composable
-fun SearchView() {
+fun SearchView(onNavigate: (String) -> Unit) {
     var search by remember { mutableStateOf("") }
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
@@ -86,7 +86,7 @@ fun SearchView() {
                         uiState.deals != null && uiState.searchQuery.isEmpty().not() -> {
                             if (uiState.deals != null) {
                                 items(uiState.deals!!) { deals ->
-                                    ProductRow(deals) {
+                                    ProductRow(dealModel = deals) {
                                     }
                                 }
                             }

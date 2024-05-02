@@ -22,6 +22,10 @@
     <string name="login_failed_error">Anmeldung fehlgeschlagen. Der Benutzername oder das Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.</string>
     <string name="password_forget">Passwort vergessen?</string>
 
+    <!--  Deals String  -->
+    <string name="offers_ends_in_some_day">Angebote endet in %1$s Tag</string>
+    <string name="some_day_ago">vor %1$s Tage</string>
+    <string name="offers_ends_today">Angebote endet Heute</string>
 
     <!--  Global Strings  -->
     <string name="button_send">Senden</string>
@@ -30,6 +34,8 @@
     <string name="username">Benutzername</string>
     <string name="password">Passwort</string>
     <string name="password_confirm">Passwort bestätigen</string>
+    <string name="today">Heute</string>
+    <string name="free">Kostenlose</string>
 
 
 </resources>

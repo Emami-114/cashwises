@@ -20,9 +20,10 @@ import compose.icons.tablericons.User
 import org.company.app.theme.cw_dark_background
 import ui.components.customModiefier.customBorder
 import ui.menu.components.BottomBarItem
+import ui.navigation.BottomBarScreen
 
 @Composable
-fun BottomBarView(currentTab: BottomBarViewEnum, selectedTab: (BottomBarViewEnum) -> Unit) {
+fun BottomBarView(currentRoute: String, selectedTab: (route: String) -> Unit) {
     Row(
         modifier = Modifier.padding(bottom = 20.dp).padding(horizontal = 15.dp).fillMaxWidth()
             .height(70.dp).customBorder(shape = MaterialTheme.shapes.extraLarge)
@@ -31,24 +32,22 @@ fun BottomBarView(currentTab: BottomBarViewEnum, selectedTab: (BottomBarViewEnum
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BottomBarViewEnum.entries.forEach { bottomBarViewEnum ->
+        val list = listOf(
+            BottomBarScreen.Home,
+            BottomBarScreen.Search,
+            BottomBarScreen.Notification,
+            BottomBarScreen.Profile
+        )
+        list.forEach { bottomBarViewEnum ->
             BottomBarItem(
                 modifier = Modifier,
                 title = bottomBarViewEnum.title,
                 icon = bottomBarViewEnum.icon,
-                currentTitle = currentTab.title
+                selected = bottomBarViewEnum.route == currentRoute
             ) {
-                selectedTab(bottomBarViewEnum)
+                selectedTab(bottomBarViewEnum.route)
+
             }
         }
     }
-}
-
-enum class BottomBarViewEnum(
-    val title: String, val icon: ImageVector
-) {
-    HOME(title = "Home", icon = TablerIcons.Home),
-    SEARCH(title = "Search", icon = TablerIcons.Search),
-    NOTIFICATION(title = "Notification", icon = TablerIcons.Bell),
-    ACCOUNT(title = "Account", icon = TablerIcons.User)
 }

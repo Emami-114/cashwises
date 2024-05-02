@@ -14,10 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerColors
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -25,6 +31,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
+import kotlinx.datetime.Instant
+import org.company.app.theme.cw_dark_whiteText
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
@@ -39,13 +47,14 @@ import ui.deals.ViewModel.DealsViewModel
 import ui.deals.components.MainAndSubCategoryList
 
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CreateDealView(modifier: Modifier = Modifier) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val richTextState = rememberRichTextState()
     val scrollState = rememberScrollState(0)
+    val dataPickerState = rememberDatePickerState()
 
     when {
         uiState.error != null -> {
@@ -168,6 +177,13 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         placeholder = "Video url",
                         modifier = Modifier
                     )
+                    DatePicker(
+                        state = dataPickerState,
+                        showModeToggle = true,
+                        dateFormatter = remember { DatePickerDefaults.dateFormatter() },
+                        colors = DatePickerDefaults.colors(),
+                        title = null
+                    )
                     CustomMultipleImagePicker(
                         modifier = Modifier,
                         selectedImage = uiState.imagesByte ?: listOf()
@@ -177,6 +193,10 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     CustomButton(
                         isLoading = uiState.isLoading,
                         onClick = {
+                            val date = dataPickerState.selectedDateMillis?.let { dateMillis ->
+                                Instant.fromEpochMilliseconds(dateMillis).toString()
+                            }
+                            viewModel.onEvent(DealEvent.OnExpirationDateChange(date))
                             viewModel.onEvent(DealEvent.OnDescriptionChange(richTextState.toHtml()))
                             viewModel.onEvent(DealEvent.OnAction)
                             richTextState.clear()

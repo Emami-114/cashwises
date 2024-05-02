@@ -47,10 +47,10 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
+fun ProductRow(modifier: Modifier = Modifier, dealModel: DealModel, onClick: () -> Unit) {
     val roundedCornerShape = RoundedCornerShape(15.dp)
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -102,6 +102,7 @@ fun ProductRow(dealModel: DealModel, onClick: () -> Unit) {
             Text(
                 dealModel.title,
                 fontSize = 12.sp,
+                lineHeight = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 3,
                 color = cw_dark_whiteText,

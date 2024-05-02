@@ -47,9 +47,10 @@ import ui.components.CustomTopAppBar
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.CreateDealView
 import ui.menu.components.TabBarItem
+import ui.navigation.RouterBackNavigate
 
 @Composable
-fun TabBarScreen(onBack: () -> Unit) {
+fun TabBarScreen(onNavigate: (String) -> Unit) {
     var currentItem by remember { mutableStateOf(TabItemEnum.CREATE_DEAL) }
     var isExpanded by remember { mutableStateOf(false) }
     val categoriesViewModel: CategoryViewModel = koinInject()
@@ -57,7 +58,7 @@ fun TabBarScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             CustomTopAppBar(title = "", backButtonAction = {
-                onBack()
+                onNavigate(RouterBackNavigate.Back.route)
             }, rightAction = {
                 Icon(
                     if (isExpanded) Icons.Default.Close else Icons.Default.Menu,

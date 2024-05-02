@@ -16,12 +16,11 @@ import ui.components.CustomBackgroundView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationView() {
+fun NotificationView(onNavigate: (String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
         Column(verticalArrangement = Arrangement.Bottom) {
             Spacer(modifier = Modifier.height(200.dp))
-            VerificationView() {}
         }
     }
 }

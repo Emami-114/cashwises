@@ -9,10 +9,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import domain.model.DealModel
@@ -21,17 +25,21 @@ import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.ProductRow
 import ui.deals.ViewModel.DealsViewModel
+import ui.navigation.AppScreen
 
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DealsView(paddingValues: PaddingValues, selectedDeal: (DealModel) -> Unit) {
+fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
+    var selectedDeal by remember { mutableStateOf<DealModel?>(null) }
+    var showDetail by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.getDeals()
     }
     val rememberLazyGridState = rememberLazyGridState()
+
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
@@ -49,12 +57,15 @@ fun DealsView(paddingValues: PaddingValues, selectedDeal: (DealModel) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier
-                .padding(paddingValues)
+//                .padding(paddingValues)
                 .padding(all = 5.dp)
         ) {
             items(uiState.deals) { deal ->
-                ProductRow(deal, onClick = {
-                    selectedDeal(deal)
+                ProductRow(dealModel = deal, onClick = {
+                    selectedDeal = deal
+                    showDetail = true
+                            viewModel.doChangeSelectedDeal(deal)
+                            onNavigate(AppScreen.Detail.route)
                 })
             }
         }

@@ -40,9 +40,10 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
+import ui.navigation.RouterBackNavigate
 
 @Composable
-fun AuthView(onBack: () -> Unit) {
+fun AuthView(onNavigate: (String) -> Unit) {
     val registerViewModel: RegistrationViewModel = koinInject()
     val registeUiState by registerViewModel.state.collectAsState()
 
@@ -51,7 +52,7 @@ fun AuthView(onBack: () -> Unit) {
 
     Scaffold(topBar = {
         CustomTopAppBar(title = currentView.name, backButtonAction = {
-            onBack()
+            onNavigate(RouterBackNavigate.Back.route)
         })
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
@@ -128,7 +129,7 @@ fun AuthView(onBack: () -> Unit) {
                                     LogInView(toPasswordForget = {
                                         currentView = AuthEnum.PASSWORDFORGET
                                     }, toHome = {
-                                        onBack()
+//                                        onBack()
                                     })
                                 }
                             }

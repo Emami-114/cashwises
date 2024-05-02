@@ -30,7 +30,7 @@ fun BottomBarItem(
     modifier: Modifier = Modifier,
     title: String,
     icon: ImageVector,
-    currentTitle: String,
+    selected: Boolean,
     onClick: () -> Unit
 ) {
     Box(
@@ -40,7 +40,7 @@ fun BottomBarItem(
         Row(
             modifier = Modifier.height(50.dp)
                 .background(
-                    if (title == currentTitle) cw_dark_primary else Color.Transparent,
+                    if (selected) cw_dark_primary else Color.Transparent,
                     shape = MaterialTheme.shapes.extraLarge
                 )
                 .padding(horizontal = 15.dp),
@@ -54,7 +54,7 @@ fun BottomBarItem(
                 tint = cw_dark_whiteText
             )
             Spacer(modifier = Modifier.width(5.dp))
-            AnimatedVisibility(title == currentTitle) {
+            AnimatedVisibility(selected) {
                 Text(
                     text = title,
                     fontSize = 16.sp,

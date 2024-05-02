@@ -9,7 +9,7 @@ sealed interface DealEvent {
     data class OnPriceChange(val value: String) : DealEvent
     data class OnOfferPriceChange(val value: String) : DealEvent
     data class OnPublishedChange(val value: Boolean) : DealEvent
-    data class OnExpirationDateChange(val value: String) : DealEvent
+    data class OnExpirationDateChange(val value: String?) : DealEvent
     data class OnProviderChange(val value: String) : DealEvent
     data class OnProviderUrlChange(val value: String) : DealEvent
     data class OnThumbnailChange(val value: String) : DealEvent
