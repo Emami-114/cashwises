@@ -12,42 +12,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Bell
 import compose.icons.tablericons.Home
 import compose.icons.tablericons.Search
 import compose.icons.tablericons.User
 import org.company.app.theme.cw_dark_background
+import ui.account.AccountScreenTab
 import ui.components.customModiefier.customBorder
+import ui.home.HomeScreenTab
 import ui.menu.components.BottomBarItem
-import ui.navigation.BottomBarScreen
+import ui.notification.NotificationScreenTab
+import ui.search.SearchScreenTab
 
 @Composable
-fun BottomBarView(currentRoute: String, selectedTab: (route: String) -> Unit) {
+fun BottomNavigationView(
+    modifier: Modifier = Modifier,
+    currentScreen: (BottomBarScreens),
+    onNavigate: (BottomBarScreens) -> Unit
+) {
+
     Row(
-        modifier = Modifier.padding(bottom = 20.dp).padding(horizontal = 15.dp).fillMaxWidth()
+        modifier = modifier.padding(bottom = 20.dp).padding(horizontal = 15.dp).fillMaxWidth()
             .height(70.dp).customBorder(shape = MaterialTheme.shapes.extraLarge)
             .background(cw_dark_background, shape = MaterialTheme.shapes.extraLarge)
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val list = listOf(
-            BottomBarScreen.Home,
-            BottomBarScreen.Search,
-            BottomBarScreen.Notification,
-            BottomBarScreen.Profile
-        )
-        list.forEach { bottomBarViewEnum ->
+        BottomBarScreens.entries.forEach { bottomBarScreen ->
             BottomBarItem(
                 modifier = Modifier,
-                title = bottomBarViewEnum.title,
-                icon = bottomBarViewEnum.icon,
-                selected = bottomBarViewEnum.route == currentRoute
+                tab = bottomBarScreen,
+                isSelected = currentScreen.title == bottomBarScreen.title
             ) {
-                selectedTab(bottomBarViewEnum.route)
-
+                onNavigate(it)
             }
         }
     }
+}
+
+enum class BottomBarScreens(val title: String, val icon: ImageVector) {
+    Home(title = "Home", icon = TablerIcons.Home),
+    Search(title = "Search", icon = TablerIcons.Search),
+    Notification(title = "Notification", icon = TablerIcons.Bell),
+    Account(title = "Account", icon = TablerIcons.User)
 }

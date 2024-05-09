@@ -1,7 +1,17 @@
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.window.Tray
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberNotification
+import androidx.compose.ui.window.rememberTrayState
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.component.setupDefaultComponents
@@ -12,13 +22,48 @@ import org.koin.core.context.GlobalContext.startKoin
 import ui.App
 import java.io.File
 
+object TrayIcon : Painter() {
+    override val intrinsicSize = Size(256f, 256f)
+
+    override fun DrawScope.onDraw() {
+        drawOval(Color(0xFFFFA500))
+    }
+}
 fun main() = application {
     startKoin { modules(getSharedModules()) }
+    val trayState = rememberTrayState()
+    val notification = rememberNotification("Notification", "Message from MyApp!")
+
+    Tray(
+        state = trayState,
+        icon = TrayIcon,
+        menu = {
+            Item(
+                "Send notification",
+                onClick = {
+                    trayState.sendNotification(notification)
+                }
+            )
+            Item(
+                "Exit",
+                onClick = {
+                }
+            )
+        }
+    )
     Window(onCloseRequest = ::exitApplication, title = "cashwises") {
         CompositionLocalProvider(
             LocalImageLoader provides remember { generateImageLoader() },
         ) {
-            App()
+
+           Column {
+               Button(onClick = {
+                   trayState.sendNotification(notification)
+               }) {
+                   Text("Notification")
+               }
+               App()
+           }
         }
     }
 }

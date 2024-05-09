@@ -32,6 +32,7 @@ import compose.icons.tablericons.ChevronDown
 import compose.icons.tablericons.ChevronUp
 import compose.icons.tablericons.Square
 import domain.model.CategoryStatus
+import ui.components.CustomCheckBox
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.ViewModel.DealsState
@@ -83,57 +84,34 @@ fun MainAndSubCategoryList(
                     verticalArrangement = Arrangement.Center
                 ) {
                     filterMainCategory.forEach { category ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                                .height(35.dp)
-                                .clickable {
-                                    if (selectedItems.contains(category.id)) {
-                                        selectedItems.remove(category.id)
-                                    } else {
-                                        selectedItems.add(category.id ?: "")
-                                    }
-                                    onSelected(selectedItems.toList())
-                                }.padding(10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(20.dp)
-                        ) {
-                            val icon =
-                                if (selectedItems.contains(category.id)) TablerIcons.Checkbox else TablerIcons.Square
-                            Icon(
-                                icon,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                            Text(category.title ?: "", color = MaterialTheme.colorScheme.secondary)
-                        }
+                        CustomCheckBox(
+                            text = category.title ?: "",
+                            active = selectedItems.contains(category.id),
+                            selected = {
+                                selectedItems.add(category.id ?: "")
+                                onSelected(selectedItems.toList())
+                            },
+                            unselected = {
+                                selectedItems.remove(category.id)
+                                onSelected(selectedItems.toList())
+                            }
+                        )
                         HorizontalDivider(color = MaterialTheme.colorScheme.surface)
                         val subCatFilter = uiState.categories.filter { category.id == it.mainId }
                         subCatFilter.forEach { subCat ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth()
-                                    .height(35.dp)
-                                    .clickable {
-                                        if (selectedItems.contains(subCat.id)) {
-                                            selectedItems.remove(subCat.id)
-                                        } else {
-                                            selectedItems.add(subCat.id ?: "")
-                                        }
+                            Row {
+                                Spacer(modifier = Modifier.width(15.dp))
+                                CustomCheckBox(
+                                    text = subCat.title ?: "",
+                                    active = selectedItems.contains(subCat.id),
+                                    selected = {
+                                        selectedItems.add(subCat.id ?: "")
                                         onSelected(selectedItems.toList())
-                                    }.padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(20.dp)
-                            ) {
-                                Spacer(modifier = Modifier.width(10.dp))
-                                val icon =
-                                    if (selectedItems.contains(subCat.id)) TablerIcons.Checkbox else TablerIcons.Square
-                                Icon(
-                                    icon,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSecondary
-                                )
-                                Text(
-                                    subCat.title ?: "",
-                                    color = MaterialTheme.colorScheme.secondary
+                                    },
+                                    unselected = {
+                                        selectedItems.remove(subCat.id)
+                                        onSelected(selectedItems.toList())
+                                    }
                                 )
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.surface)

@@ -34,7 +34,7 @@ import ui.menu.components.MenuBarItem
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MenuBarView(onClick: (MenuBarEnum) -> Unit) {
+fun MenuBarView(onClick:(MenuBarEnum) -> Unit) {
     val scope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()

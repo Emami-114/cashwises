@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
@@ -40,10 +41,17 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
-import ui.navigation.RouterBackNavigate
+
+class AuthScreen : Screen {
+    @Composable
+    override fun Content() {
+        AuthView { }
+    }
+
+}
 
 @Composable
-fun AuthView(onNavigate: (String) -> Unit) {
+fun AuthView(onNavigate: () -> Unit) {
     val registerViewModel: RegistrationViewModel = koinInject()
     val registeUiState by registerViewModel.state.collectAsState()
 
@@ -52,7 +60,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
 
     Scaffold(topBar = {
         CustomTopAppBar(title = currentView.name, backButtonAction = {
-            onNavigate(RouterBackNavigate.Back.route)
+            onNavigate()
         })
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
@@ -108,7 +116,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
                     registeUiState.isRegistrationSuccess -> {
                         VerificationView(errorMessage = registeUiState.verificationCodeError) {
                             registerViewModel.doVerification(it) {
-//                                    navigator.pop()
+                                onNavigate()
                             }
                         }
                     }
@@ -126,11 +134,12 @@ fun AuthView(onNavigate: (String) -> Unit) {
                                         animationSpec = tween(delayMillis = 300)
                                     )
                                 ) {
-                                    LogInView(toPasswordForget = {
-                                        currentView = AuthEnum.PASSWORDFORGET
-                                    }, toHome = {
-//                                        onBack()
-                                    })
+                                    LogInView(
+                                        toPasswordForget = {
+                                            currentView = AuthEnum.PASSWORDFORGET
+                                        }, toHome = {
+                                            onNavigate()
+                                        })
                                 }
                             }
 

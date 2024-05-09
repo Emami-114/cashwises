@@ -30,8 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
+import cashwises.composeapp.generated.resources.invalid_email_address_error
 import cashwises.composeapp.generated.resources.password
 import cashwises.composeapp.generated.resources.password_forget
+import cashwises.composeapp.generated.resources.password_required_error
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Eye
 import compose.icons.tablericons.EyeOff
@@ -86,7 +88,9 @@ fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
                         leadingIcon = {
                             Icon(TablerIcons.Mail, contentDescription = null)
                         },
-                        errorText = uiState.emailError,
+                        errorText = if (uiState.emailError.isNullOrEmpty()
+                                .not()
+                        ) stringResource(Res.string.invalid_email_address_error) else null,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
@@ -100,7 +104,9 @@ fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
                         leadingIcon = {
                             Icon(TablerIcons.Lock, contentDescription = null)
                         },
-                        errorText = uiState.passwordError,
+                        errorText = if (uiState.passwordError.isNullOrEmpty().not()) stringResource(
+                            Res.string.password_required_error
+                        ) else null,
                         label = { Text(stringResource(Res.string.password)) },
                         trailingIcon = {
                             Icon(if (passwordVisible) TablerIcons.Eye else TablerIcons.EyeOff,

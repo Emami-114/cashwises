@@ -1,5 +1,6 @@
 package ui.deals.ViewModel
 
+import com.mohamedrejeb.calf.picker.toImageBitmap
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
@@ -66,7 +67,6 @@ class DealsViewModel : ViewModel(), KoinComponent {
             it.copy(thumbnailByte = image)
         }
     }
-
     fun doChangeImages(image: List<ImageModel>?) {
         _state.update {
             it.copy(imagesByte = image)
@@ -85,6 +85,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 }
             }
             if (_state.value.imagesByte != null) {
+                var bitmap = _state.value.thumbnailByte!!.byteArray
                 useCase.uploadImages(_state.value.imagesByte!!) { imagesPath ->
                     _state.update {
                         it.copy(

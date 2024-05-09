@@ -37,5 +37,7 @@
     <string name="password_confirm">Password confirm</string>
     <string name="today">Today</string>
     <string name="free">Free</string>
+    <string name="coupon_code">Coupon code: %1$s</string>
+    <string name="successfully_registered">Successfully registered</string>
 
 </resources>

@@ -36,6 +36,12 @@ data class DealModel(
     val userId: String? = null,
     @SerialName("video_url")
     val videoUrl: String? = null,
+    // New Variable
+    @SerialName("coupon_code")
+    val couponCode: String? = "Test",
+    val tags: List<String>? = null,
+    @SerialName("shipping_costs")
+    val shippingCosts: Double? = null,
     @SerialName("created_at")
     val createdAt: String? = null,
     @SerialName("updated_at")

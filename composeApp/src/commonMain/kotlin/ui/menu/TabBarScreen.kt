@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import cafe.adriel.voyager.core.screen.Screen
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
 import compose.icons.tablericons.LayoutGrid
@@ -47,10 +48,17 @@ import ui.components.CustomTopAppBar
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.CreateDealView
 import ui.menu.components.TabBarItem
-import ui.navigation.RouterBackNavigate
+
+class TabBarScreen2 : Screen {
+    @Composable
+    override fun Content() {
+        TabBarScreen { }
+    }
+
+}
 
 @Composable
-fun TabBarScreen(onNavigate: (String) -> Unit) {
+fun TabBarScreen(onNavigate: () -> Unit) {
     var currentItem by remember { mutableStateOf(TabItemEnum.CREATE_DEAL) }
     var isExpanded by remember { mutableStateOf(false) }
     val categoriesViewModel: CategoryViewModel = koinInject()
@@ -58,7 +66,7 @@ fun TabBarScreen(onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             CustomTopAppBar(title = "", backButtonAction = {
-                onNavigate(RouterBackNavigate.Back.route)
+                onNavigate()
             }, rightAction = {
                 Icon(
                     if (isExpanded) Icons.Default.Close else Icons.Default.Menu,

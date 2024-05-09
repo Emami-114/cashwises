@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -64,8 +65,9 @@ fun CustomImagesSlider(
     val scope = rememberCoroutineScope()
 
     Column(
-        modifier = modifier
-            .heightIn(max = 400.dp)
+        modifier = modifier.fillMaxWidth()
+            .heightIn(max = 400.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.weight(9f), contentAlignment = Alignment.Center) {
             HorizontalPager(

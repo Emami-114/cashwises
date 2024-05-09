@@ -82,6 +82,7 @@ internal val md_theme_dark_scrim = Color(0xFF000000)
 
 // Green Color
 internal val cw_dark_green = Color(0xFF34B433)
+internal val cw_dark_green_dark = Color(0xFF119822)
 internal val seed = Color(0xFF2C3639)
 // Button Color
 internal val cw_dark_primary = Color(0xFF049EFE)

@@ -19,6 +19,7 @@ import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -118,10 +119,16 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                             viewModel.onEvent(DealEvent.OnCategoryChange(it))
                         },
                     )
-                    CustomSwitch(title = "Free", value = uiState.isFree) {
+                    CustomSwitch(
+                        textView = { Text("Free", color = cw_dark_whiteText) },
+                        value = uiState.isFree
+                    ) {
                         viewModel.onEvent(DealEvent.OnIsFreeChange(it))
                     }
-                    CustomSwitch(title = "Published", value = uiState.published) {
+                    CustomSwitch(
+                        textView = { Text("Published", color = cw_dark_whiteText) },
+                        value = uiState.published
+                    ) {
                         viewModel.onEvent(DealEvent.OnPublishedChange(it))
                     }
                     CustomTextField(

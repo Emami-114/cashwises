@@ -4,6 +4,7 @@
     <string name="bad_request_error"> Die Anfrage konnte nicht verarbeitet werden. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut</string>
     <string name="unauthorized_error">Sie sind nicht autorisiert. Bitte stellen Sie sicher, dass Sie angemeldet sind und über die erforderlichen Berechtigungen verfügen.</string>
     <string name="conflict_error">Die angeforderte Aktion konnte nicht abgeschlossen werden, da ein Konflikt mit einer vorhandenen Ressource besteht.</string>
+
     <!-- Authentication String -->
     <string name="auth_verification_title">Verifizierungscode</string>
     <string name="auth_verification_description">Bitte geben Sie den Verifizierungscode ein, den wir Ihnen per E-Mail zusenden.</string>
@@ -15,9 +16,9 @@
     <string name="password_confirm_not_match_error">Das Passwort und die Bestätigung stimmen nicht überein. Bitte stellen Sie sicher, dass beide Passwörter übereinstimmen.</string>
     <string name="invalid_email_address_error">Ungültige E-Mail Adresse. Bitte geben Sie eine gültige E-Mail-Adresse ein.</string>
     <string name="accept_data_protection_error">Bitte akzeptieren Sie die Datenschutzbestimmungen.</string>
-    <string name="accept_data_protection_description">Ich akzeptiere die Datenschutzerklärung und die Nutzungsbedingungen</string>
+    <string name="accept_data_protection_description">Ich stimme den Geschäftsbedingungen und den Datenschutzbestimmungen zu.</string>
     <string name="privacy_policy_placeholder">Datenschutzbestimmungen</string>
-    <string name="terms_of_use_placeholder">Nutzungsbedingungen</string>
+    <string name="terms_of_use_placeholder">Geschäftsbedingungen</string>
     <string name="password_required_error">Passwort erforderlich</string>
     <string name="login_failed_error">Anmeldung fehlgeschlagen. Der Benutzername oder das Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.</string>
     <string name="password_forget">Passwort vergessen?</string>
@@ -36,6 +37,8 @@
     <string name="password_confirm">Passwort bestätigen</string>
     <string name="today">Heute</string>
     <string name="free">Kostenlose</string>
+    <string name="coupon_code">Coupon-Code: %1$s</string>
+    <string name="successfully_registered">Erfolgreich angemeldet</string>
 
 
 </resources>

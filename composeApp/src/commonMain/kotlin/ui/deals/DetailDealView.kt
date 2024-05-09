@@ -4,41 +4,48 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,7 +53,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.coupon_code
 import cashwises.composeapp.generated.resources.free
 import cashwises.composeapp.generated.resources.offers_ends_in_some_day
 import cashwises.composeapp.generated.resources.offers_ends_today
@@ -57,6 +66,7 @@ import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ExternalLink
+import compose.icons.tablericons.Scissors
 import domain.model.DealModel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -65,51 +75,68 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_blackText
+import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_green
-import org.company.app.theme.cw_dark_onBackground
+import org.company.app.theme.cw_dark_green_dark
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
-import ui.components.CustomButton
 import ui.components.CustomImagesSlider
 import ui.components.CustomTopAppBar
+import ui.components.CustomToast
+import ui.components.NotificationBarEnum
+import ui.components.customModiefier.noRippleClickable
 import ui.deals.ViewModel.DealsViewModel
-import ui.navigation.RouterBackNavigate
 import kotlin.math.absoluteValue
 
 
+@OptIn(InternalVoyagerApi::class)
 @Composable
-fun DetailDealScreen(onNavigate: (String) -> Unit) {
+fun DetailDealScreen(onClick: () -> Unit) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val scrollState = rememberScrollState(0)
+    var showToast by remember { mutableStateOf(false) }
+    var clipCopyText by remember { mutableStateOf("") }
+    val clipBoard = LocalClipboardManager.current
+
     val colorAnimation by animateColorAsState(
         targetValue = if (scrollState.value < 800) Color.Transparent else cw_dark_background,
         animationSpec = tween(200)
     )
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+    BoxWithConstraints(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         val scope = this
         val maxWidth = scope.maxWidth
         CustomBackgroundView()
-        CustomTopAppBar(modifier = Modifier.zIndex(1f).fillMaxWidth(),
+        CustomTopAppBar(modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
             title = if (scrollState.value < 800) "" else uiState.selectedDeal?.title ?: "",
             backgroundColor = colorAnimation,
             hasBackButtonBackground = scrollState.value < 800,
             textColor = if (scrollState.value < 800) cw_dark_blackText else cw_dark_whiteText,
             isDivider = false,
             backButtonAction = {
-                onNavigate(RouterBackNavigate.Back.route)
+                onClick()
             })
         uiState.selectedDeal?.let { deal ->
             DetailDealView(
                 modifier = Modifier,
                 dealModel = deal,
-                scrollState = scrollState
-            ) {}
+                scrollState = scrollState,
+                onClick = {},
+                clipBoard = { copyText ->
+                    clipBoard.setText(annotatedString = AnnotatedString(text = copyText))
+                    clipCopyText = copyText
+                    showToast = true
+                }
+            )
         }
         Box(
             modifier = Modifier
@@ -166,6 +193,13 @@ fun DetailDealScreen(onNavigate: (String) -> Unit) {
 
             }
         }
+        if (showToast) {
+            CustomToast(
+                modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 50.dp),
+                status = NotificationBarEnum.SUCCESS,
+                title = clipCopyText
+            ) { showToast = false }
+        }
     }
 }
 
@@ -176,17 +210,19 @@ fun DetailDealView(
     modifier: Modifier = Modifier,
     dealModel: DealModel,
     scrollState: ScrollState,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    clipBoard: (String) -> Unit
 ) {
     val richTextState = rememberRichTextState()
-
+    var showToast by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
+
     LaunchedEffect(Unit) {
         richTextState.setHtml(dealModel.description)
-        onClick()
     }
     Column(
-        modifier = modifier
+        modifier = modifier.widthIn(min = 300.dp, max = 900.dp)
             .verticalScroll(scrollState)
             .pointerInput(Unit) {
                 detectVerticalDragGestures { change, dragAmount ->
@@ -263,6 +299,36 @@ fun DetailDealView(
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
+        dealModel.couponCode?.let { couponCode ->
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .height(50.dp)
+                .drawBehind {
+                    val stroke = Stroke(
+                        width = 5f,
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                    )
+                    drawRoundRect(
+                        color = cw_dark_borderColor,
+                        style = stroke,
+                        cornerRadius = CornerRadius(16.dp.toPx())
+                    )
+                }.noRippleClickable {
+                    clipBoard(couponCode)
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    TablerIcons.Scissors,
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.TopStart).offset(x = 20.dp, y = (-10).dp),
+                    tint = cw_dark_green
+                )
+                Text(stringResource(Res.string.coupon_code, couponCode), color = cw_dark_green_dark)
+            }
+        }
 
         Text(
             "Detail",

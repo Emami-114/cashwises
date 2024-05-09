@@ -44,23 +44,19 @@ class LoginViewModel : ViewModel(), KoinComponent {
             _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() || !isValidEmail(
                 _state.value.emailText
             ) -> {
-                viewModelScope.launch {
                     _state.update {
                         it.copy(
-                            emailError = getString(Res.string.invalid_email_address_error)
+                            emailError = "Invalid E-mail"
                         )
                     }
-                }
             }
 
             _state.value.passwordText.isBlank() || _state.value.passwordText.isBlank() -> {
-                viewModelScope.launch {
                     _state.update {
                         it.copy(
-                            passwordError = getString(Res.string.password_required_error)
+                            passwordError = "Invalid Password"
                         )
                     }
-                }
             }
 
             else -> {

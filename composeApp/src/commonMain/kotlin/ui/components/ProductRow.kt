@@ -62,7 +62,7 @@ fun ProductRow(modifier: Modifier = Modifier, dealModel: DealModel, onClick: () 
                     val offerPercent = ((dealModel.offerPrice / dealModel.price!!) * 100).toInt()
                     Box(
                         modifier = Modifier.padding(start = 18.dp)
-                            .height(30.dp)
+                            .height(25.dp)
                             .background(cw_dark_primary)
                             .padding(2.dp)
                             .zIndex(1f),

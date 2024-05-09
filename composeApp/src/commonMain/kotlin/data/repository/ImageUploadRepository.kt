@@ -12,12 +12,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.util.InternalAPI
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.internal.readJson
-import okio.ByteString.Companion.encodeUtf8
 
 class ImageUploadRepository {
 

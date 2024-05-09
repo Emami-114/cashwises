@@ -20,7 +20,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabOptions
+import cafe.adriel.voyager.transitions.SlideTransition
+import compose.icons.TablerIcons
+import compose.icons.tablericons.Search
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
 import domain.model.DealModel
@@ -41,6 +49,13 @@ import ui.deals.components.CategoryItemView
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
+class SearchScreen : Screen {
+    @Composable
+    override fun Content() {
+        SearchView { }
+    }
+
+}
 
 @OptIn(InternalResourceApi::class, ExperimentalResourceApi::class)
 @Composable
@@ -72,6 +87,8 @@ fun SearchView(onNavigate: (String) -> Unit) {
                 else if (maxWidth > 700.dp && maxWidth < 900.dp) 3
                 else 3
             CustomBackgroundView()
+
+
             Column {
                 Spacer(modifier = Modifier.height(15.dp))
                 LazyVerticalGrid(
@@ -108,6 +125,31 @@ fun SearchView(onNavigate: (String) -> Unit) {
             }
         }
     }
+}
+
+object SearchScreenTab : Tab {
+    @Composable
+    override fun Content() {
+        Navigator(SearchScreen()) { navigator ->
+            SlideTransition(navigator)
+        }
+    }
+
+    override val options: TabOptions
+        @Composable
+        get() {
+            val title = "Search"
+            val icon = rememberVectorPainter(TablerIcons.Search)
+
+            return remember {
+                TabOptions(
+                    index = 1u,
+                    title = title,
+                    icon = icon
+                )
+            }
+        }
+
 }
 
 
