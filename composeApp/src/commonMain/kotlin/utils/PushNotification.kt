@@ -4,7 +4,6 @@ internal expect object LocalPushNotification {
     fun requestAuthorization(completion: (Boolean) -> Unit)
     fun schedule(pushNotificationModel: PushNotificationModel)
     fun getPendingRequestCount(pendingCount: (Int) -> Unit)
-    fun removeRequest(identifier: String)
     fun removeAllRequest()
 }
 

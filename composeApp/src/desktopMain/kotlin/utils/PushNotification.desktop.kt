@@ -13,9 +13,6 @@ internal actual object LocalPushNotification {
         TODO("Not yet implemented")
     }
 
-    actual fun removeRequest(identifier: String) {
-    }
-
     actual fun removeAllRequest() {
     }
 

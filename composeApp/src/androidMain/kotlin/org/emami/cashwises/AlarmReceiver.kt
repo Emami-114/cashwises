@@ -7,6 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import utils.PushNotificationModel
 
@@ -16,6 +21,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val title = intent?.getStringExtra("title") ?: ""
         val content = intent?.getStringExtra("content") ?: ""
+        val channelId = intent?.getStringExtra("channel_id") ?: ""
 
         // Hier können Sie die Benachrichtigung anzeigen
         // Verwenden Sie dazu NotificationManager und NotificationCompat
@@ -23,15 +29,15 @@ class AlarmReceiver : BroadcastReceiver() {
         val notificationManager =
             context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannel(
-            "CHANNEL_ID",
-            "CHANNEL_NAME",
+            channelId,
+            title,
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
-        val notification = NotificationCompat.Builder(context, "CHANNEL_ID")
+        val notification = NotificationCompat.Builder(context, channelId)
             .setContentTitle(title)
             .setContentText(content)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.compose_image)
             .build()
 
         notificationManager.notify(1, notification)

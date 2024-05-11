@@ -1,5 +1,7 @@
 package org.emami.cashwises
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.os.Build
 import android.os.Bundle
@@ -38,29 +40,20 @@ class AndroidApp : Application() {
 }
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        lateinit var ACTIVITY: Activity
+    }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            requestAuthorizationAndroid(this){
-
-            }
-
+            ACTIVITY = this
             CompositionLocalProvider(
                 LocalImageLoader provides remember { generateImageLoader() },
             ) {
-                LaunchedEffect(key1 = Unit) {
-                    println("test timr zon: ${System.currentTimeMillis()}")
-                    LocalPushNotification.NotificationReceiver(PushNotificationModel(
-                        identifier = "ewefewf",
-                        title = "dsfwef",
-                        body = "dsfcwesdc",
-                        timeInterval = 30.0,
-                        repeats = false
-                    )
-                    )
-                }
                 App()
             }
         }

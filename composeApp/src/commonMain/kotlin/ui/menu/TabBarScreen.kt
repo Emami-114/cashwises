@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import cafe.adriel.voyager.core.screen.Screen
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
 import compose.icons.tablericons.LayoutGrid
@@ -40,6 +39,7 @@ import compose.icons.tablericons.LayoutGridAdd
 import compose.icons.tablericons.Plus
 import org.company.app.theme.cw_dark_background
 import org.koin.compose.koinInject
+import ui.AppConstants
 import ui.category.CategoriesView
 import ui.category.CreateCategory
 import ui.category.viewModel.CategoryViewModel
@@ -49,16 +49,8 @@ import ui.components.customModiefier.noRippleClickable
 import ui.deals.CreateDealView
 import ui.menu.components.TabBarItem
 
-class TabBarScreen2 : Screen {
-    @Composable
-    override fun Content() {
-        TabBarScreen { }
-    }
-
-}
-
 @Composable
-fun TabBarScreen(onNavigate: () -> Unit) {
+fun TabBarScreen(onNavigate: (String) -> Unit) {
     var currentItem by remember { mutableStateOf(TabItemEnum.CREATE_DEAL) }
     var isExpanded by remember { mutableStateOf(false) }
     val categoriesViewModel: CategoryViewModel = koinInject()
@@ -66,7 +58,7 @@ fun TabBarScreen(onNavigate: () -> Unit) {
     Scaffold(
         topBar = {
             CustomTopAppBar(title = "", backButtonAction = {
-                onNavigate()
+                onNavigate(AppConstants.BackClickRoute.route)
             }, rightAction = {
                 Icon(
                     if (isExpanded) Icons.Default.Close else Icons.Default.Menu,

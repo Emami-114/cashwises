@@ -25,16 +25,16 @@ import compose.icons.tablericons.Logout
 import compose.icons.tablericons.Settings
 import compose.icons.tablericons.User
 import data.repository.AuthRepositoryImpl
-import domain.repository.AuthRepository
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import ui.AppScreen
 import ui.components.CustomBackgroundView
 import ui.menu.components.MenuBarItem
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MenuBarView(onClick:(MenuBarEnum) -> Unit) {
+fun MenuBarView(onNavigate: (String) -> Unit, onClick: (MenuBarEnum) -> Unit) {
     val scope = rememberCoroutineScope()
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
@@ -59,7 +59,8 @@ fun MenuBarView(onClick:(MenuBarEnum) -> Unit) {
                 title = MenuBarEnum.LOGIN.title,
                 icon = MenuBarEnum.LOGIN.icon
             ) {
-                onClick(MenuBarEnum.LOGIN)
+//                onClick(MenuBarEnum.LOGIN)
+                onNavigate(AppScreen.Authentication.route)
             }
 
             MenuBarItem(
@@ -67,8 +68,7 @@ fun MenuBarView(onClick:(MenuBarEnum) -> Unit) {
                 title = MenuBarEnum.PROFILE.title,
                 icon = MenuBarEnum.PROFILE.icon
             ) {
-                onClick(MenuBarEnum.PROFILE)
-
+                onNavigate(AppScreen.Profile.route)
             }
             MenuBarItem(
                 modifier = Modifier.height(60.dp),

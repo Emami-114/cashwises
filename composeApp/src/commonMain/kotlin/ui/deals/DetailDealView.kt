@@ -4,12 +4,11 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,10 +40,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -53,13 +49,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cashwises.composeapp.generated.resources.Res
-import cashwises.composeapp.generated.resources.coupon_code
 import cashwises.composeapp.generated.resources.free
 import cashwises.composeapp.generated.resources.offers_ends_in_some_day
 import cashwises.composeapp.generated.resources.offers_ends_today
+import cashwises.composeapp.generated.resources.offers_expired
 import cashwises.composeapp.generated.resources.some_day_ago
+import cashwises.composeapp.generated.resources.successfully_copied
 import cashwises.composeapp.generated.resources.today
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
@@ -68,7 +64,6 @@ import compose.icons.TablerIcons
 import compose.icons.tablericons.ExternalLink
 import compose.icons.tablericons.Scissors
 import domain.model.DealModel
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -79,24 +74,29 @@ import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_green
 import org.company.app.theme.cw_dark_green_dark
+import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import ui.AppConstants
 import ui.components.CustomBackgroundView
 import ui.components.CustomImagesSlider
-import ui.components.CustomTopAppBar
 import ui.components.CustomToast
-import ui.components.NotificationBarEnum
+import ui.components.CustomTopAppBar
+import ui.components.ToastStatus
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.ViewModel.DealsViewModel
 import kotlin.math.absoluteValue
 
 
-@OptIn(InternalVoyagerApi::class)
 @Composable
-fun DetailDealScreen(onClick: () -> Unit) {
+fun DetailDealScreen(
+    innerPadding: PaddingValues = PaddingValues(),
+    onNavigate: (String) -> Unit,
+    onClick: () -> Unit
+) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val scrollState = rememberScrollState(0)
@@ -110,7 +110,7 @@ fun DetailDealScreen(onClick: () -> Unit) {
     )
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(top = 0.dp),
         contentAlignment = Alignment.Center
     ) {
         val scope = this
@@ -123,7 +123,7 @@ fun DetailDealScreen(onClick: () -> Unit) {
             textColor = if (scrollState.value < 800) cw_dark_blackText else cw_dark_whiteText,
             isDivider = false,
             backButtonAction = {
-                onClick()
+                onNavigate(AppConstants.BackClickRoute.route)
             })
         uiState.selectedDeal?.let { deal ->
             DetailDealView(
@@ -196,8 +196,8 @@ fun DetailDealScreen(onClick: () -> Unit) {
         if (showToast) {
             CustomToast(
                 modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 50.dp),
-                status = NotificationBarEnum.SUCCESS,
-                title = clipCopyText
+                status = ToastStatus.SUCCESS,
+                title = stringResource(Res.string.successfully_copied, clipCopyText)
             ) { showToast = false }
         }
     }
@@ -214,23 +214,14 @@ fun DetailDealView(
     clipBoard: (String) -> Unit
 ) {
     val richTextState = rememberRichTextState()
-    var showToast by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val haptic = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) {
         richTextState.setHtml(dealModel.description)
     }
     Column(
         modifier = modifier.widthIn(min = 300.dp, max = 900.dp)
-            .verticalScroll(scrollState)
-            .pointerInput(Unit) {
-                detectVerticalDragGestures { change, dragAmount ->
-                    coroutineScope.launch {
-                        scrollState.scrollBy(-dragAmount)
-                    }
-                }
-            },
+            .verticalScroll(scrollState),
 //            .draggable(
 //                orientation = Orientation.Vertical,
 //                state = rememberDraggableState { delta ->
@@ -270,12 +261,13 @@ fun DetailDealView(
             color = cw_dark_whiteText,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
         )
+        Spacer(modifier = Modifier.height(5.dp))
         dealModel.expirationDate?.let { expirationDate ->
             val expiration = Clock.System.now()
                 .daysUntil(
                     Instant.parse(expirationDate),
                     timeZone = TimeZone.UTC
-                ).absoluteValue
+                )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -287,10 +279,10 @@ fun DetailDealView(
                     .padding(vertical = 3.dp),
                 contentAlignment = Alignment.Center
             ) {
-
                 Text(
-                    if (expiration == 0) stringResource(Res.string.offers_ends_today) else
-                        stringResource(Res.string.offers_ends_in_some_day, expiration),
+                    if (expiration == 0) stringResource(Res.string.offers_ends_today)
+                    else if (expiration < 0) stringResource(Res.string.offers_expired)
+                    else stringResource(Res.string.offers_ends_in_some_day, expiration),
                     fontSize = 12.sp,
                     color = cw_dark_whiteText,
                     textAlign = TextAlign.Center,
@@ -298,11 +290,12 @@ fun DetailDealView(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
         dealModel.couponCode?.let { couponCode ->
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
+                .background(cw_dark_onBackground, shape = MaterialTheme.shapes.large)
                 .height(50.dp)
                 .drawBehind {
                     val stroke = Stroke(
@@ -316,17 +309,16 @@ fun DetailDealView(
                     )
                 }.noRippleClickable {
                     clipBoard(couponCode)
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     TablerIcons.Scissors,
                     contentDescription = null,
-                    modifier = Modifier.align(Alignment.TopStart).offset(x = 20.dp, y = (-10).dp),
+                    modifier = Modifier.align(Alignment.TopStart).offset(x = 20.dp, y = (-12).dp),
                     tint = cw_dark_green
                 )
-                Text(stringResource(Res.string.coupon_code, couponCode), color = cw_dark_green_dark)
+                Text(couponCode, color = cw_dark_green_dark)
             }
         }
 
@@ -335,7 +327,7 @@ fun DetailDealView(
             fontSize = 20.sp,
             color = cw_dark_grayText,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).offset(y = 15.dp)
         )
         OutlinedRichTextEditor(
             state = richTextState,

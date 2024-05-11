@@ -26,13 +26,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import ui.AppConstants
+import ui.AppScreen
 import ui.account.auth.login.LogInView
+import ui.account.auth.login.LoginViewModel
 import ui.account.auth.registration.PasswordForget
 import ui.account.auth.registration.RegistrationView
 import ui.account.auth.registration.viewModel.RegistrationViewModel
@@ -42,26 +44,21 @@ import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
 
-class AuthScreen : Screen {
-    @Composable
-    override fun Content() {
-        AuthView { }
-    }
-
-}
-
 @Composable
-fun AuthView(onNavigate: () -> Unit) {
+fun AuthView(onNavigate: (String) -> Unit) {
     val registerViewModel: RegistrationViewModel = koinInject()
     val registeUiState by registerViewModel.state.collectAsState()
-
+    val loginViewModel: LoginViewModel = koinInject()
+    val loginUiState by loginViewModel.state.collectAsState()
     var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
     var animationState by remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
         CustomTopAppBar(title = currentView.name, backButtonAction = {
-            onNavigate()
+            onNavigate(AppConstants.BackClickRoute.route)
         })
+    }, snackbarHost = {
+
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
@@ -116,7 +113,7 @@ fun AuthView(onNavigate: () -> Unit) {
                     registeUiState.isRegistrationSuccess -> {
                         VerificationView(errorMessage = registeUiState.verificationCodeError) {
                             registerViewModel.doVerification(it) {
-                                onNavigate()
+                                onNavigate("")
                             }
                         }
                     }
@@ -135,10 +132,12 @@ fun AuthView(onNavigate: () -> Unit) {
                                     )
                                 ) {
                                     LogInView(
+                                        viewModel = loginViewModel,
+                                        uiState = loginUiState,
                                         toPasswordForget = {
                                             currentView = AuthEnum.PASSWORDFORGET
                                         }, toHome = {
-                                            onNavigate()
+                                            onNavigate("")
                                         })
                                 }
                             }
@@ -172,6 +171,7 @@ fun AuthView(onNavigate: () -> Unit) {
                 }
 
             }
+
         }
     }
 }

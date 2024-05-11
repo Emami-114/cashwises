@@ -82,13 +82,13 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                     _state.value = _state.value.copy(isLoading = true)
 
                     try {
-                        val registeModel = RegisterModel(
+                        val registerModel = RegisterModel(
                             name = _state.value.nameText,
                             email = _state.value.emailText,
                             password = _state.value.passwordText,
                             passwordConfirm = _state.value.passwordConfirm
                         )
-                        useCase.register(registeModel) {
+                        useCase.register(registerModel) {
                             _state.update {
                                 it.copy(
                                     isRegistrationSuccess = true,

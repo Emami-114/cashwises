@@ -27,6 +27,7 @@
     <string name="offers_ends_in_some_day">Offers ends in %1$s day</string>
     <string name="some_day_ago">%1$s day ago</string>
     <string name="offers_ends_today">Offers ends today</string>
+    <string name="offers_expired">Expired</string>
 
     <!--  Global Strings  -->
     <string name="btn_send">Send</string>
@@ -39,5 +40,6 @@
     <string name="free">Free</string>
     <string name="coupon_code">Coupon code: %1$s</string>
     <string name="successfully_registered">Successfully registered</string>
-
+    <string name="successfully_login">Successfully logged</string>
+    <string name="successfully_copied">Successfully copied: %1$s</string>
 </resources>

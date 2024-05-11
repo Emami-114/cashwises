@@ -10,6 +10,7 @@ import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNNotificationSound
 import platform.UserNotifications.UNTimeIntervalNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
+import platform.darwin.nil
 
 internal actual object LocalPushNotification {
     private val center = UNUserNotificationCenter.currentNotificationCenter()
@@ -38,12 +39,7 @@ internal actual object LocalPushNotification {
     actual fun getPendingRequestCount(pendingCount: (Int) -> Unit) {
         center.getPendingNotificationRequestsWithCompletionHandler { pending ->
             pendingCount(pending?.size ?: 0)
-
         }
-    }
-
-    actual fun removeRequest(identifier: String) {
-        center.removePendingNotificationRequestsWithIdentifiers(identifiers = listOf(identifier))
     }
 
     actual fun removeAllRequest() {

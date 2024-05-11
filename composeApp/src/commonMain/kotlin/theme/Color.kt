@@ -93,7 +93,7 @@ internal val cw_dark_grayText = Color(0xFF899393)
 internal val cw_dark_blackText = Color(0xFF2E2A2A)
 // background Color
 internal val cw_dark_background = Color(0xFF252831)
-internal val cw_dark_onBackground = Color(0xFF232630)
+internal val cw_dark_onBackground = Color(0xFF21242E)
 // Border color
 internal val cw_dark_borderColor = Color(0xFF33363E)
 internal val cw_dark_red = Color(0xFFa62424)
