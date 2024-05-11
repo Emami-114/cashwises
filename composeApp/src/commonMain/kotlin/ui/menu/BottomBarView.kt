@@ -18,37 +18,45 @@ import compose.icons.tablericons.Home
 import compose.icons.tablericons.Search
 import compose.icons.tablericons.User
 import org.company.app.theme.cw_dark_background
+import ui.BottomBarScreen
 import ui.components.customModiefier.customBorder
 import ui.menu.components.BottomBarItem
 
 @Composable
-fun BottomBarView(currentTab: BottomBarViewEnum, selectedTab: (BottomBarViewEnum) -> Unit) {
+fun BottomNavigationView(
+    modifier: Modifier = Modifier,
+    currentScreenRouter: String,
+    onNavigate: (String) -> Unit
+) {
     Row(
-        modifier = Modifier.padding(bottom = 20.dp).padding(horizontal = 15.dp).fillMaxWidth()
+        modifier = modifier.padding(bottom = 20.dp).padding(horizontal = 15.dp).fillMaxWidth()
             .height(70.dp).customBorder(shape = MaterialTheme.shapes.extraLarge)
             .background(cw_dark_background, shape = MaterialTheme.shapes.extraLarge)
             .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        BottomBarViewEnum.entries.forEach { bottomBarViewEnum ->
+        val listScreen = listOf(
+            BottomBarScreen.Home,
+            BottomBarScreen.Search,
+            BottomBarScreen.Notification,
+            BottomBarScreen.Account
+        )
+        listScreen.forEach { bottomBarScreen ->
             BottomBarItem(
                 modifier = Modifier,
-                title = bottomBarViewEnum.title,
-                icon = bottomBarViewEnum.icon,
-                currentTitle = currentTab.title
+                tab = bottomBarScreen,
+                isSelected = currentScreenRouter == bottomBarScreen.route
             ) {
-                selectedTab(bottomBarViewEnum)
+                onNavigate(bottomBarScreen.route)
             }
         }
     }
 }
 
-enum class BottomBarViewEnum(
-    val title: String, val icon: ImageVector
-) {
-    HOME(title = "Home", icon = TablerIcons.Home),
-    SEARCH(title = "Search", icon = TablerIcons.Search),
-    NOTIFICATION(title = "Notification", icon = TablerIcons.Bell),
-    ACCOUNT(title = "Account", icon = TablerIcons.User)
-}
+//enum class BottomBarScreens(val title: String, val icon: ImageVector) {
+//    Home(title = "Home", icon = TablerIcons.Home),
+//    Search(title = "Search", icon = TablerIcons.Search),
+//    Notification(title = "Notification", icon = TablerIcons.Bell),
+//    Account(title = "Account", icon = TablerIcons.User)
+//}

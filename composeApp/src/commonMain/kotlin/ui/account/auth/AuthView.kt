@@ -31,7 +31,10 @@ import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import ui.AppConstants
+import ui.AppScreen
 import ui.account.auth.login.LogInView
+import ui.account.auth.login.LoginViewModel
 import ui.account.auth.registration.PasswordForget
 import ui.account.auth.registration.RegistrationView
 import ui.account.auth.registration.viewModel.RegistrationViewModel
@@ -42,17 +45,20 @@ import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
 
 @Composable
-fun AuthView(onBack: () -> Unit) {
+fun AuthView(onNavigate: (String) -> Unit) {
     val registerViewModel: RegistrationViewModel = koinInject()
     val registeUiState by registerViewModel.state.collectAsState()
-
+    val loginViewModel: LoginViewModel = koinInject()
+    val loginUiState by loginViewModel.state.collectAsState()
     var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
     var animationState by remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
         CustomTopAppBar(title = currentView.name, backButtonAction = {
-            onBack()
+            onNavigate(AppConstants.BackClickRoute.route)
         })
+    }, snackbarHost = {
+
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
@@ -107,7 +113,7 @@ fun AuthView(onBack: () -> Unit) {
                     registeUiState.isRegistrationSuccess -> {
                         VerificationView(errorMessage = registeUiState.verificationCodeError) {
                             registerViewModel.doVerification(it) {
-//                                    navigator.pop()
+                                onNavigate("")
                             }
                         }
                     }
@@ -125,11 +131,14 @@ fun AuthView(onBack: () -> Unit) {
                                         animationSpec = tween(delayMillis = 300)
                                     )
                                 ) {
-                                    LogInView(toPasswordForget = {
-                                        currentView = AuthEnum.PASSWORDFORGET
-                                    }, toHome = {
-                                        onBack()
-                                    })
+                                    LogInView(
+                                        viewModel = loginViewModel,
+                                        uiState = loginUiState,
+                                        toPasswordForget = {
+                                            currentView = AuthEnum.PASSWORDFORGET
+                                        }, toHome = {
+                                            onNavigate("")
+                                        })
                                 }
                             }
 
@@ -162,6 +171,7 @@ fun AuthView(onBack: () -> Unit) {
                 }
 
             }
+
         }
     }
 }

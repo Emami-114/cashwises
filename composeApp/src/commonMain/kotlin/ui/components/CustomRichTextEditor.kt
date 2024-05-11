@@ -88,9 +88,9 @@ fun CustomRichTextEditor(
     modifier: Modifier = Modifier
 ) {
     val titleSize = MaterialTheme.typography.titleLarge.fontSize
-    val subTitleSize = MaterialTheme.typography.displaySmall.fontSize
-    val textRange by mutableStateOf(TextRange.Zero)
-
+    LaunchedEffect(Unit) {
+        state.toggleSpanStyle(spanStyle = SpanStyle(color = cw_dark_whiteText))
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -142,6 +142,7 @@ fun CustomRichTextEditor(
                 println("Editor ** ${state.toHtml()}")
             }
         )
+
         RichTextEditor(
             modifier = modifier
                 .fillMaxWidth(),
@@ -205,25 +206,25 @@ fun EditorControls(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ControlWrapper(
-            selected = boldSelected,
+            selected = state.currentSpanStyle.fontWeight == FontWeight.Bold,
             onChangeClick = { boldSelected = it },
             onClick = onBoldClick,
             icon = TablerIcons.Bold
         )
         ControlWrapper(
-            selected = italicSelected,
+            selected = state.currentSpanStyle.fontStyle == FontStyle.Italic,
             onChangeClick = { italicSelected = it },
             onClick = onItalicClick,
             icon = TablerIcons.Italic
         )
         ControlWrapper(
-            selected = underlineSelected,
+            selected = state.currentSpanStyle.textDecoration == TextDecoration.Underline,
             onChangeClick = { underlineSelected = it },
             onClick = onUnderlineClick,
             icon = TablerIcons.Underline
         )
         ControlWrapper(
-            selected = titleSelected,
+            selected = state.currentSpanStyle.fontSize == MaterialTheme.typography.titleLarge.fontSize,
             onChangeClick = { titleSelected = it },
             onClick = onTitleClick,
             icon = TablerIcons.LetterT
@@ -235,7 +236,8 @@ fun EditorControls(
 //            icon = TablerIcons.LetterT
 //        )
         FontSizeChoise(onSubtitleClick)
-        CustomColorPicker { color ->
+
+        CustomColorPicker(currentColor = state.currentSpanStyle.color) { color ->
             onTextColorClick(color)
         }
 
@@ -264,7 +266,7 @@ fun EditorControls(
             icon = TablerIcons.AlignRight
         )
         ControlWrapper(
-            selected = formatListNumber,
+            selected = state.isOrderedList,
             onChangeClick = { formatListNumber = it },
             onClick = {
                 if (!state.isOrderedList) {
@@ -280,7 +282,7 @@ fun EditorControls(
             icon = TablerIcons.List
         )
         ControlWrapper(
-            selected = formatListBulleted,
+            selected = state.isUnorderedList,
             onChangeClick = { formatListBulleted = it },
             onClick = {
                 if (!state.isUnorderedList) {
@@ -430,15 +432,18 @@ fun LinkDialog(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CustomColorPicker(selectedColor: (Color) -> Unit) {
+fun CustomColorPicker(
+    currentColor: Color = cw_dark_whiteText,
+    selectedColor: (Color) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     val colors = listOf(
-        cw_dark_background, cw_dark_primary, cw_dark_onPrimary, cw_dark_whiteText,
+        cw_dark_primary, cw_dark_onPrimary, cw_dark_whiteText,
         cw_dark_grayText, cw_dark_blackText, cw_dark_green, cw_dark_red
     )
-    var selected by remember { mutableStateOf(cw_dark_whiteText) }
+//    var selected by remember { mutableStateOf(currentColor) }
     Box(modifier = Modifier.clip(MaterialTheme.shapes.medium)
-        .background(selected)
+        .background(currentColor)
         .clickable { expanded = !expanded }
         .size(40.dp)
         .customBorder(shape = MaterialTheme.shapes.medium)
@@ -463,7 +468,7 @@ fun CustomColorPicker(selectedColor: (Color) -> Unit) {
                             .background(color)
                             .clickable {
                                 selectedColor(color)
-                                selected = color
+//                                selected = color
                                 expanded = false
                             }
                     )

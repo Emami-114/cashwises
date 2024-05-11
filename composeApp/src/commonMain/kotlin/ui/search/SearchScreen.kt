@@ -41,10 +41,9 @@ import ui.deals.components.CategoryItemView
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
-
 @OptIn(InternalResourceApi::class, ExperimentalResourceApi::class)
 @Composable
-fun SearchView() {
+fun SearchView(onNavigate: (String) -> Unit) {
     var search by remember { mutableStateOf("") }
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
@@ -72,6 +71,7 @@ fun SearchView() {
                 else if (maxWidth > 700.dp && maxWidth < 900.dp) 3
                 else 3
             CustomBackgroundView()
+
             Column {
                 Spacer(modifier = Modifier.height(15.dp))
                 LazyVerticalGrid(
@@ -86,7 +86,7 @@ fun SearchView() {
                         uiState.deals != null && uiState.searchQuery.isEmpty().not() -> {
                             if (uiState.deals != null) {
                                 items(uiState.deals!!) { deals ->
-                                    ProductRow(deals) {
+                                    ProductRow(dealModel = deals) {
                                     }
                                 }
                             }
@@ -109,7 +109,6 @@ fun SearchView() {
         }
     }
 }
-
 
 class SearchScreenViewModel : ViewModel(), KoinComponent {
     private val dealUseCase: DealsUseCase by inject()

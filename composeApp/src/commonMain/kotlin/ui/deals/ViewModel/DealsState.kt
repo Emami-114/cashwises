@@ -26,8 +26,8 @@ data class DealsState(
     val images: List<String>? = null,
     val userId: String? = null,
     val videoUrl: String? = null,
-    val dealModel: DealModel? = null,
     val thumbnailByte: ImageModel? = null,
     var imagesByte: List<ImageModel>? = null,
-    val dealCreatedSuccess: Boolean = false
+    val dealCreatedSuccess: Boolean = false,
+    val selectedDeal: DealModel? = null
 )

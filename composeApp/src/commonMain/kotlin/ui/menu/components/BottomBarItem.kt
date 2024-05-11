@@ -17,30 +17,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
+import ui.BottomBarScreen
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun BottomBarItem(
     modifier: Modifier = Modifier,
-    title: String,
-    icon: ImageVector,
-    currentTitle: String,
-    onClick: () -> Unit
+    tab: BottomBarScreen,
+    isSelected: Boolean = false,
+    onClick: (BottomBarScreen) -> Unit
 ) {
     Box(
-        modifier = modifier.noRippleClickable(onClick),
+        modifier = modifier.noRippleClickable {
+            onClick(tab)
+        },
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier.height(50.dp)
                 .background(
-                    if (title == currentTitle) cw_dark_primary else Color.Transparent,
+                    if (isSelected) cw_dark_primary else Color.Transparent,
                     shape = MaterialTheme.shapes.extraLarge
                 )
                 .padding(horizontal = 15.dp),
@@ -48,15 +49,15 @@ fun BottomBarItem(
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = icon,
-                contentDescription = title,
+                imageVector = tab.defaultIcon,
+                contentDescription = tab.title,
                 modifier = Modifier.size(22.dp),
                 tint = cw_dark_whiteText
             )
             Spacer(modifier = Modifier.width(5.dp))
-            AnimatedVisibility(title == currentTitle) {
+            AnimatedVisibility(isSelected) {
                 Text(
-                    text = title,
+                    text = tab.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = cw_dark_whiteText

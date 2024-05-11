@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.captionBar
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.russhwolf.settings.Settings
 import theme.AppTheme
-import ui.home.HomeScreen
+import utils.LocalPushNotification
 
 var settings = Settings()
 
@@ -27,6 +27,9 @@ fun App() = AppTheme {
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HomeScreen()
+        LaunchedEffect(Unit) {
+            LocalPushNotification.requestAuthorization { }
+        }
+        HomeNav()
     }
 }

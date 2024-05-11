@@ -28,10 +28,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
+import cashwises.composeapp.generated.resources.invalid_email_address_error
 import cashwises.composeapp.generated.resources.password
 import cashwises.composeapp.generated.resources.password_forget
+import cashwises.composeapp.generated.resources.password_required_error
+import cashwises.composeapp.generated.resources.successfully_login
+import cashwises.composeapp.generated.resources.successfully_registered
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Eye
 import compose.icons.tablericons.EyeOff
@@ -42,12 +47,16 @@ import org.koin.compose.koinInject
 import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTextField
+import ui.components.CustomToast
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
-fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
-    val viewModel: LoginViewModel = koinInject()
-    val uiState by viewModel.state.collectAsState()
+fun LogInView(
+    viewModel: LoginViewModel,
+    uiState: LoginState,
+    toPasswordForget: () -> Unit,
+    toHome: () -> Unit
+) {
     var passwordVisible by remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
 //        CustomBackgroundView()
@@ -63,8 +72,14 @@ fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
             }
 
             uiState.isLoginSuccess -> {
-                toHome()
-                viewModel.onEvent(LoginEvent.OnSetDefaultState)
+                CustomToast(
+                    modifier = Modifier.zIndex(3f).align(Alignment.BottomCenter)
+                        .padding(bottom = 50.dp),
+                    title = stringResource(Res.string.successfully_login)
+                ) {
+                    toHome()
+                    viewModel.onEvent(LoginEvent.OnSetDefaultState)
+                }
             }
 
             uiState.errorMessage.isNullOrEmpty().not() -> {
@@ -86,7 +101,9 @@ fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
                         leadingIcon = {
                             Icon(TablerIcons.Mail, contentDescription = null)
                         },
-                        errorText = uiState.emailError,
+                        errorText = if (uiState.emailError.isNullOrEmpty()
+                                .not()
+                        ) stringResource(Res.string.invalid_email_address_error) else null,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
@@ -100,7 +117,9 @@ fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
                         leadingIcon = {
                             Icon(TablerIcons.Lock, contentDescription = null)
                         },
-                        errorText = uiState.passwordError,
+                        errorText = if (uiState.passwordError.isNullOrEmpty().not()) stringResource(
+                            Res.string.password_required_error
+                        ) else null,
                         label = { Text(stringResource(Res.string.password)) },
                         trailingIcon = {
                             Icon(if (passwordVisible) TablerIcons.Eye else TablerIcons.EyeOff,
@@ -134,7 +153,6 @@ fun LogInView(toPasswordForget: () -> Unit, toHome: () -> Unit) {
                         modifier = Modifier.fillMaxWidth().noRippleClickable {
                             toPasswordForget()
                         })
-
                 }
             }
         }

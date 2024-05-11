@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,7 +37,7 @@ import ui.components.customModiefier.noRippleClickable
 @Composable
 fun CustomSwitch(
     modifier: Modifier = Modifier,
-    title: String = "",
+    textView: @Composable (RowScope.() -> Unit)? = null,
     value: Boolean,
     errorText: String? = null,
     onValueChange: (Boolean) -> Unit
@@ -54,25 +55,24 @@ fun CustomSwitch(
         else MaterialTheme.colorScheme.onSurface,
         animationSpec = tween(600)
     )
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = modifier,
+            modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.weight(8f)) {
-                Text(
-                    title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
+            textView?.let { view ->
+                Row(modifier = Modifier.weight(9f), content = view)
             }
+
             Box(
-                modifier = Modifier.weight(2f),
-                contentAlignment = Alignment.Center,
+                modifier = Modifier.weight(2f)
+                    ,
+                contentAlignment = Alignment.TopEnd,
             ) {
                 Row(
-                    modifier = Modifier.height(height)
+                    modifier = Modifier
+                        .height(height)
                         .width(width)
                         .clip(RoundedCornerShape(height))
                         .background(animatedColor)

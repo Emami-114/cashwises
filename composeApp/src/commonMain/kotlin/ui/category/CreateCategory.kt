@@ -79,7 +79,7 @@ fun CreateCategory(
                 MainCategoryList(uiState, onSelected = { category ->
                     viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
                 })
-                CustomSwitch(title = "Published", value = uiState.published ?: false) {
+                CustomSwitch(textView = { Text("Published") }, value = uiState.published ?: false) {
                     viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
                 }
                 CustomButton(title = "Create Category") {

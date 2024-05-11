@@ -9,25 +9,33 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import domain.model.DealModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.koinInject
+import ui.AppScreen
 import ui.components.CustomBackgroundView
+import ui.components.CustomSlideTransition
 import ui.components.ProductRow
 import ui.deals.ViewModel.DealsViewModel
 
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DealsView(paddingValues: PaddingValues, selectedDeal: (DealModel) -> Unit) {
+fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
+    var selectedDeal by remember { mutableStateOf<DealModel?>(null) }
+    var showDetail by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.getDeals()
     }
@@ -42,19 +50,21 @@ fun DealsView(paddingValues: PaddingValues, selectedDeal: (DealModel) -> Unit) {
             else if (maxWidth > 900.dp && maxWidth < 1150.dp) 4
             else if (maxWidth > 700.dp && maxWidth < 900.dp) 3
             else 2
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(column),
             state = rememberLazyGridState,
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
             modifier = Modifier
-                .padding(paddingValues)
+//                .padding(paddingValues)
                 .padding(all = 5.dp)
         ) {
             items(uiState.deals) { deal ->
-                ProductRow(deal, onClick = {
-                    selectedDeal(deal)
+                ProductRow(dealModel = deal, onClick = {
+                    selectedDeal = deal
+                    showDetail = true
+                    viewModel.doChangeSelectedDeal(deal)
+                    onNavigate(AppScreen.Detail.route)
                 })
             }
         }

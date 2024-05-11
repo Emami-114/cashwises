@@ -1,5 +1,9 @@
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.seiko.imageloader.ImageLoader
@@ -12,12 +16,22 @@ import org.koin.core.context.GlobalContext.startKoin
 import ui.App
 import java.io.File
 
+object TrayIcon : Painter() {
+    override val intrinsicSize = Size(256f, 256f)
+
+    override fun DrawScope.onDraw() {
+        drawOval(Color(0xFFFFA500))
+    }
+}
+
 fun main() = application {
     startKoin { modules(getSharedModules()) }
+
     Window(onCloseRequest = ::exitApplication, title = "cashwises") {
         CompositionLocalProvider(
             LocalImageLoader provides remember { generateImageLoader() },
         ) {
+            
             App()
         }
     }

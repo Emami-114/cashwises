@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.buildConfig)
-
 }
 
 kotlin {
@@ -81,6 +80,11 @@ kotlin {
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            // navigation
+//            implementation(libs.voyager.navigation)
+//            implementation(libs.voyager.tab)
+//            implementation(libs.voyager.transition)
+
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha02")
 
             // Ktor

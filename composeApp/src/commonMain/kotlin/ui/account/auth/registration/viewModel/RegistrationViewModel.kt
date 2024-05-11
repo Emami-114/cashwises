@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ui.account.auth.registration.RegistrationEvent
@@ -43,46 +44,36 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
     private fun doRegistration(event: RegistrationEvent.OnRegistration) {
         when {
             _state.value.nameText.isEmpty() || _state.value.nameText.isBlank() -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(nameError = getString(Res.string.username_required_error))
-                    }
+                _state.update {
+                    it.copy(nameError = "Invalid UserName")
                 }
             }
 
             _state.value.emailText.isBlank() || _state.value.emailText.isEmpty() || !isValidEmail(
                 _state.value.emailText
             ) -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(emailError = getString(Res.string.invalid_email_address_error))
-                    }
+                _state.update {
+                    it.copy(emailError = "Invalid E-mail")
                 }
             }
 
 
             _state.value.passwordText.length < 6 || _state.value.passwordText.isEmpty() || _state.value.passwordText.isBlank() -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(passwordError = getString(Res.string.password_must_be_6characters_error))
-                    }
+                _state.update {
+                    it.copy(passwordError = "Invalid password")
                 }
             }
 
             _state.value.passwordConfirm != _state.value.passwordText -> {
-                viewModelScope.launch {
-                    _state.update {
-                        it.copy(passwordConfirmError = getString(Res.string.password_confirm_not_match_error))
-                    }
+                _state.update {
+                    it.copy(passwordConfirmError = "Invalid passwordConfirm")
                 }
             }
 
             !_state.value.acceptedDataProtection -> {
-                viewModelScope.launch {
                     _state.update {
-                        it.copy(acceptedDataProtectionError = getString(Res.string.accept_data_protection_error))
+                        it.copy(acceptedDataProtectionError = "Data privacy not accepted")
                     }
-                }
             }
 
             else -> {
@@ -91,13 +82,13 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                     _state.value = _state.value.copy(isLoading = true)
 
                     try {
-                        val registeModel = RegisterModel(
+                        val registerModel = RegisterModel(
                             name = _state.value.nameText,
                             email = _state.value.emailText,
                             password = _state.value.passwordText,
                             passwordConfirm = _state.value.passwordConfirm
                         )
-                        useCase.register(registeModel) {
+                        useCase.register(registerModel) {
                             _state.update {
                                 it.copy(
                                     isRegistrationSuccess = true,

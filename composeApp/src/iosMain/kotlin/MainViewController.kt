@@ -11,6 +11,7 @@ import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
 import ui.App
+import utils.LocalPushNotification
 
 @OptIn(ExperimentalComposeApi::class)
 fun MainViewController() = ComposeUIViewController(
