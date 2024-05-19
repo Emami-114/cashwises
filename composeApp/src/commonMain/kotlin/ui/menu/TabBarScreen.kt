@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -49,6 +50,7 @@ import ui.components.customModiefier.noRippleClickable
 import ui.deals.CreateDealView
 import ui.menu.components.TabBarItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabBarScreen(onNavigate: (String) -> Unit) {
     var currentItem by remember { mutableStateOf(TabItemEnum.CREATE_DEAL) }

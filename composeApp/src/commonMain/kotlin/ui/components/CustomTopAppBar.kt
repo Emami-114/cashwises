@@ -11,23 +11,33 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import compose.icons.TablerIcons
+import compose.icons.tablericons.ArrowBackUp
 import compose.icons.tablericons.ChevronLeft
+import compose.icons.tablericons.Plus
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_blackText
+import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_whiteText
 import ui.components.customModiefier.noRippleClickable
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
     modifier: Modifier = Modifier,
@@ -38,11 +48,30 @@ fun CustomTopAppBar(
     backgroundColor: Color = cw_dark_background,
     textColor: Color = if (hasBackButtonBackground) cw_dark_blackText else cw_dark_whiteText,
     isDivider: Boolean = true,
+    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
+
+//        CenterAlignedTopAppBar(
+//            modifier = Modifier.background(backgroundColor),
+//            title = { Text("TOP APP BAR", color = cw_dark_whiteText) },
+//            navigationIcon = {
+//                Icon(imageVector = TablerIcons.ArrowBackUp, contentDescription = null)
+//            },
+//            actions = { Icon(TablerIcons.Plus, contentDescription = null) },
+//            scrollBehavior = scrollBehavior,
+//            colors = TopAppBarColors(
+//                containerColor = backgroundColor,
+//                scrolledContainerColor = backgroundColor,
+//                navigationIconContentColor = textColor,
+//                titleContentColor = textColor,
+//                actionIconContentColor = textColor
+//            )
+//        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -59,7 +88,7 @@ fun CustomTopAppBar(
                         modifier = Modifier.size(30.dp)
                             .background(
                                 if (hasBackButtonBackground)
-                                    cw_dark_whiteText else Color.Transparent,
+                                    cw_dark_background else Color.Transparent,
                                 shape = MaterialTheme.shapes.extraLarge
                             ),
                         contentAlignment = Alignment.Center

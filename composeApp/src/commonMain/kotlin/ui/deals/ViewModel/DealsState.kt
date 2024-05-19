@@ -29,5 +29,8 @@ data class DealsState(
     val thumbnailByte: ImageModel? = null,
     var imagesByte: List<ImageModel>? = null,
     val dealCreatedSuccess: Boolean = false,
-    val selectedDeal: DealModel? = null
+    val selectedDeal: DealModel? = null,
+    val couponCode: String? = null,
+    val tags: List<String>? = null,
+    val shippingCosts: Double? = null,
 )

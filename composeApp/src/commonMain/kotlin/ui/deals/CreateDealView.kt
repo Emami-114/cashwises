@@ -184,6 +184,27 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         placeholder = "Video url",
                         modifier = Modifier
                     )
+
+                    CustomTextField(
+                        value = uiState.couponCode ?: "",
+                        onValueChange = { viewModel.onEvent(DealEvent.OnCouponCodeChange(it)) },
+                        placeholder = "Coupon code",
+                        modifier = Modifier
+                    )
+                    CustomTextField(
+                        value = uiState.tags?.joinToString("") ?: "",
+                        onValueChange = { viewModel.onEvent(DealEvent.OnTagsChange(listOf(it))) },
+                        placeholder = "Tags",
+                        modifier = Modifier
+                    )
+
+                    CustomTextField(
+                        value = "${uiState.shippingCosts ?: 0.0}",
+                        onValueChange = { viewModel.onEvent(DealEvent.OnShippingCostChange(it.toDouble())) },
+                        placeholder = "Shipping costs",
+                        modifier = Modifier,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
                     DatePicker(
                         state = dataPickerState,
                         showModeToggle = true,

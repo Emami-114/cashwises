@@ -25,6 +25,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,6 +42,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -61,6 +64,7 @@ import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 import compose.icons.TablerIcons
+import compose.icons.tablericons.Copy
 import compose.icons.tablericons.ExternalLink
 import compose.icons.tablericons.Scissors
 import domain.model.DealModel
@@ -91,9 +95,9 @@ import ui.deals.ViewModel.DealsViewModel
 import kotlin.math.absoluteValue
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailDealScreen(
-    innerPadding: PaddingValues = PaddingValues(),
     onNavigate: (String) -> Unit,
     onClick: () -> Unit
 ) {
@@ -101,33 +105,38 @@ fun DetailDealScreen(
     val uiState by viewModel.state.collectAsState()
     val scrollState = rememberScrollState(0)
     var showToast by remember { mutableStateOf(false) }
+    val topAppBarState = rememberTopAppBarState()
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(state = topAppBarState)
 
     val colorAnimation by animateColorAsState(
-        targetValue = if (scrollState.value < 800) Color.Transparent else cw_dark_background,
-        animationSpec = tween(200)
+        targetValue = if (scrollState.value < 700) cw_dark_background.copy(alpha = 0.03f) else cw_dark_background,
+        animationSpec = tween(600)
     )
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize().padding(top = 0.dp),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         val scope = this
         val maxWidth = scope.maxWidth
         CustomBackgroundView()
-        CustomTopAppBar(modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
+        CustomTopAppBar(
+            modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
             title = if (scrollState.value < 800) "" else uiState.selectedDeal?.title ?: "",
             backgroundColor = colorAnimation,
             hasBackButtonBackground = scrollState.value < 800,
-            textColor = if (scrollState.value < 800) cw_dark_blackText else cw_dark_whiteText,
+            textColor = cw_dark_whiteText,
             isDivider = false,
             backButtonAction = {
                 onNavigate(AppConstants.BackClickRoute.route)
-            })
+            },
+            scrollBehavior = scrollBehavior
+        )
         uiState.selectedDeal?.let { deal ->
             DetailDealView(
-                modifier = Modifier,
+                modifier = Modifier.nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                 dealModel = deal,
                 scrollState = scrollState,
                 onClick = {},
@@ -220,15 +229,8 @@ fun DetailDealView(
         richTextState.setHtml(dealModel.description)
     }
     Column(
-        modifier = modifier.widthIn(min = 300.dp, max = 900.dp)
+        modifier = modifier.fillMaxSize().widthIn(min = 300.dp, max = 900.dp)
             .verticalScroll(scrollState),
-//            .draggable(
-//                orientation = Orientation.Vertical,
-//                state = rememberDraggableState { delta ->
-//                    coroutineScope.launch {
-//                        scrollState.scrollBy(-delta)
-//                    }
-//                }),
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
         dealModel.thumbnail?.let { path ->
@@ -318,7 +320,10 @@ fun DetailDealView(
                     modifier = Modifier.align(Alignment.TopStart).offset(x = 20.dp, y = (-12).dp),
                     tint = cw_dark_green
                 )
-                Text(couponCode, color = cw_dark_green_dark)
+                Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+                    Text(couponCode, color = cw_dark_whiteText)
+                    Icon(TablerIcons.Copy, contentDescription = null, tint = cw_dark_green_dark)
+                }
             }
         }
 

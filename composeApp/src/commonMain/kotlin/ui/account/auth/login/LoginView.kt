@@ -73,8 +73,7 @@ fun LogInView(
 
             uiState.isLoginSuccess -> {
                 CustomToast(
-                    modifier = Modifier.zIndex(3f).align(Alignment.BottomCenter)
-                        .padding(bottom = 50.dp),
+                    modifier = Modifier,
                     title = stringResource(Res.string.successfully_login)
                 ) {
                     toHome()

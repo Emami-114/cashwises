@@ -57,6 +57,9 @@ class DealsViewModel : ViewModel(), KoinComponent {
             is DealEvent.OnImagesChange -> doChangeImages(event)
             is DealEvent.OnVideoUrlChange -> doChangeVideoUrl(event)
             is DealEvent.OnAction -> doCreateDeal(event)
+            is DealEvent.OnCouponCodeChange -> doChangeCouponCode(event)
+            is DealEvent.OnTagsChange -> doChangeTags(event)
+            is DealEvent.OnShippingCostChange -> doChangeShippingCosts(event)
             is DealEvent.OnSetDefaultState -> _state.value = DealsState()
         }
     }
@@ -67,6 +70,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
             it.copy(thumbnailByte = image)
         }
     }
+
     fun doChangeImages(image: List<ImageModel>?) {
         _state.update {
             it.copy(imagesByte = image)
@@ -100,6 +104,9 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 description = _state.value.description,
                 category = _state.value.category,
                 isFree = _state.value.isFree,
+                couponCode = _state.value.couponCode,
+                tags = _state.value.tags,
+                shippingCosts = _state.value.shippingCosts,
                 price = _state.value.price?.toDouble(),
                 offerPrice = _state.value.offerPrice?.toDouble(),
                 published = _state.value.published,
@@ -211,7 +218,33 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     private fun doChangeVideoUrl(event: DealEvent.OnVideoUrlChange) {
         _state.update {
-            it.copy(videoUrl = event.values)
+            it.copy(
+                videoUrl = event.value,
+            )
+        }
+    }
+
+    private fun doChangeCouponCode(event: DealEvent.OnCouponCodeChange) {
+        _state.update {
+            it.copy(
+                couponCode = event.value,
+            )
+        }
+    }
+
+    private fun doChangeTags(event: DealEvent.OnTagsChange) {
+        _state.update {
+            it.copy(
+                tags = event.values,
+            )
+        }
+    }
+
+    private fun doChangeShippingCosts(event: DealEvent.OnShippingCostChange) {
+        _state.update {
+            it.copy(
+                shippingCosts = event.value,
+            )
         }
     }
 

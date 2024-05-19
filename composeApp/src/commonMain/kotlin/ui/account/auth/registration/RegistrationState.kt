@@ -15,5 +15,6 @@ data class RegistrationState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val verificationCodeError: String? = null,
-    var verificationCode: List<String> = List(4) { "" }
+    val isVerificationSuccess: Boolean = false,
+    val otpCode: String = ""
 )

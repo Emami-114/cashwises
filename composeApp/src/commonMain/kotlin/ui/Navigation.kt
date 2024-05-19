@@ -3,11 +3,16 @@ package ui
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateValueAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -58,26 +63,29 @@ fun NavHostMain(
     navController: NavHostController = rememberNavController(),
     onNavigate: (rootName: String) -> Unit,
 ) {
+
+    val shoWAnimation by animateFloatAsState(
+        targetValue = if (navController.shouldShowBottomBar) 1f else 0f,
+        animationSpec = tween(200)
+    )
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = backStackEntry?.destination
     Scaffold(bottomBar = {
-        if (navController.shouldShowBottomBar)
+        if (navController.shouldShowBottomBar && shoWAnimation == 1f)
             BottomNavigationView(
+                modifier = Modifier,
                 currentScreenRouter = currentScreen?.route ?: ""
             ) { onNavigate(it) }
     }) { innerPadding ->
         CustomBackgroundView()
-        val paddingAnimation by animateDpAsState(
-            targetValue = if (navController.shouldShowBottomBar) innerPadding.calculateBottomPadding() else 0.dp,
-            animationSpec = tween(500)
-        )
+
 
         NavHost(
             navController = navController,
             startDestination = BottomBarScreen.Home.route,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding()),
+                ,
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Left,
@@ -115,7 +123,9 @@ fun NavHostMain(
                     fadeOut(animationSpec = tween(200))
                 }
             ) {
+//                Box(modifier = Modifier.fillMaxSize().padding(bottom = 80.dp)) {
                 HomeView(onNavigate)
+//                }
             }
             composable(
                 route = BottomBarScreen.Search.route,
@@ -153,7 +163,7 @@ fun NavHostMain(
             }
 
             composable(route = AppScreen.Detail.route) {
-                DetailDealScreen(innerPadding = innerPadding, onNavigate = onNavigate) { }
+                DetailDealScreen(onNavigate = onNavigate) { }
             }
             composable(route = AppScreen.Authentication.route) {
                 AuthView(onNavigate)

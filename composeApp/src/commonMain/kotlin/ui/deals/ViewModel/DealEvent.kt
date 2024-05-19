@@ -14,6 +14,9 @@ sealed interface DealEvent {
     data class OnProviderUrlChange(val value: String) : DealEvent
     data class OnThumbnailChange(val value: String) : DealEvent
     data class OnImagesChange(val values: List<String>) : DealEvent
-    data class OnVideoUrlChange(val values: String) : DealEvent
+    data class OnVideoUrlChange(val value: String) : DealEvent
+    data class OnCouponCodeChange(val value: String) : DealEvent
+    data class OnTagsChange(val values: List<String>) : DealEvent
+    data class OnShippingCostChange(val value: Double) : DealEvent
     data object OnSetDefaultState : DealEvent
 }

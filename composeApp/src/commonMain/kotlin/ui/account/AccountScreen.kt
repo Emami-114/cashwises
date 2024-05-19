@@ -30,20 +30,22 @@ fun AccountView(onNavigate: (String) -> Unit) {
 
                 CustomSlideTransition(visible = currentScreen != null, currentView = {
                     MenuBarView(onNavigate = {
-                                 onNavigate(it)
-                    },onClick = { tab ->
+                        onNavigate(it)
+                    }, onClick = { tab ->
 //                        currentScreen = tab
                     })
                 }, slideView = {
                     when (currentScreen) {
                         MenuBarEnum.LOGIN -> {
                             AuthView {
-//                                currentScreen = null
+                                currentScreen = null
                             }
                         }
+
                         MenuBarEnum.PROFILE -> {
 
                         }
+
                         MenuBarEnum.SETTING -> TODO()
                         MenuBarEnum.IMPRINT -> TODO()
                         MenuBarEnum.PRIVACYPOLICY -> TODO()

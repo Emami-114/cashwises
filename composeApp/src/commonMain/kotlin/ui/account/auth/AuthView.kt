@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -42,12 +43,14 @@ import ui.account.auth.verification.VerificationView
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomPopUp
+import ui.components.CustomToast
 import ui.components.CustomTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthView(onNavigate: (String) -> Unit) {
     val registerViewModel: RegistrationViewModel = koinInject()
-    val registeUiState by registerViewModel.state.collectAsState()
+    val registerUiState by registerViewModel.state.collectAsState()
     val loginViewModel: LoginViewModel = koinInject()
     val loginUiState by loginViewModel.state.collectAsState()
     var currentView by remember { mutableStateOf(AuthEnum.LOGIN) }
@@ -58,14 +61,15 @@ fun AuthView(onNavigate: (String) -> Unit) {
             onNavigate(AppConstants.BackClickRoute.route)
         })
     }, snackbarHost = {
-
+        if (registerUiState.isVerificationSuccess)
+            CustomToast {}
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
             Column(
                 modifier = Modifier.fillMaxSize().padding(paddingValue).padding(top = 20.dp)
             ) {
-                if (currentView != AuthEnum.PASSWORDFORGET && !registeUiState.isRegistrationSuccess) {
+                if (currentView != AuthEnum.PASSWORDFORGET && !registerUiState.isRegistrationSuccess) {
                     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)) {
                         CustomButton(
                             modifier = Modifier.weight(1f).padding(horizontal = 3.dp)
@@ -87,7 +91,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
                 Spacer(modifier = Modifier.height(15.dp))
 
                 when {
-                    registeUiState.isLoading -> {
+                    registerUiState.isLoading -> {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
@@ -97,24 +101,16 @@ fun AuthView(onNavigate: (String) -> Unit) {
                         }
                     }
 
-                    registeUiState.errorMessage.isNullOrEmpty().not() -> {
+                    registerUiState.errorMessage.isNullOrEmpty().not() -> {
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
                             CustomPopUp(
-                                present = registeUiState.errorMessage != null,
-                                message = registeUiState.errorMessage ?: "",
+                                present = registerUiState.errorMessage != null,
+                                message = registerUiState.errorMessage ?: "",
                             )
-                        }
-                    }
-
-                    registeUiState.isRegistrationSuccess -> {
-                        VerificationView(errorMessage = registeUiState.verificationCodeError) {
-                            registerViewModel.doVerification(it) {
-                                onNavigate("")
-                            }
                         }
                     }
 
@@ -137,7 +133,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
                                         toPasswordForget = {
                                             currentView = AuthEnum.PASSWORDFORGET
                                         }, toHome = {
-                                            onNavigate("")
+                                            onNavigate(AppScreen.Home.route)
                                         })
                                 }
                             }
@@ -154,9 +150,9 @@ fun AuthView(onNavigate: (String) -> Unit) {
                                     )
                                 ) {
                                     RegistrationView(viewModel = registerViewModel,
-                                        uiState = registeUiState,
+                                        uiState = registerUiState,
                                         toVerification = {
-                                            println("Test: to Verification ")
+                                            currentView = AuthEnum.VERIFICATION
                                         })
                                 }
                             }
@@ -164,6 +160,17 @@ fun AuthView(onNavigate: (String) -> Unit) {
                             AuthEnum.PASSWORDFORGET -> {
                                 PasswordForget() {
                                     currentView = AuthEnum.LOGIN
+                                }
+                            }
+
+                            AuthEnum.VERIFICATION -> {
+                                VerificationView(
+                                    viewModel = registerViewModel,
+                                    uiState = registerUiState
+                                ) {
+                                    registerViewModel.doVerification {
+                                        currentView = AuthEnum.LOGIN
+                                    }
                                 }
                             }
                         }
@@ -177,5 +184,5 @@ fun AuthView(onNavigate: (String) -> Unit) {
 }
 
 enum class AuthEnum() {
-    LOGIN, REGISTRATION, PASSWORDFORGET
+    LOGIN, REGISTRATION, PASSWORDFORGET, VERIFICATION
 }

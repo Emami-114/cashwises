@@ -125,6 +125,10 @@ fun RegistrationView(
                 }
             }
 
+            uiState.isRegistrationSuccess -> {
+                toVerification()
+            }
+
             else -> {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -269,11 +273,7 @@ fun RegistrationView(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomButton(title = stringResource(Res.string.btn_register)) {
-                        if (uiState.isRegistrationSuccess) {
-                            toVerification()
-                        } else {
-                            viewModel.onRegisterEvent(RegistrationEvent.OnRegistration)
-                        }
+                        viewModel.onRegisterEvent(RegistrationEvent.OnRegistration)
                     }
                 }
             }

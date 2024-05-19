@@ -17,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ui.account.auth.verification.VerificationView
 import ui.components.CustomBackgroundView
 import ui.components.CustomTextField
 import ui.components.CustomToast
@@ -33,7 +34,7 @@ fun NotificationView(onNavigate: (String) -> Unit) {
     val notification = LocalPushNotification
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
-
+        CustomToast {  }
         Column(verticalArrangement = Arrangement.Bottom) {
             Spacer(modifier = Modifier.height(200.dp))
             CustomTextField(value = title, onValueChange = { title = it })
@@ -56,7 +57,6 @@ fun NotificationView(onNavigate: (String) -> Unit) {
                 Text("Notification")
             }
             Text("$pendingCount")
-            CustomToast()
         }
     }
 }
