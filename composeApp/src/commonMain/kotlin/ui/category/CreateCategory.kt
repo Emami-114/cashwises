@@ -28,12 +28,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.successfully_copied
+import cashwises.composeapp.generated.resources.successfully_created
 import compose.icons.TablerIcons
 import compose.icons.tablericons.ChevronDown
 import compose.icons.tablericons.ChevronUp
 import compose.icons.tablericons.X
 import domain.model.CategoryModel
 import domain.model.CategoryStatus
+import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.stringResource
 import ui.category.viewModel.CategoryEvent
 import ui.category.viewModel.CategoryState
 import ui.category.viewModel.CategoryViewModel
@@ -42,6 +47,7 @@ import ui.components.CustomImagePicker
 import ui.components.CustomPopUp
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
+import ui.components.CustomToast
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
@@ -58,37 +64,43 @@ fun CreateCategory(
             CustomPopUp(present = true, onDismissDisable = true, message = uiState.errorText)
         }
 
-        uiState.createdSuccessfully || uiState.updateSuccessfully -> {
-            viewModel.onEvent(CategoryEvent.OnDefaultState)
-        }
-
         else -> {
-            Column(
-                modifier = modifier.fillMaxSize()
-                    .padding(10.dp).padding(horizontal = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                CustomImagePicker(selectedImage = uiState.imageModel) { image ->
-                    viewModel.doChangeImageModel(image)
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (uiState.createdSuccessfully || uiState.updateSuccessfully) {
+                    CustomToast(title = stringResource(if (uiState.createdSuccessfully) Res.string.successfully_created else Res.string.successfully_copied)) {
+                        viewModel.onEvent(CategoryEvent.OnDefaultState)
+                    }
                 }
-                CustomTextField(
-                    value = uiState.title ?: "",
-                    onValueChange = { viewModel.onEvent(CategoryEvent.OnTitleChange(it)) },
-                    placeholder = "Title"
-                )
-                MainCategoryList(uiState, onSelected = { category ->
-                    viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
-                })
-                CustomSwitch(textView = { Text("Published") }, value = uiState.published ?: false) {
-                    viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
-                }
-                CustomButton(title = "Create Category") {
-                    viewModel.onEvent(CategoryEvent.OnCreateCategory)
+
+                Column(
+                    modifier = modifier.fillMaxSize()
+                        .padding(10.dp).padding(horizontal = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    CustomImagePicker(selectedImage = uiState.imageModel) { image ->
+                        viewModel.doChangeImageModel(image)
+                    }
+                    CustomTextField(
+                        value = uiState.title ?: "",
+                        onValueChange = { viewModel.onEvent(CategoryEvent.OnTitleChange(it)) },
+                        placeholder = "Title"
+                    )
+                    MainCategoryList(uiState, onSelected = { category ->
+                        viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
+                    })
+                    CustomSwitch(
+                        textView = { Text("Published", color = cw_dark_whiteText) },
+                        value = uiState.published ?: false
+                    ) {
+                        viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
+                    }
+                    CustomButton(title = "Create Category") {
+                        viewModel.onEvent(CategoryEvent.OnCreateCategory)
+                    }
                 }
             }
         }
     }
-
 }
 
 @Composable
@@ -117,7 +129,7 @@ fun MainCategoryList(
             ) {
                 Text(
                     text = uiState.selectedCategory?.title ?: "Categories",
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (uiState.selectedCategory != null) {
@@ -146,8 +158,7 @@ fun MainCategoryList(
                     items(filterCategory) { category ->
                         Row(
                             modifier = Modifier.fillMaxWidth()
-                                .height(35.dp)
-
+                                .height(42.dp)
                                 .clickable {
                                     onSelected(category)
                                     isExpanded = false

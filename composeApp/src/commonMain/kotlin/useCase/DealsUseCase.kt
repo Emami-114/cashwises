@@ -1,5 +1,6 @@
 package useCase
 
+import data.model.DealsQuery
 import data.repository.ImageUploadRepository
 import domain.model.DealModel
 import domain.model.DealsModel
@@ -13,15 +14,11 @@ class DealsUseCase : KoinComponent {
     private val repository: DealRepository by inject()
     private val imageRepository = ImageUploadRepository()
     suspend fun getDeals(
-        query: String = "",
-        page: Int = 1,
-        limit: Int = 20,
+        query: DealsQuery
     ): DealsModel? {
         try {
             return repository.getDeals(
-                query = query,
-                page = page,
-                limit = limit,
+                query = query
             )
 
         } catch (e: Exception) {

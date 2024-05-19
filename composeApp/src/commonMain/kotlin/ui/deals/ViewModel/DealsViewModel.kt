@@ -1,6 +1,7 @@
 package ui.deals.ViewModel
 
 import com.mohamedrejeb.calf.picker.toImageBitmap
+import data.model.DealsQuery
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
@@ -253,7 +254,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
             _state.value = _state.value.copy(isLoading = true)
             _state.update {
                 it.copy(
-                    deals = useCase.getDeals()?.deals
+                    deals = useCase.getDeals(query = DealsQuery())?.deals
                         ?: listOf(),
                     isLoading = false,
                     error = null,

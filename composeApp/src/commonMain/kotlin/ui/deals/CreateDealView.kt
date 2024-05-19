@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,10 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -31,9 +28,24 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.coupon_code
+import cashwises.composeapp.generated.resources.create_deal
+import cashwises.composeapp.generated.resources.description
+import cashwises.composeapp.generated.resources.free
+import cashwises.composeapp.generated.resources.offer_price
+import cashwises.composeapp.generated.resources.price
+import cashwises.composeapp.generated.resources.provider
+import cashwises.composeapp.generated.resources.provider_url
+import cashwises.composeapp.generated.resources.publish
+import cashwises.composeapp.generated.resources.shipping_costs
+import cashwises.composeapp.generated.resources.successfully_created
+import cashwises.composeapp.generated.resources.title
+import cashwises.composeapp.generated.resources.video_url
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import kotlinx.datetime.Instant
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
@@ -43,6 +55,7 @@ import ui.components.CustomPopUp
 import ui.components.CustomRichTextEditor
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
+import ui.components.CustomToast
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsViewModel
 import ui.deals.components.MainAndSubCategoryList
@@ -62,16 +75,17 @@ fun CreateDealView(modifier: Modifier = Modifier) {
             CustomPopUp(present = true, onDismissDisable = true, message = uiState.error ?: "")
         }
 
-        uiState.dealCreatedSuccess -> {
-            viewModel.onEvent(DealEvent.OnSetDefaultState)
-        }
-
         else -> {
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CustomBackgroundView()
+                if (uiState.dealCreatedSuccess) {
+                    CustomToast(title = stringResource(Res.string.successfully_created)) {
+                        viewModel.onEvent(DealEvent.OnSetDefaultState)
+                    }
+                }
 
                 FlowRow(
                     modifier = Modifier.padding(10.dp).padding(horizontal = 10.dp)
@@ -102,14 +116,14 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     CustomTextField(
                         value = uiState.title,
                         onValueChange = { viewModel.onEvent(DealEvent.OnTitleChange(it)) },
-                        placeholder = "Title",
+                        placeholder = stringResource(Res.string.title),
                         modifier = Modifier
                     )
 
                     CustomTextField(
                         value = uiState.description,
                         onValueChange = { viewModel.onEvent(DealEvent.OnDescriptionChange(it)) },
-                        placeholder = "Description",
+                        placeholder = stringResource(Res.string.description),
                         modifier = Modifier
                     )
                     MainAndSubCategoryList(
@@ -120,13 +134,23 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         },
                     )
                     CustomSwitch(
-                        textView = { Text("Free", color = cw_dark_whiteText) },
+                        textView = {
+                            Text(
+                                stringResource(Res.string.free),
+                                color = cw_dark_whiteText
+                            )
+                        },
                         value = uiState.isFree
                     ) {
                         viewModel.onEvent(DealEvent.OnIsFreeChange(it))
                     }
                     CustomSwitch(
-                        textView = { Text("Published", color = cw_dark_whiteText) },
+                        textView = {
+                            Text(
+                                stringResource(Res.string.publish),
+                                color = cw_dark_whiteText
+                            )
+                        },
                         value = uiState.published
                     ) {
                         viewModel.onEvent(DealEvent.OnPublishedChange(it))
@@ -134,7 +158,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     CustomTextField(
                         value = uiState.price ?: "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnPriceChange(it)) },
-                        placeholder = "Price",
+                        placeholder = stringResource(Res.string.price),
                         enabled = !uiState.isFree,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -148,7 +172,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     CustomTextField(
                         value = uiState.offerPrice ?: "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnOfferPriceChange(it)) },
-                        placeholder = "Offer price",
+                        placeholder = stringResource(Res.string.offer_price),
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
@@ -156,20 +180,19 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         ), enabled = !uiState.isFree,
                         modifier = Modifier
                             .alpha(if (uiState.isFree) 0.4f else 1f)
-
                     )
 
                     CustomTextField(
                         value = uiState.provider ?: "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnProviderChange(it)) },
-                        placeholder = "Provider",
+                        placeholder = stringResource(Res.string.provider),
                         modifier = Modifier
                     )
 
                     CustomTextField(
                         value = uiState.providerUrl ?: "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnProviderUrlChange(it)) },
-                        placeholder = "provider url",
+                        placeholder = stringResource(Res.string.provider_url),
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrect = false,
@@ -181,14 +204,14 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     CustomTextField(
                         value = uiState.videoUrl ?: "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnVideoUrlChange(it)) },
-                        placeholder = "Video url",
+                        placeholder = stringResource(Res.string.video_url),
                         modifier = Modifier
                     )
 
                     CustomTextField(
                         value = uiState.couponCode ?: "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnCouponCodeChange(it)) },
-                        placeholder = "Coupon code",
+                        placeholder = stringResource(Res.string.coupon_code),
                         modifier = Modifier
                     )
                     CustomTextField(
@@ -201,7 +224,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     CustomTextField(
                         value = "${uiState.shippingCosts ?: 0.0}",
                         onValueChange = { viewModel.onEvent(DealEvent.OnShippingCostChange(it.toDouble())) },
-                        placeholder = "Shipping costs",
+                        placeholder = stringResource(Res.string.shipping_costs),
                         modifier = Modifier,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -229,7 +252,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                             viewModel.onEvent(DealEvent.OnAction)
                             richTextState.clear()
                         },
-                        title = "Create",
+                        title = stringResource(Res.string.create_deal),
                         modifier = Modifier.fillMaxWidth().height(50.dp)
                     )
                     Spacer(modifier = Modifier.height(150.dp))

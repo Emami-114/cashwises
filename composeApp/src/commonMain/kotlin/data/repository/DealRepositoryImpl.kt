@@ -1,5 +1,6 @@
 package data.repository
 
+import data.model.DealsQuery
 import data.repository.ApiConfig.httpClient
 import domain.model.DealModel
 import domain.model.DealsModel
@@ -27,17 +28,19 @@ class DealRepositoryImpl : DealRepository {
 
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getDeals(
-        query: String,
-        page: Int,
-        limit: Int,
+        query: DealsQuery
     ): DealsModel? {
         return try {
             val response = client.get("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(settings.getString("TOKEN2", "Token not found"))
-                parameter("query", query)
-                parameter("page", page)
-                parameter("limit", limit)
+                parameter("query", query.searchQuery)
+                parameter("page", query.page)
+                parameter("limit", query.limit)
+                val filterCategories = query.categories?.joinToString(",")
+                val filterTags = query.filterTags?.joinToString(",")
+                parameter("categories", filterCategories)
+                parameter("tags", filterTags)
             }
             response.body<DealsModel>()
         } catch (e: Exception) {

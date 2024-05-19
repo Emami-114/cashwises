@@ -1,11 +1,14 @@
 package domain.repository
 
+import data.model.DealsQuery
 import domain.model.DealModel
 import domain.model.DealsModel
 import kotlinx.serialization.SerialName
 
 interface DealRepository {
-    suspend fun getDeals(query: String, page: Int, limit: Int): DealsModel?
+    suspend fun getDeals(
+        query: DealsQuery
+    ): DealsModel?
 
     suspend fun addDeal(dealModel: DealModel): Boolean
 

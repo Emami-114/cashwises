@@ -28,6 +28,7 @@
     <string name="some_day_ago">%1$s day ago</string>
     <string name="offers_ends_today">Offers ends today</string>
     <string name="offers_expired">Expired</string>
+    <string name="create_deal">Create Deal</string>
 
     <!--  Global Strings  -->
     <string name="btn_send">Send</string>
@@ -38,8 +39,20 @@
     <string name="password_confirm">Password confirm</string>
     <string name="today">Today</string>
     <string name="free">Free</string>
-    <string name="coupon_code">Coupon code: %1$s</string>
+    <string name="coupon_code">Coupon code</string>
     <string name="successfully_registered">Successfully registered</string>
     <string name="successfully_login">Successfully logged</string>
-    <string name="successfully_copied">Successfully copied: %1$s</string>
+    <string name="successfully_copied">copied: %1$s</string>
+    <string name="successfully_created">Successfully created</string>
+    <string name="successfully_updated">Successfully updated</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="publish">Publish</string>
+    <string name="price">Price</string>
+    <string name="offer_price">Offer price</string>
+    <string name="provider">Provider</string>
+    <string name="provider_url">provider url</string>
+    <string name="video_url">Video url</string>
+    <string name="shipping_costs">Shipping costs</string>
+
 </resources>

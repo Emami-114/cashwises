@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import data.model.DealsQuery
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
 import domain.model.DealModel
@@ -129,7 +130,7 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
     fun doSearch() = viewModelScope.launch {
         _state.update {
             it.copy(
-                deals = dealUseCase.getDeals(query = _state.value.searchQuery)?.deals
+                deals = dealUseCase.getDeals(query = DealsQuery(searchQuery = _state.value.searchQuery))?.deals
             )
         }
     }
