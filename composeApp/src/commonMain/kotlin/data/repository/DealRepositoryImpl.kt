@@ -34,7 +34,7 @@ class DealRepositoryImpl : DealRepository {
         return try {
             val response = client.get("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(settings.getString("TOKEN", "Token not found"))
                 parameter("query", query.searchQuery)
                 parameter("page", query.page)
                 parameter("limit", query.limit)
@@ -54,7 +54,7 @@ class DealRepositoryImpl : DealRepository {
         return try {
             client.post("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(settings.getString("TOKEN", "Token not found"))
                 setBody(dealModel)
             }.status.value in 200..300
         } catch (e: Exception) {
@@ -81,7 +81,7 @@ class DealRepositoryImpl : DealRepository {
 
     override suspend fun deleteDeal(id: String) {
         client.delete("${ApiConfig.BASE_URL}/deals/$id") {
-            bearerAuth(settings.getString("TOKEN2", "Token not found"))
+            bearerAuth(settings.getString("TOKEN", "Token not found"))
         }
 
     }
