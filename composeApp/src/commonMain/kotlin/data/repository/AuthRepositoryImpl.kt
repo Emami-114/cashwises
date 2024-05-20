@@ -13,6 +13,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.parameters
+import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.Serializable
 import ui.settings
 

@@ -2,6 +2,7 @@ package ui.deals.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,12 +23,19 @@ import data.repository.ApiConfig
 import domain.model.CategoryModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import ui.components.customModiefier.customBorder
+import ui.components.customModiefier.noRippleClickable
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun CategoryItemView(modifier: Modifier = Modifier, categoryModel: CategoryModel) {
+fun CategoryItemView(
+    modifier: Modifier = Modifier,
+    categoryModel: CategoryModel,
+    onSearch: (CategoryModel) -> Unit
+) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().noRippleClickable {
+            onSearch(categoryModel)
+        },
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         val painter =

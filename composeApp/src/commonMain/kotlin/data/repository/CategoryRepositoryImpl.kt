@@ -12,6 +12,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.utils.io.errors.IOException
 import ui.settings
 
 class CategoryRepositoryImpl : CategoryRepository {

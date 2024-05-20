@@ -97,13 +97,12 @@ class DealsViewModel : ViewModel(), KoinComponent {
                             images = imagesPath
                         )
                     }
-                    println("image path von upload image $imagesPath")
                 }
             }
             val deal = DealModel(
                 title = _state.value.title,
                 description = _state.value.description,
-                category = _state.value.category,
+                categories = _state.value.category,
                 isFree = _state.value.isFree,
                 couponCode = _state.value.couponCode,
                 tags = _state.value.tags,

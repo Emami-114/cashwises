@@ -46,7 +46,7 @@ fun HomeView(onNavigate: (String) -> Unit) {
         },
         floatingActionButton = {
             Box(
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.padding(bottom = 100.dp).size(50.dp)
                     .background(
                         MaterialTheme.colorScheme.primary,
                         shape = MaterialTheme.shapes.extraLarge

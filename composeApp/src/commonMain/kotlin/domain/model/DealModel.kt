@@ -13,7 +13,7 @@ data class DealModel(
     val id: String? = null,
     val title: String,
     val description: String,
-    val category: List<String>? = null,
+    val categories: List<String>? = null,
     @SerialName("is_free")
     val isFree: Boolean? = null,
     val price: Double? = null,

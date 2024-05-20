@@ -23,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Bell
 import compose.icons.tablericons.Home
@@ -37,11 +39,13 @@ import ui.account.auth.AuthView
 import ui.components.CustomBackgroundView
 import ui.components.CustomToast
 import ui.components.CustomTopAppBar
+import ui.deals.DealsView
 import ui.deals.DetailDealScreen
 import ui.home.HomeView
 import ui.menu.BottomNavigationView
 import ui.menu.TabBarScreen
 import ui.notification.NotificationView
+import ui.search.SearchScreen
 import ui.search.SearchView
 
 @Composable
@@ -84,8 +88,7 @@ fun NavHostMain(
             navController = navController,
             startDestination = BottomBarScreen.Home.route,
             modifier = Modifier
-                .fillMaxSize()
-                ,
+                .fillMaxSize(),
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Left,
@@ -137,7 +140,7 @@ fun NavHostMain(
                 },
 
                 ) {
-                SearchView(onNavigate)
+                SearchScreen(onNavigate = onNavigate)
             }
             composable(
                 route = BottomBarScreen.Notification.route,
@@ -170,6 +173,19 @@ fun NavHostMain(
             }
             composable(route = AppScreen.CreateDeal.route) {
                 TabBarScreen(onNavigate = onNavigate)
+            }
+            composable(
+                route = AppScreen.SearchView.route + "/{categoryId}",
+                arguments = listOf(navArgument("categoryId") {
+                    type = NavType.StringType
+                    defaultValue = "Default argument"
+                    nullable = true
+                })
+            ) {
+                val categoryId = it.arguments?.getString("categoryId")
+                println("test argument $categoryId")
+                SearchView(argument = categoryId, onNavigate = onNavigate)
+
             }
         }
     }
@@ -236,6 +252,11 @@ sealed class AppScreen(
     data object PrivacyPolicy : AppScreen(
         route = "PRIVACY_POLICY",
         title = "Privacy Policy",
+    )
+
+    data object SearchView : AppScreen(
+        route = "SEARCH",
+        title = "Search",
     )
 
 }
