@@ -19,8 +19,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +52,7 @@ import org.koin.compose.koinInject
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomImagePicker
+import ui.components.CustomMultiSelection
 import ui.components.CustomMultipleImagePicker
 import ui.components.CustomPopUp
 import ui.components.CustomRichTextEditor
@@ -69,6 +72,11 @@ fun CreateDealView(modifier: Modifier = Modifier) {
     val richTextState = rememberRichTextState()
     val scrollState = rememberScrollState(0)
     val dataPickerState = rememberDatePickerState()
+    val textQuery by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        viewModel.getCategories()
+        viewModel.getTags()
+    }
 
     when {
         uiState.error != null -> {
@@ -214,11 +222,17 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         placeholder = stringResource(Res.string.coupon_code),
                         modifier = Modifier
                     )
-                    CustomTextField(
-                        value = uiState.tags?.joinToString("") ?: "",
-                        onValueChange = { viewModel.onEvent(DealEvent.OnTagsChange(listOf(it))) },
-                        placeholder = "Tags",
-                        modifier = Modifier
+                    CustomMultiSelection(
+                        tags = uiState.listTag,
+                        selectedTags = uiState.selectedTags,
+                        onSearch = {
+                            viewModel.getTags(it)
+                        },
+                        onSelected = {
+                            viewModel.onEvent(DealEvent.OnTagsChange(it))
+                            println("test list tags $it")
+
+                        }
                     )
 
                     CustomTextField(

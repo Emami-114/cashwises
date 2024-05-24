@@ -38,8 +38,8 @@ class DealRepositoryImpl : DealRepository {
                 parameter("query", query.searchQuery)
                 parameter("page", query.page)
                 parameter("limit", query.limit)
-                val filterCategories = query.categories?.joinToString(",")
-                val filterTags = query.filterTags?.joinToString(",")
+                val filterCategories = query.categories
+                val filterTags = query.filterTags
                 parameter("categories", filterCategories)
                 parameter("tags", filterTags)
             }

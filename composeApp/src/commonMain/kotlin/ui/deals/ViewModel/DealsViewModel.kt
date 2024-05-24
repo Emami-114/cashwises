@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.deals.DetailDealScreen
 import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
+import useCase.TagsUseCase
 
 class DealsViewModel : ViewModel(), KoinComponent {
     private val useCase: DealsUseCase by inject()
+    private val tagsUseCase: TagsUseCase by inject()
     private val _state = MutableStateFlow(DealsState())
     private val categoriesUseCase: CategoryUseCase by inject()
     val state = _state.asStateFlow()
@@ -105,7 +106,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 categories = _state.value.category,
                 isFree = _state.value.isFree,
                 couponCode = _state.value.couponCode,
-                tags = _state.value.tags,
+                tags = _state.value.selectedTags,
                 shippingCosts = _state.value.shippingCosts,
                 price = _state.value.price?.toDouble(),
                 offerPrice = _state.value.offerPrice?.toDouble(),
@@ -235,7 +236,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
     private fun doChangeTags(event: DealEvent.OnTagsChange) {
         _state.update {
             it.copy(
-                tags = event.values,
+                selectedTags = event.values,
             )
         }
     }
@@ -245,6 +246,48 @@ class DealsViewModel : ViewModel(), KoinComponent {
             it.copy(
                 shippingCosts = event.value,
             )
+        }
+    }
+
+    fun getTags(queryText: String? = null) = viewModelScope.launch {
+        try {
+            _state.value = _state.value.copy(isLoading = true)
+            _state.update {
+                it.copy(
+                    listTag = tagsUseCase.getTags(queryText),
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    error = e.message
+                )
+            }
+            delay(4000)
+            _state.value = DealsState()
+        }
+    }
+
+    fun getCategories() = viewModelScope.launch {
+        try {
+            _state.value = _state.value.copy(isLoading = true)
+            _state.update {
+                it.copy(
+                    categories = categoriesUseCase.getCategories().categories,
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    error = e.message
+                )
+            }
+            delay(4000)
+            _state.value = DealsState()
         }
     }
 
@@ -258,9 +301,6 @@ class DealsViewModel : ViewModel(), KoinComponent {
                     isLoading = false,
                     error = null,
                 )
-            }
-            _state.update {
-                it.copy(categories = categoriesUseCase.getCategories().categories)
             }
         } catch (e: Exception) {
             _state.update {

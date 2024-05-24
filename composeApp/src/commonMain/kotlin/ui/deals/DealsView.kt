@@ -64,7 +64,7 @@ fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
                     selectedDeal = deal
                     showDetail = true
                     viewModel.doChangeSelectedDeal(deal)
-                    onNavigate(AppScreen.Detail.route)
+                    onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
                 })
             }
         }

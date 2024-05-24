@@ -39,8 +39,8 @@ import ui.account.auth.AuthView
 import ui.components.CustomBackgroundView
 import ui.components.CustomToast
 import ui.components.CustomTopAppBar
+import ui.deals.DealDetailScreen
 import ui.deals.DealsView
-import ui.deals.DetailDealScreen
 import ui.home.HomeView
 import ui.menu.BottomNavigationView
 import ui.menu.TabBarScreen
@@ -165,8 +165,15 @@ fun NavHostMain(
                 AccountView(onNavigate)
             }
 
-            composable(route = AppScreen.Detail.route) {
-                DetailDealScreen(onNavigate = onNavigate) { }
+            composable(
+                route = AppScreen.DealDetail.route + "/{deal_id}",
+                arguments = listOf(navArgument("deal_id") {
+                    type = NavType.StringType
+                    nullable = true
+                })
+            ) {
+                val dealId = it.arguments?.getString("deal_id")
+                DealDetailScreen(dealId = dealId, onNavigate = onNavigate)
             }
             composable(route = AppScreen.Authentication.route) {
                 AuthView(onNavigate)
@@ -175,16 +182,28 @@ fun NavHostMain(
                 TabBarScreen(onNavigate = onNavigate)
             }
             composable(
-                route = AppScreen.SearchView.route + "/{categoryId}",
-                arguments = listOf(navArgument("categoryId") {
-                    type = NavType.StringType
-                    defaultValue = "Default argument"
-                    nullable = true
-                })
-            ) {
-                val categoryId = it.arguments?.getString("categoryId")
-                println("test argument $categoryId")
-                SearchView(argument = categoryId, onNavigate = onNavigate)
+                route = AppScreen.SearchView.route + "?categoryId={categoryId}&tag={tag}",
+                arguments = listOf(
+                    navArgument("categoryId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                    navArgument("tag") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                )
+            ) {backStackEntry ->
+                val categoryId = backStackEntry.arguments?.getString("categoryId")
+                val tag = backStackEntry.arguments?.getString("tag")
+                println("CategoryId: $categoryId, Tag: $tag")
+                SearchView(
+                    categoryId = categoryId,
+                    tagArgument = tag,
+                    onNavigate = onNavigate
+                )
 
             }
         }
@@ -219,8 +238,8 @@ sealed class AppScreen(
         title = "Home",
     )
 
-    data object Detail : AppScreen(
-        route = "Detail",
+    data object DealDetail : AppScreen(
+        route = "DEAL_DETAIL",
         title = "Detail",
     )
 

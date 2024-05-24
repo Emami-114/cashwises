@@ -97,9 +97,9 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailDealScreen(
+fun DealDetailScreen(
+    dealId: String? = null,
     onNavigate: (String) -> Unit,
-    onClick: () -> Unit
 ) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
@@ -109,11 +109,15 @@ fun DetailDealScreen(
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(state = topAppBarState)
-
+    var deal by remember { mutableStateOf<DealModel?>(null) }
     val colorAnimation by animateColorAsState(
         targetValue = if (scrollState.value < 700) cw_dark_background.copy(alpha = 0.03f) else cw_dark_background,
         animationSpec = tween(600)
     )
+
+    LaunchedEffect(dealId) {
+        deal = uiState.deals.first { it.id == dealId }
+    }
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
@@ -124,7 +128,7 @@ fun DetailDealScreen(
         CustomBackgroundView()
         CustomTopAppBar(
             modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
-            title = if (scrollState.value < 800) "" else uiState.selectedDeal?.title ?: "",
+            title = if (scrollState.value < 800) "" else deal?.title ?: "",
             backgroundColor = colorAnimation,
             hasBackButtonBackground = scrollState.value < 800,
             textColor = cw_dark_whiteText,

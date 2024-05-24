@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ui.account.auth.verification.VerificationView
 import ui.components.CustomBackgroundView
+import ui.components.CustomMultiSelection
 import ui.components.CustomTextField
 import ui.components.CustomToast
 import utils.LocalPushNotification
@@ -57,6 +58,8 @@ fun NotificationView(onNavigate: (String) -> Unit) {
                 Text("Notification")
             }
             Text("$pendingCount")
+
+//            CustomMultiSelection()
         }
     }
 }

@@ -11,6 +11,6 @@ data class DealsQuery(
     @SerialName("query")
     val searchQuery: String? = null,
     @SerialName("tags")
-    val filterTags: List<String>? = null,
-    val categories: List<String>? = null
+    val filterTags: String? = null,
+    val categories: String? = null
 )

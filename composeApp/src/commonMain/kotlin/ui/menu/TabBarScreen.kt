@@ -48,6 +48,7 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomTopAppBar
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.CreateDealView
+import ui.home.tags.CreateTagView
 import ui.menu.components.TabBarItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,6 +136,9 @@ fun TabBarScreen(onNavigate: (String) -> Unit) {
 
                     TabItemEnum.EDIT_DEAL -> {}
                     TabItemEnum.EDIT_CATEGORY -> {}
+                    TabItemEnum.CREATE_TAGS -> {
+                        CreateTagView()
+                    }
                 }
             }
         }
@@ -174,6 +178,14 @@ fun TabBarView(
         ) {
             selectedItem(TabItemEnum.CREATE_CATEGORY)
         }
+
+        TabBarItem(
+            title = TabItemEnum.CREATE_TAGS.title,
+            icon = TabItemEnum.CREATE_TAGS.icon,
+            currentItem = currentItem.title
+        ) {
+            selectedItem(TabItemEnum.CREATE_TAGS)
+        }
     }
 }
 
@@ -182,6 +194,7 @@ enum class TabItemEnum(var title: String, var icon: ImageVector) {
     CATEGORIES(title = "Categories", icon = TablerIcons.LayoutGrid),
     CREATE_CATEGORY(title = "Create Category", icon = TablerIcons.LayoutGridAdd),
     EDIT_DEAL(title = "Edit Deal", icon = TablerIcons.Edit),
-    EDIT_CATEGORY(title = "Edit Category", icon = TablerIcons.Edit);
+    EDIT_CATEGORY(title = "Edit Category", icon = TablerIcons.Edit),
+    CREATE_TAGS(title = "Create Tags", icon = TablerIcons.Plus);
 
 }
