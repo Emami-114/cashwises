@@ -43,6 +43,22 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun doGetSingleDeal(id: String, success: (DealModel?) -> Unit) {
+        viewModelScope.launch {
+            println("test deal view model")
+            try {
+                val deal = useCase.getSingleDeal(id)
+                success(deal)
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        error = e.message
+                    )
+                }
+            }
+        }
+    }
+
     fun onEvent(event: DealEvent) {
         when (event) {
             is DealEvent.OnTitleChange -> doChangeTitle(event)

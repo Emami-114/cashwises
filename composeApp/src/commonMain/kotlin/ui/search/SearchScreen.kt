@@ -55,6 +55,7 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomDivider
 import ui.components.CustomSearchView
 import ui.components.CustomSlideTransition
+import ui.components.CustomTopAppBar
 import ui.components.ProductRow
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.components.CategoryItemView
@@ -67,11 +68,11 @@ import useCase.DealsUseCase
 fun SearchView(
     categoryId: String? = null,
     tagArgument: String? = null,
+    title: String = "",
     onNavigate: (String) -> Unit
 ) {
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
-    var showDetail by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = categoryId, key2 = tagArgument) {
         viewModel.doSearch(DealsQuery(categories = categoryId, filterTags = tagArgument))
     }
@@ -85,16 +86,21 @@ fun SearchView(
         else if (maxWidth > 700.dp && maxWidth < 900.dp) 4
         else 4
         CustomBackgroundView()
-        LazyVerticalGrid(
-            modifier = Modifier.padding(top = 10.dp).padding(horizontal = 5.dp),
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(uiState.deals ?: listOf()) { deal ->
-                ProductRow(dealModel = deal) {
-                    viewModel.doChangeDeal(deal)
-                    showDetail = true
+
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            CustomTopAppBar(modifier = Modifier.fillMaxWidth(), title = title, backButtonAction = {
+                onNavigate(AppConstants.BackClickRoute.route)
+            })
+            LazyVerticalGrid(
+                modifier = Modifier.padding(top = 10.dp).padding(horizontal = 5.dp),
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(uiState.deals ?: listOf()) { deal ->
+                    ProductRow(dealModel = deal) {
+                        onNavigate.invoke(AppScreen.DealDetail.route + "/${deal.id}")
+                    }
                 }
             }
         }
@@ -118,7 +124,8 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
 
         Column {
             SearchTopAppBar(
-                modifier = Modifier,
+
+                modifier = modifier,
                 searchQuery = uiState.searchQuery ?: "",
                 onQueryChange = { viewModel.doChangeSearchText(it) },
                 focused = searchFocused,
@@ -151,7 +158,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                                         .widthIn(max = 100.dp),
                                     categoryModel = category
                                 ) { selectedCategory ->
-                                    onNavigate(AppScreen.SearchView.route + "?categoryId=${selectedCategory.id}")
+                                    onNavigate(AppScreen.SearchView.route + "?categoryId=${selectedCategory.id}&title=${selectedCategory.title}")
                                 }
                             }
                         }
@@ -159,7 +166,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                 },
                 slideView = {
                     TagsView(uiState = uiState, onSelectedTag = { tag ->
-                        onNavigate(AppScreen.SearchView.route + "?tag=${tag}")
+                        onNavigate(AppScreen.SearchView.route + "?tag=${tag}&title=${tag}")
                         focusManager.clearFocus()
                     })
                 }

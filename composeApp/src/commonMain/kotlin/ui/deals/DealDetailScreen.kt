@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,7 +72,6 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import org.company.app.theme.cw_dark_background
-import org.company.app.theme.cw_dark_blackText
 import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_green
@@ -116,7 +114,11 @@ fun DealDetailScreen(
     )
 
     LaunchedEffect(dealId) {
-        deal = uiState.deals.first { it.id == dealId }
+        dealId?.let {
+            viewModel.doGetSingleDeal(dealId) { dealModel ->
+                deal = dealModel
+            }
+        }
     }
 
     BoxWithConstraints(
@@ -138,7 +140,7 @@ fun DealDetailScreen(
             },
             scrollBehavior = scrollBehavior
         )
-        uiState.selectedDeal?.let { deal ->
+        deal?.let { deal ->
             DetailDealView(
                 modifier = Modifier.nestedScroll(connection = scrollBehavior.nestedScrollConnection),
                 dealModel = deal,

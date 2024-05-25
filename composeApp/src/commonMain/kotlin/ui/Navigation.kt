@@ -182,7 +182,7 @@ fun NavHostMain(
                 TabBarScreen(onNavigate = onNavigate)
             }
             composable(
-                route = AppScreen.SearchView.route + "?categoryId={categoryId}&tag={tag}",
+                route = AppScreen.SearchView.route + "?categoryId={categoryId}&tag={tag}&title={title}",
                 arguments = listOf(
                     navArgument("categoryId") {
                         type = NavType.StringType
@@ -194,14 +194,20 @@ fun NavHostMain(
                         nullable = true
                         defaultValue = null
                     },
+                    navArgument("title") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
                 )
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val categoryId = backStackEntry.arguments?.getString("categoryId")
                 val tag = backStackEntry.arguments?.getString("tag")
-                println("CategoryId: $categoryId, Tag: $tag")
+                val title = backStackEntry.arguments?.getString("title")
                 SearchView(
                     categoryId = categoryId,
                     tagArgument = tag,
+                    title = title ?: "",
                     onNavigate = onNavigate
                 )
 

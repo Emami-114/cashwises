@@ -10,8 +10,8 @@ interface DealRepository {
         query: DealsQuery
     ): DealsModel?
 
+    suspend fun getSingleDeal(id: String): DealModel?
     suspend fun addDeal(dealModel: DealModel): Boolean
-
     suspend fun updateDeal(
         title: String,
         description: String,

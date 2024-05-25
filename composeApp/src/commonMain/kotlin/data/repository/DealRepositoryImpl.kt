@@ -45,7 +45,20 @@ class DealRepositoryImpl : DealRepository {
             }
             response.body<DealsModel>()
         } catch (e: Exception) {
-            println("Failed repository get deals: ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun getSingleDeal(id: String): DealModel? {
+        return try {
+            val response = client.get("${ApiConfig.BASE_URL}/deals/$id") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(settings.getString("TOKEN", "Token not found"))
+            }.body<DealModel>()
+
+            println("test deal Repo ${response.title}")
+            response
+        } catch (e: Exception) {
             throw e
         }
     }

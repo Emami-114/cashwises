@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +39,6 @@ fun CustomMultiSelection(
     tags: List<TagModel> = listOf(),
     selectedTags: List<String> = listOf(),
     onSearch: (String) -> Unit,
-    showSearch: Boolean = false,
     onSelected: (List<String>) -> Unit
 ) {
     val selectedItems =
@@ -51,21 +51,19 @@ fun CustomMultiSelection(
             .customBorder()
             .padding(10.dp)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
             Text("Tags:", color = cw_dark_grayText, fontSize = 20.sp)
             HorizontalDivider()
-            if (showSearch) {
-                CustomSearchView(
-                    value = query,
-                    onValueChange = {
-                        query = it
-                        onSearch(it)
-                    },
-                    onFocused = {},
-                    onSearchClick = {},
-                    animation = false
-                )
-            }
+            CustomSearchView(
+                value = query,
+                onValueChange = {
+                    query = it
+                    onSearch(it)
+                },
+                onFocused = {},
+                onSearchClick = {},
+                animation = false
+            )
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(4),
                 verticalItemSpacing = 8.dp,
@@ -87,7 +85,8 @@ fun CustomMultiSelection(
                                     selectedItems.add(tag.title)
                                     onSelected(selectedItems.toList())
                                 }
-                            }
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             tag.title,

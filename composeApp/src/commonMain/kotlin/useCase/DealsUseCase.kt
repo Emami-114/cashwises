@@ -26,6 +26,14 @@ class DealsUseCase : KoinComponent {
         }
     }
 
+    suspend fun getSingleDeal(id: String): DealModel? {
+        return try {
+            repository.getSingleDeal(id)
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
     suspend fun uploadImages(
         imagesModel: List<ImageModel>,
         imagePaths: (List<String>) -> Unit,
