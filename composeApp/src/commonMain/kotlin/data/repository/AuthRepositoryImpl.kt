@@ -43,6 +43,7 @@ class AuthRepositoryImpl : AuthRepository {
             }
             if (respose.status.value in 200..300) {
                 settings.putString("TOKEN", respose.body<TokenModel>().token)
+                UserRepository.INSTANCE.getMe()
                 true
             } else {
                 false
@@ -71,7 +72,7 @@ class AuthRepositoryImpl : AuthRepository {
     }
 
     override suspend fun logout() {
-        client.post("${baseUrl}/api/auth/logout") {
+        client.post("${baseUrl}/auth/logout") {
             contentType(ContentType.Application.Json)
             bearerAuth(settings.getString("TOKEN", "Token not found"))
         }

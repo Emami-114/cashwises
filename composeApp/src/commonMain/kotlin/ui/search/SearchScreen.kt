@@ -44,8 +44,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_whiteText
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.InternalResourceApi
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -63,18 +61,25 @@ import ui.home.tags.TagsView
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 
-@OptIn(InternalResourceApi::class, ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchView(
     categoryId: String? = null,
     tagArgument: String? = null,
+    searchQuery: String? = null,
     title: String = "",
     onNavigate: (String) -> Unit
 ) {
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
-    LaunchedEffect(key1 = categoryId, key2 = tagArgument) {
-        viewModel.doSearch(DealsQuery(categories = categoryId, filterTags = tagArgument))
+    LaunchedEffect(key1 = categoryId, key2 = tagArgument, key3 = searchQuery) {
+        viewModel.doSearch(
+            DealsQuery(
+                categories = categoryId,
+                filterTags = tagArgument,
+                searchQuery = searchQuery
+            )
+        )
     }
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
@@ -124,7 +129,6 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
 
         Column {
             SearchTopAppBar(
-
                 modifier = modifier,
                 searchQuery = uiState.searchQuery ?: "",
                 onQueryChange = { viewModel.doChangeSearchText(it) },
@@ -138,7 +142,12 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                         focusManager.clearFocus()
                     }
                 },
-                onNavigate = {}
+                onNavigate = {},
+                onSearch = { searchQuery ->
+                    if (searchQuery.isEmpty().not()) {
+                        onNavigate(AppScreen.SearchView.route + "?title=${searchQuery}&query=${searchQuery}")
+                    }
+                }
             )
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -209,12 +218,6 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun doChangeDeal(value: DealModel?) {
-        _state.update {
-            it.copy(selectedDeal = value)
-        }
-    }
-
     fun doChangeTags(value: String?) {
         _state.update {
             it.copy(searchSelectedTag = value)
@@ -236,7 +239,6 @@ data class SearchState(
     val limit: Int = 20,
     val searchSelectedCategory: CategoryModel? = null,
     val searchSelectedTag: String? = null,
-    val selectedDeal: DealModel? = null
 )
 
 @Composable
@@ -247,7 +249,8 @@ fun SearchTopAppBar(
     focused: Boolean,
     showBackButton: Boolean,
     onFocusedChange: (Boolean) -> Unit,
-    onNavigate: (String) -> Unit
+    onNavigate: (String) -> Unit,
+    onSearch: (String) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -279,7 +282,7 @@ fun SearchTopAppBar(
                 modifier = Modifier,
                 value = searchQuery,
                 onValueChange = { onQueryChange(it) },
-                onSearchClick = { onQueryChange(it) },
+                onSearchClick = { onSearch(it) },
                 onFocused = onFocusedChange
             )
         }

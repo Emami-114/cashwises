@@ -31,7 +31,10 @@ import ui.deals.ViewModel.DealsViewModel
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
+fun DealsView(
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
+) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var selectedDeal by remember { mutableStateOf<DealModel?>(null) }
@@ -53,14 +56,15 @@ fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(column),
             state = rememberLazyGridState,
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier
-//                .padding(paddingValues)
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = modifier
                 .padding(all = 5.dp)
         ) {
             items(uiState.deals) { deal ->
-                ProductRow(dealModel = deal, onClick = {
+                ProductRow(
+                    dealModel = deal,
+                    onClick = {
                     selectedDeal = deal
                     showDetail = true
                     viewModel.doChangeSelectedDeal(deal)

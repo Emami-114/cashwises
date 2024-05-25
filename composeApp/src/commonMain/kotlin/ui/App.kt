@@ -12,13 +12,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.russhwolf.settings.Settings
+import data.repository.UserRepository
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import theme.AppTheme
 import utils.LocalPushNotification
 
 var settings = Settings()
 
+@Preview
 @Composable
 fun App() = AppTheme {
+    LaunchedEffect(Unit) {
+        UserRepository.INSTANCE.getMe()
+    }
     Column(
         modifier = Modifier.fillMaxSize()
             .windowInsetsPadding(WindowInsets.captionBar)

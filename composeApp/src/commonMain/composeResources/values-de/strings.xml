@@ -22,7 +22,9 @@
     <string name="password_required_error">Passwort erforderlich</string>
     <string name="login_failed_error">Anmeldung fehlgeschlagen. Der Benutzername oder das Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.</string>
     <string name="password_forget">Passwort vergessen?</string>
-
+    <string name="successfully_logout">Erfolgreich abgemeldet</string>
+    <string name="successfully_registered">Erfolgreich registriert</string>
+    <string name="successfully_login">Erfolgreich eingeloggt</string>
     <!--  Deals String  -->
     <string name="offers_ends_in_some_day">Angebote endet in %1$s Tag</string>
     <string name="some_day_ago">vor %1$s Tage</string>
@@ -40,8 +42,6 @@
     <string name="today">Heute</string>
     <string name="free">Kostenlose</string>
     <string name="coupon_code">Coupon Code</string>
-    <string name="successfully_registered">Erfolgreich registriert</string>
-    <string name="successfully_login">Erfolgreich eingeloggt</string>
     <string name="successfully_copied">kopiert: %1$s</string>
     <string name="successfully_created">Erfolgreich erstellt</string>
     <string name="successfully_updated">Erfolgreich aktualisiert</string>

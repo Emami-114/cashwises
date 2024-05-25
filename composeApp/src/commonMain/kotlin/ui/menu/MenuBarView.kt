@@ -11,35 +11,50 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.compose_multiplatform
+import cashwises.composeapp.generated.resources.successfully_logout
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Book
 import compose.icons.tablericons.Login
 import compose.icons.tablericons.Logout
 import compose.icons.tablericons.Settings
 import compose.icons.tablericons.User
-import data.repository.AuthRepositoryImpl
+import data.repository.UserRepository
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import ui.AppScreen
 import ui.components.CustomBackgroundView
+import ui.components.CustomToast
 import ui.menu.components.MenuBarItem
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MenuBarView(onNavigate: (String) -> Unit, onClick: (MenuBarEnum) -> Unit) {
+fun MenuBarView(onNavigate: (String) -> Unit) {
     val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState(0)
+    var showLogOutToast by remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
+        if (showLogOutToast) {
+            CustomToast(
+                modifier = Modifier.padding(bottom = 50.dp),
+                title = stringResource(Res.string.successfully_logout)
+            ) { showLogOutToast = false }
+        }
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Row(
@@ -53,14 +68,14 @@ fun MenuBarView(onNavigate: (String) -> Unit, onClick: (MenuBarEnum) -> Unit) {
                     modifier = Modifier.size(100.dp)
                 )
             }
-
-            MenuBarItem(
-                modifier = Modifier.height(60.dp),
-                title = MenuBarEnum.LOGIN.title,
-                icon = MenuBarEnum.LOGIN.icon
-            ) {
-//                onClick(MenuBarEnum.LOGIN)
-                onNavigate(AppScreen.Authentication.route)
+            if (!UserRepository.INSTANCE.userIsLogged) {
+                MenuBarItem(
+                    modifier = Modifier.height(60.dp),
+                    title = MenuBarEnum.LOGIN.title,
+                    icon = MenuBarEnum.LOGIN.icon
+                ) {
+                    onNavigate(AppScreen.Authentication.route)
+                }
             }
 
             MenuBarItem(
@@ -84,19 +99,24 @@ fun MenuBarView(onNavigate: (String) -> Unit, onClick: (MenuBarEnum) -> Unit) {
 
             MenuBarItem(
                 modifier = Modifier.height(60.dp),
-                title = MenuBarEnum.PRIVACYPOLICY.title,
-                icon = MenuBarEnum.PRIVACYPOLICY.icon
+                title = MenuBarEnum.PRIVACY_POLICY.title,
+                icon = MenuBarEnum.PRIVACY_POLICY.icon
             ) {}
 
-            Spacer(modifier = Modifier.height(50.dp))
-
-            MenuBarItem(
-                modifier = Modifier.height(60.dp),
-                title = MenuBarEnum.LOGOUT.title,
-                icon = MenuBarEnum.LOGOUT.icon
-            ) {
-                scope.launch {
-                    AuthRepositoryImpl().logout()
+            if (UserRepository.INSTANCE.userIsLogged) {
+                Spacer(modifier = Modifier.height(50.dp))
+                MenuBarItem(
+                    modifier = Modifier.height(60.dp),
+                    title = MenuBarEnum.LOGOUT.title,
+                    icon = MenuBarEnum.LOGOUT.icon
+                ) {
+                    scope.launch {
+                        UserRepository.INSTANCE.logout().let { isSuccess ->
+                            if (isSuccess) {
+                                showLogOutToast = true
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -109,7 +129,7 @@ enum class MenuBarEnum(var title: String, var icon: ImageVector) {
     PROFILE(title = "Profile", icon = TablerIcons.User),
     SETTING(title = "Setting", icon = TablerIcons.Settings),
     IMPRINT(title = "Imprint", icon = TablerIcons.Book),
-    PRIVACYPOLICY(title = "Privacy Policy", icon = TablerIcons.Book),
+    PRIVACY_POLICY(title = "Privacy Policy", icon = TablerIcons.Book),
     LOGOUT(title = "Log out", icon = TablerIcons.Logout);
 
 }

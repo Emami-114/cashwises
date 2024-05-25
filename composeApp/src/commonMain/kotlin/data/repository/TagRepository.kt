@@ -35,7 +35,6 @@ class TagRepositoryImpl : TagRepository {
                 bearerAuth(settings.getString("TOKEN", "Token not found"))
                 setBody(tagModel)
             }
-            println("test result ${response.status.value}")
             response.status.value in 200..300
         } catch (e: Exception) {
             throw e
@@ -46,5 +45,4 @@ class TagRepositoryImpl : TagRepository {
         val response = client.delete(urlString = "${ApiConfig.BASE_URL}/tags/$id")
         return response.status.value in 200..300
     }
-
 }

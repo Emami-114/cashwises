@@ -37,7 +37,6 @@ import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_whiteText
 import ui.components.customModiefier.noRippleClickable
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
     modifier: Modifier = Modifier,
@@ -48,30 +47,11 @@ fun CustomTopAppBar(
     backgroundColor: Color = cw_dark_background,
     textColor: Color = if (hasBackButtonBackground) cw_dark_blackText else cw_dark_whiteText,
     isDivider: Boolean = true,
-    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-
-//        CenterAlignedTopAppBar(
-//            modifier = Modifier.background(backgroundColor),
-//            title = { Text("TOP APP BAR", color = cw_dark_whiteText) },
-//            navigationIcon = {
-//                Icon(imageVector = TablerIcons.ArrowBackUp, contentDescription = null)
-//            },
-//            actions = { Icon(TablerIcons.Plus, contentDescription = null) },
-//            scrollBehavior = scrollBehavior,
-//            colors = TopAppBarColors(
-//                containerColor = backgroundColor,
-//                scrolledContainerColor = backgroundColor,
-//                navigationIconContentColor = textColor,
-//                titleContentColor = textColor,
-//                actionIconContentColor = textColor
-//            )
-//        )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

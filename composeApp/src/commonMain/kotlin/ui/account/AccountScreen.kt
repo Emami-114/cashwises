@@ -18,8 +18,6 @@ import ui.menu.MenuBarView
 
 @Composable
 fun AccountView(onNavigate: (String) -> Unit) {
-    var currentScreen by remember { mutableStateOf<MenuBarEnum?>(null) }
-
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
         Column(
@@ -27,32 +25,8 @@ fun AccountView(onNavigate: (String) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-
-                CustomSlideTransition(visible = currentScreen != null, currentView = {
-                    MenuBarView(onNavigate = {
-                        onNavigate(it)
-                    }, onClick = { tab ->
-//                        currentScreen = tab
-                    })
-                }, slideView = {
-                    when (currentScreen) {
-                        MenuBarEnum.LOGIN -> {
-                            AuthView {
-                                currentScreen = null
-                            }
-                        }
-
-                        MenuBarEnum.PROFILE -> {
-
-                        }
-
-                        MenuBarEnum.SETTING -> TODO()
-                        MenuBarEnum.IMPRINT -> TODO()
-                        MenuBarEnum.PRIVACYPOLICY -> TODO()
-                        MenuBarEnum.LOGOUT -> TODO()
-
-                        else -> {}
-                    }
+                MenuBarView(onNavigate = {
+                    onNavigate(it)
                 })
             }
 

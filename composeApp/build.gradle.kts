@@ -1,33 +1,22 @@
-import com.android.aaptcompiler.android.isTruthy
 import com.android.build.api.dsl.ManagedVirtualDevice
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.buildConfig)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "${JavaVersion.VERSION_1_8}"
-                freeCompilerArgs += "-Xjdk-release=${JavaVersion.VERSION_1_8}"
-            }
-        }
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant {
-            sourceSetTree.set(KotlinSourceSetTree.test)
-            dependencies {
-                debugImplementation(libs.androidx.testManifest)
-                implementation(libs.androidx.junit4)
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -45,12 +34,6 @@ kotlin {
     }
 
     sourceSets {
-        all {
-            languageSettings {
-                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
-            }
-        }
-
         val desktopMain by getting
 
         commonTest.dependencies {
@@ -73,13 +56,11 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-//            implementation(compose.material)
             implementation(compose.material3)
-//            implementation(compose.materialIconsExtended)
-//            implementation(compose.components.uiToolingPreview)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             // navigation
 //            implementation(libs.voyager.navigation)
 //            implementation(libs.voyager.tab)
@@ -160,14 +141,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+    dependencies {
+        debugImplementation(compose.uiTooling)
     }
 }
 dependencies {

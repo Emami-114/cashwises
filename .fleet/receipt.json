@@ -1,6 +1,6 @@
 {
     "spec": {
-        "template_id": "kmt",
+        "template_id": "cashwises",
         "targets": {
             "android": {
                 "ui": [
@@ -19,5 +19,5 @@
             }
         }
     },
-    "timestamp": "2024-02-23T19:15:07.251445534Z"
+    "timestamp": "2024-05-25T14:09:46.784061525Z"
 }

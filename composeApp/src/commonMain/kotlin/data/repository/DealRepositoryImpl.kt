@@ -4,6 +4,7 @@ import data.model.DealsQuery
 import data.repository.ApiConfig.httpClient
 import domain.model.DealModel
 import domain.model.DealsModel
+import domain.repository.AuthRepository
 import domain.repository.DealRepository
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
@@ -26,7 +27,6 @@ import ui.settings
 
 class DealRepositoryImpl : DealRepository {
     private val client = httpClient
-
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getDeals(
         query: DealsQuery

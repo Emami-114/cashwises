@@ -93,7 +93,6 @@ import ui.deals.ViewModel.DealsViewModel
 import kotlin.math.absoluteValue
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DealDetailScreen(
     dealId: String? = null,
@@ -103,10 +102,8 @@ fun DealDetailScreen(
     val uiState by viewModel.state.collectAsState()
     val scrollState = rememberScrollState(0)
     var showToast by remember { mutableStateOf(false) }
-    val topAppBarState = rememberTopAppBarState()
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(state = topAppBarState)
     var deal by remember { mutableStateOf<DealModel?>(null) }
     val colorAnimation by animateColorAsState(
         targetValue = if (scrollState.value < 700) cw_dark_background.copy(alpha = 0.03f) else cw_dark_background,
@@ -138,11 +135,10 @@ fun DealDetailScreen(
             backButtonAction = {
                 onNavigate(AppConstants.BackClickRoute.route)
             },
-            scrollBehavior = scrollBehavior
         )
         deal?.let { deal ->
             DetailDealView(
-                modifier = Modifier.nestedScroll(connection = scrollBehavior.nestedScrollConnection),
+                modifier = Modifier,
                 dealModel = deal,
                 scrollState = scrollState,
                 onClick = {},

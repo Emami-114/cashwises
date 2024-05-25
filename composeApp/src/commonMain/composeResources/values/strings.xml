@@ -22,7 +22,9 @@
     <string name="password_required_error">Password required</string>
     <string name="login_failed_error">Login failed. The username or password is incorrect. Please check your entries and try again.</string>
     <string name="password_forget">Password forget?</string>
-
+    <string name="successfully_logout">Successfully logout</string>
+    <string name="successfully_registered">Successfully registered</string>
+    <string name="successfully_login">Successfully logged</string>
     <!--  Deals String  -->
     <string name="offers_ends_in_some_day">Offers ends in %1$s day</string>
     <string name="some_day_ago">%1$s day ago</string>
@@ -40,8 +42,7 @@
     <string name="today">Today</string>
     <string name="free">Free</string>
     <string name="coupon_code">Coupon code</string>
-    <string name="successfully_registered">Successfully registered</string>
-    <string name="successfully_login">Successfully logged</string>
+
     <string name="successfully_copied">copied: %1$s</string>
     <string name="successfully_created">Successfully created</string>
     <string name="successfully_updated">Successfully updated</string>
