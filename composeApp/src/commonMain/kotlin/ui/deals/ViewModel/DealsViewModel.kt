@@ -1,20 +1,17 @@
 package ui.deals.ViewModel
 
-import com.mohamedrejeb.calf.picker.toImageBitmap
 import data.model.DealsQuery
+import data.repository.UserRepository
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 import useCase.TagsUseCase
@@ -82,16 +79,18 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
-
     fun doChangeThumbnail(image: ImageModel?) {
         _state.update {
-            it.copy(thumbnailByte = image)
+            it.copy(
+                thumbnailByte = image,
+                imagesByte = listOf(image!!)
+            )
         }
     }
 
     fun doChangeImages(image: List<ImageModel>?) {
         _state.update {
-            it.copy(imagesByte = image)
+            it.copy(imagesByte = _state.value.imagesByte?.plus(image!!))
         }
     }
 
@@ -107,7 +106,6 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 }
             }
             if (_state.value.imagesByte != null) {
-                var bitmap = _state.value.thumbnailByte!!.byteArray
                 useCase.uploadImages(_state.value.imagesByte!!) { imagesPath ->
                     _state.update {
                         it.copy(
@@ -223,7 +221,9 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     private fun doChangeThumbnail(event: DealEvent.OnThumbnailChange) {
         _state.update {
-            it.copy(thumbnail = event.value)
+            it.copy(
+                thumbnail = event.value,
+            )
         }
     }
 
@@ -312,7 +312,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
             _state.value = _state.value.copy(isLoading = true)
             _state.update {
                 it.copy(
-                    deals = useCase.getDeals(query = DealsQuery())?.deals
+                    deals = useCase.getDeals(query = DealsQuery(limit = 50))?.deals
                         ?: listOf(),
                     isLoading = false,
                     error = null,

@@ -22,7 +22,6 @@ class TagsUseCase : KoinComponent {
             repository.createTag(tagModel = tagModel).let { isSuccess ->
                 if (isSuccess) {
                     onSuccess()
-
                 }
             }
         } catch (e: Exception) {

@@ -21,9 +21,3 @@ struct ContentView: View {
             .ignoresSafeArea(.all) // Compose has own keyboard handler
     }
 }
-
-struct TextView: View {
-    var body: some View {
-        Text("Test View")
-    }
-}

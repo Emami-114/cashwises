@@ -22,7 +22,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         try {
             val response = client.post("${baseUrl}/category") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
                 setBody(categoryModel)
             }
             return response.status.value in 200..300
@@ -34,7 +34,7 @@ class CategoryRepositoryImpl : CategoryRepository {
     override suspend fun getCategories(): CategoriesModel {
         try {
             val response = client.get("${baseUrl}/categories") {
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
             }
 
             return response.body<CategoriesModel>()
@@ -46,7 +46,7 @@ class CategoryRepositoryImpl : CategoryRepository {
     override suspend fun getCategory(id: String): CategoryModel {
         try {
             return client.get("${baseUrl}/category/$id") {
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
             }.body<CategoryModel>()
         } catch (e: Exception) {
             throw e
@@ -57,7 +57,7 @@ class CategoryRepositoryImpl : CategoryRepository {
         try {
             val response = client.patch("${baseUrl}/category/${categoryModel.id}") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
                 setBody(categoryModel)
             }
             return response.status.value in 200..300
@@ -69,7 +69,7 @@ class CategoryRepositoryImpl : CategoryRepository {
     override suspend fun deleteCategory(id: String): Boolean {
         try {
             val response = client.delete("${baseUrl}/category/$id") {
-                bearerAuth(settings.getString("TOKEN2", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
             }
             return response.status.value in 200..300
         } catch (e: Exception) {

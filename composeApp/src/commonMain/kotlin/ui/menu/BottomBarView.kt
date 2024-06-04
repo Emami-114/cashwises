@@ -53,10 +53,3 @@ fun BottomNavigationView(
         }
     }
 }
-
-//enum class BottomBarScreens(val title: String, val icon: ImageVector) {
-//    Home(title = "Home", icon = TablerIcons.Home),
-//    Search(title = "Search", icon = TablerIcons.Search),
-//    Notification(title = "Notification", icon = TablerIcons.Bell),
-//    Account(title = "Account", icon = TablerIcons.User)
-//}

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,7 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.seiko.imageloader.rememberImagePainter
+import coil3.compose.AsyncImage
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Edit
 import data.repository.ApiConfig
@@ -168,16 +169,16 @@ fun CategoryItemHeader(
             horizontalArrangement = Arrangement.spacedBy(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val painter =
-                rememberImagePainter(
-                    url = "${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}",
-                )
-            Image(
-                painter,
+            AsyncImage(
+                modifier = Modifier
+                    .size(height)
+                    .customBorder()
+                    .clip(shape = MaterialTheme.shapes.large),
+                model = "${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}",
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier.size(height)
-                    .clip(MaterialTheme.shapes.large)
+                onError = {},
+                onLoading = {},
             )
             Text(
                 categoryModel.title ?: "",

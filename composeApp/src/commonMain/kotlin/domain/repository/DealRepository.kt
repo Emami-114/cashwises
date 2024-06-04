@@ -1,6 +1,7 @@
 package domain.repository
 
 import data.model.DealsQuery
+import data.model.MarkedDealForUser
 import domain.model.DealModel
 import domain.model.DealsModel
 import kotlinx.serialization.SerialName

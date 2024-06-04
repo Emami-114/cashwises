@@ -20,7 +20,7 @@ class TagRepositoryImpl : TagRepository {
         return try {
             client.get("${ApiConfig.BASE_URL}/tags") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
                 parameter("query", query)
             }.body<List<TagModel>>()
         } catch (e: Exception) {
@@ -32,7 +32,7 @@ class TagRepositoryImpl : TagRepository {
         return try {
             val response = client.post("${ApiConfig.BASE_URL}/tags") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
                 setBody(tagModel)
             }
             response.status.value in 200..300
@@ -42,7 +42,14 @@ class TagRepositoryImpl : TagRepository {
     }
 
     override suspend fun deleteTag(id: String): Boolean {
-        val response = client.delete(urlString = "${ApiConfig.BASE_URL}/tags/$id")
-        return response.status.value in 200..300
+        try {
+            val response = client.delete(urlString = "${ApiConfig.BASE_URL}/tags/$id") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(ApiConfig.userToken)
+            }
+            return response.status.value in 200..300
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

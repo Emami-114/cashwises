@@ -54,5 +54,6 @@
     <string name="provider_url">Anbieter-URL</string>
     <string name="video_url">Video url</string>
     <string name="shipping_costs">Versandkosten</string>
+    <string name="upload_your_image">Laden Sie Ihr Bild</string>
 
 </resources>

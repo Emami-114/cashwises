@@ -18,7 +18,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.seiko.imageloader.rememberImagePainter
 import data.repository.ApiConfig
 import domain.model.CategoryModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -38,18 +37,18 @@ fun CategoryItemView(
         },
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        val painter =
-            rememberImagePainter("${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}")
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxSize()
-                .shadow(3.dp, shape = MaterialTheme.shapes.large)
-                .customBorder()
-                .clip(MaterialTheme.shapes.large).weight(8f)
-        )
+//        val painter =
+//            rememberImagePainter("${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}")
+//        Image(
+//            painter = painter,
+//            contentDescription = null,
+//            contentScale = ContentScale.FillBounds,
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .shadow(3.dp, shape = MaterialTheme.shapes.large)
+//                .customBorder()
+//                .clip(MaterialTheme.shapes.large).weight(8f)
+//        )
         categoryModel.title?.let { title ->
             Text(
                 text = title,

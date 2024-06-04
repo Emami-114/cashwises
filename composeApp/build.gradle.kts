@@ -1,8 +1,10 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.internal.utils.localPropertiesFile
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -49,6 +51,7 @@ kotlin {
             implementation(libs.ktor.client.android)
             implementation(libs.androidx.appcompat)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(compose.preview)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -57,16 +60,14 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+//            implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+//            implementation(libs.androidx.compose.material3.adaptive.navigation)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             // navigation
-//            implementation(libs.voyager.navigation)
-//            implementation(libs.voyager.tab)
-//            implementation(libs.voyager.transition)
-
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha02")
+            implementation(libs.compose.navigation)
 
             // Ktor
             implementation(libs.ktor.client.core)
@@ -91,15 +92,19 @@ kotlin {
             // file picker
             implementation(libs.calf.filepicker)
             // image laoder
-            api(libs.image.loader)
             // rich text editor
             implementation(libs.rich.text)
-//            implementation(libs.napier)
+            // Coil3
+            implementation(libs.coil.compose.core)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.mp)
+            implementation(libs.coil.network.ktor)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }
@@ -119,7 +124,6 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
-
     @Suppress("UnstableApiUsage")
     testOptions {
         managedDevices.devices {

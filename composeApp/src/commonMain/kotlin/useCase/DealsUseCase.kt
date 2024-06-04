@@ -1,6 +1,7 @@
 package useCase
 
 import data.model.DealsQuery
+import data.model.MarkedDealForUser
 import data.repository.ImageUploadRepository
 import domain.model.DealModel
 import domain.model.DealsModel
@@ -60,7 +61,7 @@ class DealsUseCase : KoinComponent {
     ) {
         try {
             imageRepository.uploadImage(imageModel,
-                subDir = "deals_images",
+                subDir = "deals_thumbnail",
                 imagePath = { paths ->
                     if (paths.isNotEmpty()) {
                         imagePaths(paths)

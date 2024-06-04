@@ -37,16 +37,15 @@ class AuthRepositoryImpl : AuthRepository {
     override suspend fun login(email: String, password: String): Boolean {
         val body = LoginModel(email, password)
         return try {
-            val respose = client.post("${baseUrl}/auth/login") {
+            val response = client.post("${baseUrl}/auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(body)
-            }
-            if (respose.status.value in 200..300) {
-                settings.putString("TOKEN", respose.body<TokenModel>().token)
+            }.body<TokenModel>()
+            run {
+                settings.putString("TOKEN", response.token)
+                ApiConfig.userToken = response.token
                 UserRepository.INSTANCE.getMe()
                 true
-            } else {
-                false
             }
         } catch (e: Exception) {
             false
@@ -63,7 +62,6 @@ class AuthRepositoryImpl : AuthRepository {
             val response = client.post("$baseUrl/auth/verification") {
                 contentType(ContentType.Application.Json)
                 setBody(body)
-
             }
             return response.status.value in 200..300
         } catch (e: Exception) {
@@ -74,7 +72,7 @@ class AuthRepositoryImpl : AuthRepository {
     override suspend fun logout() {
         client.post("${baseUrl}/auth/logout") {
             contentType(ContentType.Application.Json)
-            bearerAuth(settings.getString("TOKEN", "Token not found"))
+            bearerAuth(ApiConfig.userToken)
         }
     }
 }

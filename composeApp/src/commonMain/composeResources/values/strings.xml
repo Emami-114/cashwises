@@ -55,5 +55,6 @@
     <string name="provider_url">provider url</string>
     <string name="video_url">Video url</string>
     <string name="shipping_costs">Shipping costs</string>
+    <string name="upload_your_image">Upload your Image</string>
 
 </resources>

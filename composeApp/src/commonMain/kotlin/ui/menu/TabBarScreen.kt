@@ -72,7 +72,7 @@ fun TabBarScreen(onNavigate: (String) -> Unit) {
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingInner ->
-        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(paddingInner)) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
             val scope = this
             val maxWidth = scope.maxWidth
@@ -98,7 +98,7 @@ fun TabBarScreen(onNavigate: (String) -> Unit) {
                     }
                 }
             }
-            Row(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxSize().padding(paddingInner)) {
                 if (maxWidth >= 800.dp) {
                     TabBarView(currentItem, modifier = Modifier.weight(3f)) { tabItem ->
                         currentItem = tabItem

@@ -71,16 +71,6 @@ fun LogInView(
                 }
             }
 
-            uiState.isLoginSuccess -> {
-                CustomToast(
-                    modifier = Modifier,
-                    title = stringResource(Res.string.successfully_login)
-                ) {
-                    toHome()
-                    viewModel.onEvent(LoginEvent.OnSetDefaultState)
-                }
-            }
-
             uiState.errorMessage.isNullOrEmpty().not() -> {
                 CustomPopUp(true, onDismissDisable = true, message = uiState.errorMessage ?: "")
             }
@@ -152,6 +142,16 @@ fun LogInView(
                         modifier = Modifier.fillMaxWidth().noRippleClickable {
                             toPasswordForget()
                         })
+
+                    if (uiState.isLoginSuccess) {
+                        CustomToast(
+                            modifier = Modifier,
+                            title = stringResource(Res.string.successfully_login)
+                        ) {
+                            toHome()
+                            viewModel.onEvent(LoginEvent.OnSetDefaultState)
+                        }
+                    }
                 }
             }
         }

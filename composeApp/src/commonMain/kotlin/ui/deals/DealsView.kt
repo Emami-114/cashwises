@@ -52,12 +52,12 @@ fun DealsView(
             if (maxWidth > 1150.dp) 5
             else if (maxWidth > 900.dp && maxWidth < 1150.dp) 4
             else if (maxWidth > 700.dp && maxWidth < 900.dp) 3
-            else 2
+            else 3
         LazyVerticalGrid(
             columns = GridCells.Fixed(column),
             state = rememberLazyGridState,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
             modifier = modifier
                 .padding(all = 5.dp)
         ) {

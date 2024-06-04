@@ -1,6 +1,7 @@
 package data.repository
 
 import data.model.DealsQuery
+import data.model.MarkedDealForUser
 import data.repository.ApiConfig.httpClient
 import domain.model.DealModel
 import domain.model.DealsModel
@@ -10,6 +11,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -27,6 +29,7 @@ import ui.settings
 
 class DealRepositoryImpl : DealRepository {
     private val client = httpClient
+
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getDeals(
         query: DealsQuery
@@ -34,7 +37,7 @@ class DealRepositoryImpl : DealRepository {
         return try {
             val response = client.get("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
                 parameter("query", query.searchQuery)
                 parameter("page", query.page)
                 parameter("limit", query.limit)
@@ -53,7 +56,7 @@ class DealRepositoryImpl : DealRepository {
         return try {
             val response = client.get("${ApiConfig.BASE_URL}/deals/$id") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
             }.body<DealModel>()
 
             println("test deal Repo ${response.title}")
@@ -67,14 +70,13 @@ class DealRepositoryImpl : DealRepository {
         return try {
             client.post("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
-                bearerAuth(settings.getString("TOKEN", "Token not found"))
+                bearerAuth(ApiConfig.userToken)
                 setBody(dealModel)
             }.status.value in 200..300
         } catch (e: Exception) {
             throw e
         }
     }
-
     override suspend fun updateDeal(
         title: String,
         description: String,

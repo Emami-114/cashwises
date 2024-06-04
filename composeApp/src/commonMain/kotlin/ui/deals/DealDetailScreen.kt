@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -63,10 +64,14 @@ import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 import compose.icons.TablerIcons
+import compose.icons.tablericons.Bookmark
 import compose.icons.tablericons.Copy
 import compose.icons.tablericons.ExternalLink
+import compose.icons.tablericons.Heart
 import compose.icons.tablericons.Scissors
+import data.repository.UserRepository
 import domain.model.DealModel
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -77,6 +82,7 @@ import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_green
 import org.company.app.theme.cw_dark_green_dark
 import org.company.app.theme.cw_dark_onBackground
+import org.company.app.theme.cw_dark_onPrimary
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
@@ -105,10 +111,12 @@ fun DealDetailScreen(
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
     var deal by remember { mutableStateOf<DealModel?>(null) }
+    val scopeCoroutine = rememberCoroutineScope()
     val colorAnimation by animateColorAsState(
         targetValue = if (scrollState.value < 700) cw_dark_background.copy(alpha = 0.03f) else cw_dark_background,
         animationSpec = tween(600)
     )
+    var isDealMarked by remember { mutableStateOf(false) }
 
     LaunchedEffect(dealId) {
         dealId?.let {
@@ -116,11 +124,11 @@ fun DealDetailScreen(
                 deal = dealModel
             }
         }
+        isDealMarked = UserRepository.INSTANCE.userMarkedDeals.value.contains(dealId)
     }
 
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         val scope = this
         val maxWidth = scope.maxWidth
@@ -135,34 +143,41 @@ fun DealDetailScreen(
             backButtonAction = {
                 onNavigate(AppConstants.BackClickRoute.route)
             },
+            rightAction = {
+                Icon(
+                    TablerIcons.Bookmark,
+                    contentDescription = null,
+                    tint = if (isDealMarked) cw_dark_primary else cw_dark_whiteText,
+                    modifier = Modifier.size(26.dp).clickable {
+                        if (dealId != null) {
+                            scopeCoroutine.launch {
+                                UserRepository.INSTANCE.addMarkDealForUser(dealId)
+                                isDealMarked = UserRepository.INSTANCE.userMarkedDeals.value.contains(dealId)
+                            }
+                        }
+                    }
+                )
+            },
         )
         deal?.let { deal ->
             DetailDealView(
                 modifier = Modifier,
                 dealModel = deal,
                 scrollState = scrollState,
-                onClick = {},
                 clipBoard = { copyText ->
                     clipBoard.setText(annotatedString = AnnotatedString(text = copyText))
                     clipCopyText = copyText
                     showToast = true
-                }
-            )
+                })
         }
         Box(
-            modifier = Modifier
-                .height(80.dp)
-                .background(cw_dark_background)
-                .align(Alignment.BottomStart),
-            contentAlignment = Alignment.BottomStart
+            modifier = Modifier.height(80.dp).background(cw_dark_background)
+                .align(Alignment.BottomStart), contentAlignment = Alignment.BottomStart
         ) {
             Button(
                 onClick = {},
-                modifier = Modifier.fillMaxWidth()
-                    .height(45.dp)
-                    .align(Alignment.TopStart)
-                    .padding(top = 5.dp)
-                    .padding(horizontal = 25.dp)
+                modifier = Modifier.fillMaxWidth().height(45.dp).align(Alignment.TopStart)
+                    .padding(top = 5.dp).padding(horizontal = 25.dp)
                     .background(cw_dark_primary, shape = MaterialTheme.shapes.large)
             ) {
                 Row(
@@ -221,7 +236,6 @@ fun DetailDealView(
     modifier: Modifier = Modifier,
     dealModel: DealModel,
     scrollState: ScrollState,
-    onClick: () -> Unit,
     clipBoard: (String) -> Unit
 ) {
     val richTextState = rememberRichTextState()
@@ -237,7 +251,6 @@ fun DetailDealView(
     ) {
         dealModel.thumbnail?.let { path ->
             CustomImagesSlider(
-                thumbnail = path,
                 paths = dealModel.images,
             )
         }
@@ -246,11 +259,9 @@ fun DetailDealView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(dealModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
-            val currentDate = Clock.System.now()
-                .daysUntil(
-                    Instant.parse(dealModel.createdAt ?: ""),
-                    timeZone = TimeZone.UTC
-                ).absoluteValue
+            val currentDate = Clock.System.now().daysUntil(
+                Instant.parse(dealModel.createdAt ?: ""), timeZone = TimeZone.UTC
+            ).absoluteValue
             Text(
                 text = if (currentDate > 0) stringResource(Res.string.some_day_ago, "$currentDate")
                 else stringResource(Res.string.today),
@@ -267,21 +278,14 @@ fun DetailDealView(
         )
         Spacer(modifier = Modifier.height(5.dp))
         dealModel.expirationDate?.let { expirationDate ->
-            val expiration = Clock.System.now()
-                .daysUntil(
-                    Instant.parse(expirationDate),
-                    timeZone = TimeZone.UTC
-                )
+            val expiration = Clock.System.now().daysUntil(
+                Instant.parse(expirationDate), timeZone = TimeZone.UTC
+            )
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .background(
-                        if (expiration > 0) cw_dark_green else cw_dark_red.copy(alpha = 0.7f),
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .padding(vertical = 3.dp),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).background(
+                    if (expiration > 0) cw_dark_green else cw_dark_red.copy(alpha = 0.7f),
+                    shape = MaterialTheme.shapes.medium
+                ).padding(vertical = 3.dp), contentAlignment = Alignment.Center
             ) {
                 Text(
                     if (expiration == 0) stringResource(Res.string.offers_ends_today)
@@ -296,11 +300,8 @@ fun DetailDealView(
         }
         Spacer(modifier = Modifier.height(5.dp))
         dealModel.couponCode?.let { couponCode ->
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .background(cw_dark_onBackground, shape = MaterialTheme.shapes.large)
-                .height(50.dp)
+            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+                .background(cw_dark_onBackground, shape = MaterialTheme.shapes.large).height(50.dp)
                 .drawBehind {
                     val stroke = Stroke(
                         width = 5f,
@@ -313,8 +314,7 @@ fun DetailDealView(
                     )
                 }.noRippleClickable {
                     clipBoard(couponCode)
-                },
-                contentAlignment = Alignment.Center
+                }, contentAlignment = Alignment.Center
             ) {
                 Icon(
                     TablerIcons.Scissors,
