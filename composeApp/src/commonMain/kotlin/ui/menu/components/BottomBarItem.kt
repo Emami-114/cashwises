@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cashwises.composeapp.generated.resources.Res
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.painterResource
@@ -51,8 +50,9 @@ fun BottomBarItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
+
             Icon(
-                imageVector = tab.defaultIcon,
+                painter = painterResource(tab.defaultIcon),
                 contentDescription = tab.title,
                 modifier = Modifier.size(22.dp),
                 tint = cw_dark_whiteText

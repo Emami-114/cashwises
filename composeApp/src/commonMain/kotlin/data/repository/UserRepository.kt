@@ -3,6 +3,7 @@ package data.repository
 import androidx.compose.runtime.mutableStateOf
 import data.model.MarkedDealForUser
 import domain.model.UserModel
+import domain.model.UserRole
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
@@ -29,26 +30,28 @@ class UserRepository {
         var INSTANCE: UserRepository = UserRepository()
     }
 
-    suspend fun fetchImage(imageUrl: String): ByteArray {
-        val response: HttpResponse = ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/images/$imageUrl") {
-        }
-        return response.readBytes()
-    }
-
     suspend fun getMe() {
         try {
             if (ApiConfig.userToken.isEmpty().not()) {
                 val me = ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/users/me") {
                     bearerAuth(ApiConfig.userToken)
                 }.body<UserModel?>()
-                userIsLogged = me != null
-                user = me
+                if (me != null) {
+                    userIsLogged = true
+                    user = me
+                    getMarkDealsForUser()
+                }
             }
         } catch (e: Exception) {
             println("Error GET ME Failed ${e.message}")
         }
     }
 
+    fun isDealMarked(dealId: String): Boolean {
+        return userMarkedDeals.value.contains(dealId)
+    }
+
+    fun userIsAdmin(): Boolean = user?.role == UserRole.ADMIN
     suspend fun addMarkDealForUser(dealId: String): Boolean {
         try {
             val userId = user?.id ?: ""
@@ -82,7 +85,7 @@ class UserRepository {
         }
     }
 
-    suspend fun getMarkDealsForUser() {
+    private suspend fun getMarkDealsForUser() {
         val response = ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/deals/marked/${user?.id}") {
             contentType(ContentType.Application.Json)
             bearerAuth(ApiConfig.userToken)

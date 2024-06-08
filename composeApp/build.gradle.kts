@@ -75,7 +75,7 @@ kotlin {
             implementation(libs.ktor.client.serialization)
             implementation(libs.kotlinx.datetime)
             // Icon
-            implementation(libs.composeIcons.tablerIcons)
+//            implementation(libs.composeIcons.tablerIcons)
             // MOKO
             implementation(libs.moko.mvvm)
             // settings

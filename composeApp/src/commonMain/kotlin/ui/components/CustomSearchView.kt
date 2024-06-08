@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,12 +37,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Search
-import compose.icons.tablericons.X
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.search
+import cashwises.composeapp.generated.resources.x
 import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.customBorder
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,13 +132,19 @@ fun CustomSearchView(
                 innerTextField = innerTextField,
                 placeholder = placeholder,
                 label = null,
-                leadingIcon = { Icon(TablerIcons.Search, contentDescription = null) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.search),
+                        contentDescription = null,
+                        modifier =  Modifier.size(26.dp)
+                    )
+                },
                 trailingIcon = {
                     if (focus)
                         Icon(
-                            TablerIcons.X,
+                            painter = painterResource(Res.drawable.x),
                             contentDescription = null,
-                            modifier = Modifier.clickable {
+                            modifier = Modifier.size(26.dp).clickable {
                                 if (value.isNotEmpty()) {
                                     onValueChange("")
                                 } else {

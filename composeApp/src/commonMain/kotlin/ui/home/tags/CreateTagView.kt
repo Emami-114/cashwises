@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
@@ -24,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Trash
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.trash
 import data.repository.UserRepository
 import domain.model.TagModel
 import domain.model.UserRole
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -51,7 +53,7 @@ fun CreateTagView(modifier: Modifier = Modifier) {
     val uiState by viewModel.state.collectAsState()
     val tags by viewModel.tags.collectAsState()
 
-    Box() {
+    Box {
         when {
             uiState.errorString != null -> {
                 CustomPopUp(
@@ -85,10 +87,10 @@ fun CreateTagView(modifier: Modifier = Modifier) {
                                 Text(tag.title, fontSize = 20.sp, color = cw_dark_whiteText)
                                 if (UserRepository.INSTANCE.user?.role == UserRole.ADMIN) {
                                     Icon(
-                                        TablerIcons.Trash,
+                                        painter = painterResource(Res.drawable.trash),
                                         contentDescription = null,
                                         tint = cw_dark_whiteText,
-                                        modifier = Modifier.clickable {
+                                        modifier = Modifier.size(26.dp).clickable {
                                             viewModel.deleteTag(tag.id ?: "")
                                         })
                                 }

@@ -46,7 +46,6 @@ fun App() = AppTheme {
         LaunchedEffect(Unit) {
             LocalPushNotification.requestAuthorization { }
             UserRepository.INSTANCE.getMe()
-//            UserRepository.INSTANCE.getMarkDealsForUser()
         }
         HomeNav()
     }

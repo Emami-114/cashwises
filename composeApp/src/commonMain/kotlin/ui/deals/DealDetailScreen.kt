@@ -19,14 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,7 +41,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -53,39 +51,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.copy
+import cashwises.composeapp.generated.resources.external_link
 import cashwises.composeapp.generated.resources.free
+import cashwises.composeapp.generated.resources.heart
+import cashwises.composeapp.generated.resources.heart_fill
 import cashwises.composeapp.generated.resources.offers_ends_in_some_day
-import cashwises.composeapp.generated.resources.offers_ends_today
+import cashwises.composeapp.generated.resources.offers_ends_in_some_hour
 import cashwises.composeapp.generated.resources.offers_expired
 import cashwises.composeapp.generated.resources.some_day_ago
+import cashwises.composeapp.generated.resources.some_hour_ago
+import cashwises.composeapp.generated.resources.some_minute_ago
 import cashwises.composeapp.generated.resources.successfully_copied
-import cashwises.composeapp.generated.resources.today
+import cashwises.composeapp.generated.resources.trash
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Bookmark
-import compose.icons.tablericons.Copy
-import compose.icons.tablericons.ExternalLink
-import compose.icons.tablericons.Heart
-import compose.icons.tablericons.Scissors
 import data.repository.UserRepository
 import domain.model.DealModel
+import domain.model.UserRole
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
+import kotlinx.datetime.until
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_green
 import org.company.app.theme.cw_dark_green_dark
 import org.company.app.theme.cw_dark_onBackground
-import org.company.app.theme.cw_dark_onPrimary
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.AppConstants
@@ -135,28 +136,50 @@ fun DealDetailScreen(
         CustomBackgroundView()
         CustomTopAppBar(
             modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
-            title = if (scrollState.value < 800) "" else deal?.title ?: "",
-            backgroundColor = colorAnimation,
-            hasBackButtonBackground = scrollState.value < 800,
+            title = if (scrollState.value >= 800) deal?.title ?: "" else "",
+            hasBackground = scrollState.value >= 800,
             textColor = cw_dark_whiteText,
             isDivider = false,
             backButtonAction = {
                 onNavigate(AppConstants.BackClickRoute.route)
             },
             rightAction = {
-                Icon(
-                    TablerIcons.Bookmark,
-                    contentDescription = null,
-                    tint = if (isDealMarked) cw_dark_primary else cw_dark_whiteText,
-                    modifier = Modifier.size(26.dp).clickable {
-                        if (dealId != null) {
-                            scopeCoroutine.launch {
-                                UserRepository.INSTANCE.addMarkDealForUser(dealId)
-                                isDealMarked = UserRepository.INSTANCE.userMarkedDeals.value.contains(dealId)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(if (isDealMarked) Res.drawable.heart_fill else Res.drawable.heart),
+                        contentDescription = null,
+                        tint = if (isDealMarked) cw_dark_red else cw_dark_whiteText,
+                        modifier = Modifier.size(26.dp).clickable {
+                            if (dealId != null) {
+                                scopeCoroutine.launch {
+                                    UserRepository.INSTANCE.addMarkDealForUser(dealId)
+                                        .let { isSuccess ->
+                                            if (isSuccess) {
+                                                isDealMarked =
+                                                    UserRepository.INSTANCE.userMarkedDeals.value.contains(
+                                                        dealId
+                                                    )
+                                            }
+                                        }
+
+                                }
                             }
-                        }
+                        })
+
+                    if (UserRepository.INSTANCE.user?.role == UserRole.ADMIN) {
+                        Icon(
+                            painter = painterResource(Res.drawable.trash),
+                            contentDescription = null,
+                            tint = cw_dark_whiteText,
+                            modifier = Modifier.size(26.dp).clickable {
+                                viewModel.deleteDeal(deal)
+                                onNavigate(AppConstants.BackClickRoute.route)
+                            })
                     }
-                )
+                }
             },
         )
         deal?.let { deal ->
@@ -210,7 +233,7 @@ fun DealDetailScreen(
                         )
                     }
                     Icon(
-                        TablerIcons.ExternalLink,
+                        painter = painterResource(Res.drawable.external_link),
                         contentDescription = null,
                         tint = cw_dark_whiteText,
                         modifier = Modifier.size(20.dp)
@@ -239,7 +262,6 @@ fun DetailDealView(
     clipBoard: (String) -> Unit
 ) {
     val richTextState = rememberRichTextState()
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         richTextState.setHtml(dealModel.description)
@@ -249,22 +271,54 @@ fun DetailDealView(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
-        dealModel.thumbnail?.let { path ->
-            CustomImagesSlider(
-                paths = dealModel.images,
-            )
+        Box {
+            dealModel.thumbnail?.let { _ ->
+                CustomImagesSlider(
+                    paths = dealModel.images,
+                )
+                if (dealModel.offerPrice != null) {
+                    val offerPercent =
+                        (((dealModel.price!! - dealModel.offerPrice) / dealModel.price) * 100).toInt()
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(all = 20.dp)
+                            .padding(start = 10.dp)
+                            .size(45.dp)
+                            .background(cw_dark_primary, shape = CircleShape).padding(5.dp)
+                            .zIndex(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "${offerPercent}%",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(dealModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
-            val currentDate = Clock.System.now().daysUntil(
-                Instant.parse(dealModel.createdAt ?: ""), timeZone = TimeZone.UTC
-            ).absoluteValue
+
             Text(
-                text = if (currentDate > 0) stringResource(Res.string.some_day_ago, "$currentDate")
-                else stringResource(Res.string.today),
+                text = if (dealModel.currentCreatedHour.toInt() == 0) stringResource(
+                    Res.string.some_minute_ago,
+                    "${dealModel.currentCreatedMinute}"
+                )
+                else if (dealModel.currentCreatedDay == 0 && dealModel.currentCreatedHour < 24) stringResource(
+                    Res.string.some_hour_ago,
+                    "${dealModel.currentCreatedHour}"
+                )
+                else if (dealModel.currentCreatedDay > 0) stringResource(
+                    Res.string.some_day_ago,
+                    "${dealModel.currentCreatedDay}"
+                )
+                else "",
                 fontSize = 10.sp,
                 color = cw_dark_grayText,
                 fontWeight = FontWeight.Medium
@@ -281,16 +335,28 @@ fun DetailDealView(
             val expiration = Clock.System.now().daysUntil(
                 Instant.parse(expirationDate), timeZone = TimeZone.UTC
             )
+            val currentExpirationHour = Clock.System.now().until(
+                Instant.parse(expirationDate), unit = DateTimeUnit.HOUR
+            ).absoluteValue
+
+            val currentExpirationDay = Clock.System.now().daysUntil(
+                Instant.parse(expirationDate), timeZone = TimeZone.UTC
+            )
             Box(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).background(
-                    if (expiration > 0) cw_dark_green else cw_dark_red.copy(alpha = 0.7f),
+                    if (currentExpirationDay > 0) cw_dark_green else cw_dark_red.copy(alpha = 0.7f),
                     shape = MaterialTheme.shapes.medium
                 ).padding(vertical = 3.dp), contentAlignment = Alignment.Center
             ) {
                 Text(
-                    if (expiration == 0) stringResource(Res.string.offers_ends_today)
-                    else if (expiration < 0) stringResource(Res.string.offers_expired)
-                    else stringResource(Res.string.offers_ends_in_some_day, expiration),
+                    if (currentExpirationDay == 0 && currentExpirationHour < 24) stringResource(
+                        Res.string.offers_ends_in_some_hour,
+                        currentExpirationHour
+                    )
+                    else if (currentExpirationDay < 0) stringResource(Res.string.offers_expired)
+                    else if (currentExpirationDay > 0) stringResource(
+                        Res.string.offers_ends_in_some_day, currentExpirationDay + 1
+                    ) else "",
                     fontSize = 12.sp,
                     color = cw_dark_whiteText,
                     textAlign = TextAlign.Center,
@@ -316,15 +382,14 @@ fun DetailDealView(
                     clipBoard(couponCode)
                 }, contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    TablerIcons.Scissors,
-                    contentDescription = null,
-                    modifier = Modifier.align(Alignment.TopStart).offset(x = 20.dp, y = (-12).dp),
-                    tint = cw_dark_green
-                )
                 Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                     Text(couponCode, color = cw_dark_whiteText)
-                    Icon(TablerIcons.Copy, contentDescription = null, tint = cw_dark_green_dark)
+                    Icon(
+                        painter = painterResource(Res.drawable.copy),
+                        contentDescription = null,
+                        tint = cw_dark_green_dark,
+                        modifier = Modifier.size(26.dp)
+                    )
                 }
             }
         }

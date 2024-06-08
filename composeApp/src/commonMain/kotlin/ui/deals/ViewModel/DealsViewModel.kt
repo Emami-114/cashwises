@@ -7,7 +7,9 @@ import domain.model.DealModel
 import domain.model.ImageModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -22,11 +24,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
     private val _state = MutableStateFlow(DealsState())
     private val categoriesUseCase: CategoryUseCase by inject()
     val state = _state.asStateFlow()
-//        .stateIn(
-//            viewModelScope,
-//            SharingStarted.Lazily,
-//            DealsState()
-//        )
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            DealsState()
+        )
 
     init {
         getDeals()
@@ -327,6 +329,19 @@ class DealsViewModel : ViewModel(), KoinComponent {
             }
             delay(4000)
             onEvent(DealEvent.OnSetDefaultState)
+        }
+    }
+
+    fun deleteDeal(dealModel: DealModel?) {
+        try {
+            viewModelScope.launch {
+                if (dealModel != null) {
+                    useCase.deleteDeal(dealModel) {
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Fehler beim deleten deals  ${e.message}")
         }
     }
 

@@ -1,9 +1,7 @@
 package ui.category
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +10,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,12 +34,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.edit
 import coil3.compose.AsyncImage
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Edit
 import data.repository.ApiConfig
 import domain.model.CategoryModel
 import domain.model.CategoryStatus
+import org.jetbrains.compose.resources.painterResource
 import ui.category.viewModel.CategoryEvent
 import ui.category.viewModel.CategoryState
 import ui.category.viewModel.CategoryViewModel
@@ -191,9 +188,9 @@ fun CategoryItemHeader(
             horizontalArrangement = Arrangement.End
         ) {
             Icon(
-                TablerIcons.Edit,
+                painter = painterResource(Res.drawable.edit),
                 contentDescription = null,
-                modifier = Modifier.noRippleClickable(onEdit),
+                modifier = Modifier.size(26.dp).noRippleClickable(onEdit),
                 tint = MaterialTheme.colorScheme.onSecondary
             )
             Spacer(modifier = Modifier.size(10.dp))

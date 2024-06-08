@@ -28,5 +28,5 @@ interface DealRepository {
         images: List<String>? = null,
     )
 
-    suspend fun deleteDeal(id: String)
+    suspend fun deleteDeal(id: String): Boolean
 }

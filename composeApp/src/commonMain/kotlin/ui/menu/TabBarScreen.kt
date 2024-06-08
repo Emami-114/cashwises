@@ -30,15 +30,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Edit
-import compose.icons.tablericons.LayoutGrid
-import compose.icons.tablericons.LayoutGridAdd
-import compose.icons.tablericons.Plus
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.categories
+import cashwises.composeapp.generated.resources.create_category
+import cashwises.composeapp.generated.resources.create_deal
+import cashwises.composeapp.generated.resources.create_tags
+import cashwises.composeapp.generated.resources.edit
+import cashwises.composeapp.generated.resources.edit_category
+import cashwises.composeapp.generated.resources.edit_deal
+import cashwises.composeapp.generated.resources.layout_grid
+import cashwises.composeapp.generated.resources.layout_grid_add
+import cashwises.composeapp.generated.resources.plus
 import org.company.app.theme.cw_dark_background
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.AppConstants
 import ui.category.CategoriesView
@@ -157,44 +165,44 @@ fun TabBarView(
     ) {
 
         TabBarItem(
-            title = TabItemEnum.CREATE_DEAL.title,
-            icon = TabItemEnum.CREATE_DEAL.icon,
-            currentItem = currentItem.title
+            title = stringResource(TabItemEnum.CREATE_DEAL.title),
+            iconResource = TabItemEnum.CREATE_DEAL.icon,
+            currentItem = stringResource(currentItem.title)
         ) {
             selectedItem(TabItemEnum.CREATE_DEAL)
         }
         TabBarItem(
-            title = TabItemEnum.CATEGORIES.title,
-            icon = TabItemEnum.CATEGORIES.icon,
-            currentItem = currentItem.title
+            title = stringResource(TabItemEnum.CATEGORIES.title),
+            iconResource = TabItemEnum.CATEGORIES.icon,
+            currentItem = stringResource(currentItem.title)
         ) {
             selectedItem(TabItemEnum.CATEGORIES)
         }
 
         TabBarItem(
-            title = TabItemEnum.CREATE_CATEGORY.title,
-            icon = TabItemEnum.CREATE_CATEGORY.icon,
-            currentItem = currentItem.title
+            title = stringResource(TabItemEnum.CREATE_CATEGORY.title),
+            iconResource = TabItemEnum.CREATE_CATEGORY.icon,
+            currentItem = stringResource(currentItem.title)
         ) {
             selectedItem(TabItemEnum.CREATE_CATEGORY)
         }
 
         TabBarItem(
-            title = TabItemEnum.CREATE_TAGS.title,
-            icon = TabItemEnum.CREATE_TAGS.icon,
-            currentItem = currentItem.title
+            title = stringResource(TabItemEnum.CREATE_TAGS.title),
+            iconResource = TabItemEnum.CREATE_TAGS.icon,
+            currentItem = stringResource(currentItem.title)
         ) {
             selectedItem(TabItemEnum.CREATE_TAGS)
         }
     }
 }
 
-enum class TabItemEnum(var title: String, var icon: ImageVector) {
-    CREATE_DEAL(title = "Create Deal", icon = TablerIcons.Plus),
-    CATEGORIES(title = "Categories", icon = TablerIcons.LayoutGrid),
-    CREATE_CATEGORY(title = "Create Category", icon = TablerIcons.LayoutGridAdd),
-    EDIT_DEAL(title = "Edit Deal", icon = TablerIcons.Edit),
-    EDIT_CATEGORY(title = "Edit Category", icon = TablerIcons.Edit),
-    CREATE_TAGS(title = "Create Tags", icon = TablerIcons.Plus);
+enum class TabItemEnum(var title: StringResource, var icon: DrawableResource) {
+    CREATE_DEAL(title = Res.string.create_deal, icon = Res.drawable.layout_grid),
+    CATEGORIES(title = Res.string.categories, icon = Res.drawable.layout_grid),
+    CREATE_CATEGORY(title = Res.string.create_category, icon = Res.drawable.layout_grid_add),
+    EDIT_DEAL(title = Res.string.edit_deal, icon = Res.drawable.edit),
+    EDIT_CATEGORY(title = Res.string.edit_category, icon = Res.drawable.edit),
+    CREATE_TAGS(title = Res.string.create_tags, icon = Res.drawable.plus);
 
 }

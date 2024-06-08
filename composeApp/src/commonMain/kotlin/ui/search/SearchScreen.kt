@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import compose.icons.TablerIcons
-import compose.icons.tablericons.ChevronLeft
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.chevron_left
 import data.model.DealsQuery
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -54,7 +55,7 @@ import ui.components.CustomDivider
 import ui.components.CustomSearchView
 import ui.components.CustomSlideTransition
 import ui.components.CustomTopAppBar
-import ui.components.ProductRow
+import ui.components.ProductItem
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.components.CategoryItemView
 import ui.home.tags.TagsView
@@ -103,7 +104,7 @@ fun SearchView(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(uiState.deals ?: listOf()) { deal ->
-                    ProductRow(dealModel = deal) {
+                    ProductItem(dealModel = deal) {
                         onNavigate.invoke(AppScreen.DealDetail.route + "/${deal.id}")
                     }
                 }
@@ -270,7 +271,7 @@ fun SearchTopAppBar(
         ) {
             if (showBackButton) {
                 Icon(
-                    TablerIcons.ChevronLeft,
+                    painter = painterResource(Res.drawable.chevron_left),
                     contentDescription = null,
                     tint = cw_dark_whiteText,
                     modifier = Modifier.size(30.dp).noRippleClickable {

@@ -31,12 +31,12 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.cloud_upload
 import cashwises.composeapp.generated.resources.upload_your_image
-import coil3.compose.AsyncImage
+import cashwises.composeapp.generated.resources.x
 import com.mohamedrejeb.calf.core.LocalPlatformContext
 import com.mohamedrejeb.calf.io.getName
 import com.mohamedrejeb.calf.io.getPath
@@ -45,14 +45,11 @@ import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import com.mohamedrejeb.calf.picker.toImageBitmap
-import compose.icons.TablerIcons
-import compose.icons.tablericons.CloudUpload
-import compose.icons.tablericons.X
-import data.repository.ApiConfig
 import domain.model.ImageModel
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_onBackground
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
@@ -105,13 +102,16 @@ fun CustomMultipleImagePicker(
                             height = 1024,
                             quality = 50
                         )
-                        Image(bitmap = imageByte.toImageBitmap(), contentDescription = null,
+                        Image(
+                            bitmap = imageByte.toImageBitmap(), contentDescription = null,
                             modifier = Modifier.size(140.dp)
-                                .clip(MaterialTheme.shapes.large).customBorder())
+                                .clip(MaterialTheme.shapes.large).customBorder()
+                        )
                         Spacer(modifier = Modifier.width(10.dp))
                     }
                 }
-                Icon(TablerIcons.X,
+                Icon(
+                    painter = painterResource(Res.drawable.x),
                     contentDescription = null,
                     tint = Color.Black,
                     modifier = Modifier.align(Alignment.Top).size(40.dp).zIndex(1f)
@@ -146,7 +146,7 @@ fun CustomMultipleImagePicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    TablerIcons.CloudUpload,
+                    painter = painterResource(Res.drawable.cloud_upload),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(50.dp)

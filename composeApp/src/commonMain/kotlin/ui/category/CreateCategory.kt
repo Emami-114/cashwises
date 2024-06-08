@@ -29,15 +29,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.chevron_down
+import cashwises.composeapp.generated.resources.chevron_up
 import cashwises.composeapp.generated.resources.successfully_copied
 import cashwises.composeapp.generated.resources.successfully_created
-import compose.icons.TablerIcons
-import compose.icons.tablericons.ChevronDown
-import compose.icons.tablericons.ChevronUp
-import compose.icons.tablericons.X
+import cashwises.composeapp.generated.resources.x
 import domain.model.CategoryModel
 import domain.model.CategoryStatus
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.category.viewModel.CategoryEvent
 import ui.category.viewModel.CategoryState
@@ -135,16 +135,19 @@ fun MainCategoryList(
                     if (uiState.selectedCategory != null) {
                         Spacer(modifier = Modifier.width(20.dp))
                         Icon(
-                            TablerIcons.X,
+                            painter = painterResource(Res.drawable.x),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondary,
                             modifier = Modifier.size(20.dp).noRippleClickable { onSelected(null) }
                         )
                     }
                     Icon(
-                        if (isExpanded) TablerIcons.ChevronUp else TablerIcons.ChevronDown,
+                        painter = if (isExpanded) painterResource(Res.drawable.chevron_up) else painterResource(
+                            Res.drawable.chevron_down
+                        ),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondary
+                        tint = MaterialTheme.colorScheme.onSecondary,
+                        modifier = Modifier.size(26.dp)
                     )
                 }
 

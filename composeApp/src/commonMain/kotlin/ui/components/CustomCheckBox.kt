@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,9 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Checkbox
-import compose.icons.tablericons.Square
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.checkbox
+import cashwises.composeapp.generated.resources.square
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun CustomCheckBox(
@@ -38,12 +40,11 @@ fun CustomCheckBox(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        val icon =
-            if (active) TablerIcons.Checkbox else TablerIcons.Square
         Icon(
-            icon,
+            painter = if (active) painterResource(Res.drawable.checkbox) else painterResource(Res.drawable.square),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary
+            tint = MaterialTheme.colorScheme.onSecondary,
+            modifier = Modifier.size(26.dp)
         )
         Text(text, color = MaterialTheme.colorScheme.secondary)
     }

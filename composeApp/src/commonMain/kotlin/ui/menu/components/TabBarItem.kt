@@ -16,15 +16,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.customBorder
 
 @Composable
 fun TabBarItem(
     title: String,
-    icon: ImageVector,
+    iconResource: DrawableResource,
     currentItem: String,
     onClick: () -> Unit
 ) {
@@ -44,7 +45,7 @@ fun TabBarItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            icon,
+            painter = painterResource(iconResource),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.size(30.dp)

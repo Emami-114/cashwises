@@ -2,8 +2,9 @@ package ui.deals
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,9 +25,9 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.koinInject
 import ui.AppScreen
 import ui.components.CustomBackgroundView
-import ui.components.CustomSlideTransition
-import ui.components.ProductRow
+import ui.components.ProductItem
 import ui.deals.ViewModel.DealsViewModel
+import ui.deals.components.ProductItemRow
 
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
@@ -52,7 +53,7 @@ fun DealsView(
             if (maxWidth > 1150.dp) 5
             else if (maxWidth > 900.dp && maxWidth < 1150.dp) 4
             else if (maxWidth > 700.dp && maxWidth < 900.dp) 3
-            else 3
+            else 2
         LazyVerticalGrid(
             columns = GridCells.Fixed(column),
             state = rememberLazyGridState,
@@ -62,14 +63,17 @@ fun DealsView(
                 .padding(all = 5.dp)
         ) {
             items(uiState.deals) { deal ->
-                ProductRow(
+                ProductItem(
                     dealModel = deal,
                     onClick = {
-                    selectedDeal = deal
-                    showDetail = true
-                    viewModel.doChangeSelectedDeal(deal)
-                    onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
-                })
+                        selectedDeal = deal
+                        showDetail = true
+                        viewModel.doChangeSelectedDeal(deal)
+                        onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
+                    })
+            }
+            item {
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

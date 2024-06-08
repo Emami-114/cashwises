@@ -1,25 +1,15 @@
 package ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateValueAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
@@ -29,18 +19,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Bell
-import compose.icons.tablericons.Home
-import compose.icons.tablericons.Search
-import compose.icons.tablericons.User
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.bell
+import cashwises.composeapp.generated.resources.home
+import cashwises.composeapp.generated.resources.search
+import cashwises.composeapp.generated.resources.user
+import org.jetbrains.compose.resources.DrawableResource
 import ui.account.AccountView
 import ui.account.auth.AuthView
+import ui.account.wish_list.WishListView
 import ui.components.CustomBackgroundView
-import ui.components.CustomToast
-import ui.components.CustomTopAppBar
 import ui.deals.DealDetailScreen
-import ui.deals.DealsView
 import ui.home.HomeView
 import ui.menu.BottomNavigationView
 import ui.menu.TabBarScreen
@@ -181,6 +170,9 @@ fun NavHostMain(
             composable(route = AppScreen.CreateDeal.route) {
                 TabBarScreen(onNavigate = onNavigate)
             }
+            composable(route = AppScreen.WishList.route) {
+                WishListView(onNavigate = onNavigate)
+            }
             composable(
                 route = AppScreen.SearchView.route + "?categoryId={categoryId}&tag={tag}&title={title}&query={query}",
                 arguments = listOf(
@@ -234,6 +226,7 @@ fun navigateTo(
 
         else -> {
             navController.navigate(routeName)
+
         }
     }
 }
@@ -271,6 +264,11 @@ sealed class AppScreen(
         title = "Profile",
     )
 
+    data object WishList : AppScreen(
+        route = "WishList",
+        title = "Wish list",
+    )
+
     data object Settings : AppScreen(
         route = "SETTINGS",
         title = "Settings",
@@ -296,30 +294,30 @@ sealed class AppScreen(
 sealed class BottomBarScreen(
     val route: String,
     var title: String,
-    val defaultIcon: ImageVector
+    val defaultIcon: DrawableResource
 ) {
     data object Home : BottomBarScreen(
         route = "HOME",
         title = "Home",
-        defaultIcon = TablerIcons.Home,
+        defaultIcon = Res.drawable.home,
     )
 
     data object Search : BottomBarScreen(
         route = "Search",
         title = "Search",
-        defaultIcon = TablerIcons.Search,
+        defaultIcon = Res.drawable.search,
     )
 
     data object Notification : BottomBarScreen(
         route = "Notification",
         title = "Notification",
-        defaultIcon = TablerIcons.Bell,
+        defaultIcon = Res.drawable.bell,
     )
 
     data object Account : BottomBarScreen(
         route = "Account",
         title = "Account",
-        defaultIcon = TablerIcons.User,
+        defaultIcon = Res.drawable.user,
     )
 }
 

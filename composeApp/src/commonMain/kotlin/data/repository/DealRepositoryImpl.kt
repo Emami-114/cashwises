@@ -77,6 +77,7 @@ class DealRepositoryImpl : DealRepository {
             throw e
         }
     }
+
     override suspend fun updateDeal(
         title: String,
         description: String,
@@ -94,10 +95,13 @@ class DealRepositoryImpl : DealRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteDeal(id: String) {
-        client.delete("${ApiConfig.BASE_URL}/deals/$id") {
-            bearerAuth(settings.getString("TOKEN", "Token not found"))
+    override suspend fun deleteDeal(id: String): Boolean {
+        try {
+            return client.delete("${ApiConfig.BASE_URL}/deals/$id") {
+                bearerAuth(ApiConfig.userToken)
+            }.status.value in 200..300
+        } catch (e: Exception) {
+            throw e
         }
-
     }
 }

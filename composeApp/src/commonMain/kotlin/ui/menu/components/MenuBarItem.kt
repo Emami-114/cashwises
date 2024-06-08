@@ -12,17 +12,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun MenuBarItem(
     modifier: Modifier = Modifier,
-    title: String,
-    icon: ImageVector,
+    title: StringResource,
+    icon: DrawableResource,
     onClick: () -> Unit
 ) {
     Box(
@@ -36,13 +39,13 @@ fun MenuBarItem(
             }
         ) {
             Icon(
-                icon,
+                painter = painterResource(icon),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(30.dp)
             )
             Text(
-                title,
+               text = stringResource(title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.secondary

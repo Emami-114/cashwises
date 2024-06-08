@@ -1,6 +1,5 @@
 package ui.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,15 +30,11 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.cloud_upload
 import cashwises.composeapp.generated.resources.upload_your_image
-import coil3.Image
-import coil3.ImageLoader
-import coil3.compose.AsyncImage
-import coil3.compose.SubcomposeAsyncImage
 import com.mohamedrejeb.calf.core.LocalPlatformContext
 import com.mohamedrejeb.calf.io.getName
 import com.mohamedrejeb.calf.io.getPath
@@ -48,12 +43,11 @@ import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
 import com.mohamedrejeb.calf.picker.rememberFilePickerLauncher
 import com.mohamedrejeb.calf.picker.toImageBitmap
-import compose.icons.TablerIcons
-import compose.icons.tablericons.CloudUpload
 import domain.model.ImageModel
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_onBackground
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.customBorder
 import utils.resizeImage
@@ -108,12 +102,12 @@ fun CustomImagePicker(
                 bitmap = imageByte.toImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier
-                .heightIn(max = 300.dp)
-                .customBorder()
-                .clip(shape = MaterialTheme.shapes.large)
-                .clickable {
-                    pickerLaunch.launch()
-                })
+                    .heightIn(max = 300.dp)
+                    .customBorder()
+                    .clip(shape = MaterialTheme.shapes.large)
+                    .clickable {
+                        pickerLaunch.launch()
+                    })
             Spacer(modifier = Modifier.height(10.dp))
             CustomButton(title = "Remove") {
                 onImageChange(null)
@@ -153,7 +147,7 @@ fun CustomImagePicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
-                    TablerIcons.CloudUpload,
+                    painter = painterResource(Res.drawable.cloud_upload),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(50.dp)

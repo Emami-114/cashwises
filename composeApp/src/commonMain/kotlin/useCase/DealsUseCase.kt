@@ -90,7 +90,23 @@ class DealsUseCase : KoinComponent {
         }
     }
 
-    suspend fun deleteDeal(id: String) {
-        repository.deleteDeal(id)
+    suspend fun deleteDeal(deal: DealModel, onSuccess: () -> Unit) {
+        try {
+            if (deal.images != null) {
+                deal.images.forEach { imagePath ->
+                    imageRepository.deleteImage(imagePath)
+                }
+            }
+            if (deal.thumbnail != null) {
+                imageRepository.deleteImage(path = deal.thumbnail)
+            }
+            repository.deleteDeal(deal.id ?: "").let { isSuccess ->
+                if (isSuccess) {
+                    onSuccess()
+                }
+            }
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

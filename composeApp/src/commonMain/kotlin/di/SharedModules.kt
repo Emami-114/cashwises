@@ -11,6 +11,7 @@ import domain.repository.TagRepository
 import org.koin.dsl.module
 import ui.account.auth.login.LoginViewModel
 import ui.account.auth.registration.viewModel.RegistrationViewModel
+import ui.account.wish_list.WishListViewModel
 import ui.category.viewModel.CategoryViewModel
 import ui.deals.ViewModel.DealsViewModel
 import ui.home.tags.CreateTagViewModel
@@ -40,6 +41,7 @@ private var presentationModule = module {
     single { SearchScreenViewModel() }
     single { TagsViewModel() }
     single { CreateTagViewModel() }
+    single { WishListViewModel() }
 }
 
 

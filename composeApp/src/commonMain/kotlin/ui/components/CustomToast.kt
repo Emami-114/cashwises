@@ -31,15 +31,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Checkbox
-import compose.icons.tablericons.CircleX
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.checkbox
+import cashwises.composeapp.generated.resources.x
 import kotlinx.coroutines.delay
-import org.company.app.theme.cw_dark_blackText
 import org.company.app.theme.cw_dark_green
 import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.customBorder
 
 @Composable
@@ -65,15 +65,15 @@ fun CustomToast(
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
-    AnimatedVisibility(
-        snackBarVisible, modifier = modifier.align(Alignment.BottomStart),
-        enter = slideInVertically {
-            with(density) { 60.dp.roundToPx() }
-        },
-        exit = slideOutVertically {
-            with(density) { 60.dp.roundToPx() }
-        } + shrinkVertically(targetHeight = { with(density) { 60.dp.roundToPx() } })
-    ) {
+        AnimatedVisibility(
+            snackBarVisible, modifier = modifier.align(Alignment.BottomStart),
+            enter = slideInVertically {
+                with(density) { 60.dp.roundToPx() }
+            },
+            exit = slideOutVertically {
+                with(density) { 60.dp.roundToPx() }
+            } + shrinkVertically(targetHeight = { with(density) { 60.dp.roundToPx() } })
+        ) {
 
             Row(
                 modifier = modifier.fillMaxWidth()
@@ -97,15 +97,17 @@ fun CustomToast(
             ) {
                 if (status == ToastStatus.SUCCESS) {
                     Icon(
-                        TablerIcons.Checkbox,
+                        painter = painterResource(Res.drawable.checkbox),
                         contentDescription = null,
-                        tint = cw_dark_green
+                        tint = cw_dark_green,
+                        modifier = Modifier.size(26.dp)
                     )
                 } else {
                     Icon(
-                        TablerIcons.CircleX,
+                        painter = painterResource(Res.drawable.x),
                         contentDescription = null,
-                        tint = cw_dark_red
+                        tint = cw_dark_red,
+                        modifier = Modifier.size(26.dp)
                     )
                 }
                 Text(title, color = cw_dark_whiteText)

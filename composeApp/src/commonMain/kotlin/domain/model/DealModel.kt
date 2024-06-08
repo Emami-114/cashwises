@@ -1,7 +1,14 @@
 package domain.model
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
+import kotlinx.datetime.until
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.math.absoluteValue
 
 @Serializable
 data class DealsModel(
@@ -41,4 +48,14 @@ data class DealModel(
     val createdAt: String? = null,
     @SerialName("updated_at")
     val updatedAt: String? = null
-)
+) {
+    val currentCreatedHour = Clock.System.now().until(
+        Instant.parse(createdAt ?: ""), unit = DateTimeUnit.HOUR
+    ).absoluteValue
+    val currentCreatedMinute = Clock.System.now().until(
+        Instant.parse(createdAt ?: ""), unit = DateTimeUnit.MINUTE
+    ).absoluteValue
+    val currentCreatedDay = Clock.System.now().daysUntil(
+        Instant.parse(createdAt ?: ""), timeZone = TimeZone.UTC
+    ).absoluteValue
+}
