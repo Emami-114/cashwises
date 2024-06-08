@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -34,28 +35,26 @@ import cashwises.composeapp.generated.resources.accept_data_protection_descripti
 import cashwises.composeapp.generated.resources.accept_data_protection_error
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
+import cashwises.composeapp.generated.resources.eye
+import cashwises.composeapp.generated.resources.eye_off
 import cashwises.composeapp.generated.resources.invalid_email_address_error
+import cashwises.composeapp.generated.resources.lock
+import cashwises.composeapp.generated.resources.mail
 import cashwises.composeapp.generated.resources.password
 import cashwises.composeapp.generated.resources.password_confirm
 import cashwises.composeapp.generated.resources.password_confirm_not_match_error
 import cashwises.composeapp.generated.resources.password_required_error
 import cashwises.composeapp.generated.resources.privacy_policy_placeholder
 import cashwises.composeapp.generated.resources.terms_of_use_placeholder
+import cashwises.composeapp.generated.resources.user
 import cashwises.composeapp.generated.resources.username
 import cashwises.composeapp.generated.resources.username_required_error
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Eye
-import compose.icons.tablericons.EyeOff
-import compose.icons.tablericons.Lock
-import compose.icons.tablericons.Mail
-import compose.icons.tablericons.User
 import org.company.app.theme.cw_dark_primary
-import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.account.auth.registration.viewModel.RegistrationViewModel
 import ui.components.CustomButton
 import ui.components.CustomHyperlinkView
-import ui.components.CustomPopUp
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
 import ui.components.customModiefier.noRippleClickable
@@ -77,7 +76,11 @@ fun PasswordForget(backToLogin: () -> Unit) {
                 placeholder = "E-mail",
                 label = { Text("E-mail") },
                 leadingIcon = {
-                    Icon(TablerIcons.Mail, contentDescription = null)
+                    Icon(
+                        painter = painterResource(Res.drawable.mail),
+                        contentDescription = null,
+                        modifier = Modifier.size(26.dp)
+                    )
                 },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
@@ -125,6 +128,10 @@ fun RegistrationView(
                 }
             }
 
+            uiState.isRegistrationSuccess -> {
+                toVerification()
+            }
+
             else -> {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -144,7 +151,11 @@ fun RegistrationView(
                         placeholder = stringResource(Res.string.username),
                         label = { Text(stringResource(Res.string.username)) },
                         leadingIcon = {
-                            Icon(TablerIcons.User, contentDescription = null)
+                            Icon(
+                                painter = painterResource(Res.drawable.user),
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
                         })
                     CustomTextField(
                         value = uiState.emailText,
@@ -158,7 +169,11 @@ fun RegistrationView(
                         placeholder = "E-mail",
                         label = { Text("E-mail") },
                         leadingIcon = {
-                            Icon(TablerIcons.Mail, contentDescription = null)
+                            Icon(
+                                painter = painterResource(Res.drawable.mail),
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -181,12 +196,19 @@ fun RegistrationView(
                         placeholder = stringResource(Res.string.password),
                         label = { Text(stringResource(Res.string.password)) },
                         leadingIcon = {
-                            Icon(TablerIcons.Lock, contentDescription = null)
+                            Icon(
+                                painter = painterResource(Res.drawable.lock),
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
                         },
                         trailingIcon = {
-                            Icon(if (passwordVisible) TablerIcons.Eye else TablerIcons.EyeOff,
+                            Icon(
+                                painter = if (passwordVisible) painterResource(Res.drawable.eye) else painterResource(
+                                    Res.drawable.eye_off
+                                ),
                                 contentDescription = null,
-                                modifier = Modifier.noRippleClickable {
+                                modifier = Modifier.size(26.dp).noRippleClickable {
                                     passwordVisible = !passwordVisible
                                 })
                         },
@@ -211,15 +233,21 @@ fun RegistrationView(
                         placeholder = stringResource(Res.string.password_confirm),
                         label = { Text(stringResource(Res.string.password_confirm)) },
                         leadingIcon = {
-                            Icon(TablerIcons.Mail, contentDescription = null)
+                            Icon(
+                                painter = painterResource(Res.drawable.mail),
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
                         },
                         errorText = if (!uiState.passwordConfirmError.isNullOrEmpty()) stringResource(
                             Res.string.password_confirm_not_match_error
                         ) else null,
                         trailingIcon = {
-                            Icon(if (passwordConfirmVisible) TablerIcons.Eye else TablerIcons.EyeOff,
+                            Icon(painter = if (passwordConfirmVisible) painterResource(Res.drawable.eye) else painterResource(
+                                Res.drawable.eye_off
+                            ),
                                 contentDescription = null,
-                                modifier = Modifier.noRippleClickable {
+                                modifier = Modifier.size(26.dp).noRippleClickable {
                                     passwordConfirmVisible = !passwordConfirmVisible
                                 })
                         },
@@ -269,11 +297,7 @@ fun RegistrationView(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     CustomButton(title = stringResource(Res.string.btn_register)) {
-                        if (uiState.isRegistrationSuccess) {
-                            toVerification()
-                        } else {
-                            viewModel.onRegisterEvent(RegistrationEvent.OnRegistration)
-                        }
+                        viewModel.onRegisterEvent(RegistrationEvent.OnRegistration)
                     }
                 }
             }

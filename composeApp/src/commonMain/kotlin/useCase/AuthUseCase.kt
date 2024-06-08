@@ -7,7 +7,6 @@ import org.koin.core.component.inject
 
 class AuthUseCase : KoinComponent {
     private val repository: AuthRepository by inject()
-
     suspend fun register(registerModel: RegisterModel, onSuccess: () -> Unit) {
         try {
             repository.register(registerModel = registerModel).let { isSuccess ->

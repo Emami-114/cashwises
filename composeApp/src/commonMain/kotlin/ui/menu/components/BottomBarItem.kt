@@ -1,6 +1,7 @@
 package ui.menu.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.painterResource
 import ui.BottomBarScreen
 import ui.components.customModiefier.noRippleClickable
 
@@ -48,8 +50,9 @@ fun BottomBarItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
+
             Icon(
-                imageVector = tab.defaultIcon,
+                painter = painterResource(tab.defaultIcon),
                 contentDescription = tab.title,
                 modifier = Modifier.size(22.dp),
                 tint = cw_dark_whiteText

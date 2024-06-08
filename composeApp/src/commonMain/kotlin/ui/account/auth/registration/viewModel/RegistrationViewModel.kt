@@ -71,9 +71,9 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
             }
 
             !_state.value.acceptedDataProtection -> {
-                    _state.update {
-                        it.copy(acceptedDataProtectionError = "Data privacy not accepted")
-                    }
+                _state.update {
+                    it.copy(acceptedDataProtectionError = "Data privacy not accepted")
+                }
             }
 
             else -> {
@@ -114,9 +114,9 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun doVerification(code: String, onSuccess: () -> Unit) {
+    fun doVerification(onSuccess: () -> Unit) {
         when {
-            _state.value.verificationCode.isEmpty() -> {
+            _state.value.otpCode.isEmpty() || _state.value.otpCode.isBlank() || _state.value.otpCode.length <= 3 -> {
                 viewModelScope.launch {
                     _state.update {
                         it.copy(verificationCodeError = getString(Res.string.auth_verification_required))
@@ -131,9 +131,15 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                     try {
                         useCase.verification(
                             email = _state.value.emailText,
-                            code = code
+                            code = _state.value.otpCode!!
                         ) {
-                            _state.value = RegistrationState()
+                            _state.update {
+                                it.copy(
+                                    isVerificationSuccess = true,
+                                    errorMessage = null,
+                                    isLoading = false
+                                )
+                            }
                             onSuccess()
                         }
                     } catch (e: Exception) {
@@ -143,6 +149,12 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                     }
                 }
             }
+        }
+    }
+
+    fun doChangeOtpCode(value: String) {
+        _state.update {
+            it.copy(otpCode = value, verificationCodeError = null)
         }
     }
 

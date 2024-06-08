@@ -2,17 +2,15 @@ package ui.deals.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,12 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Checkbox
-import compose.icons.tablericons.ChevronDown
-import compose.icons.tablericons.ChevronUp
-import compose.icons.tablericons.Square
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.chevron_down
+import cashwises.composeapp.generated.resources.chevron_up
 import domain.model.CategoryStatus
+import org.jetbrains.compose.resources.painterResource
 import ui.components.CustomCheckBox
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
@@ -70,10 +67,13 @@ fun MainAndSubCategoryList(
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Icon(
-                    if (isExpanded) TablerIcons.ChevronUp else
-                        TablerIcons.ChevronDown,
+                    painter = if (isExpanded)
+                        painterResource(Res.drawable.chevron_up)
+                    else
+                        painterResource(Res.drawable.chevron_down),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondary
+                    tint = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier.size(26.dp)
                 )
             }
             AnimatedVisibility(isExpanded) {

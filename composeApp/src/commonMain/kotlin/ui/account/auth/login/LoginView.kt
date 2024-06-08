@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,22 +28,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
+import cashwises.composeapp.generated.resources.eye
+import cashwises.composeapp.generated.resources.eye_off
 import cashwises.composeapp.generated.resources.invalid_email_address_error
+import cashwises.composeapp.generated.resources.lock
+import cashwises.composeapp.generated.resources.mail
 import cashwises.composeapp.generated.resources.password
 import cashwises.composeapp.generated.resources.password_forget
 import cashwises.composeapp.generated.resources.password_required_error
 import cashwises.composeapp.generated.resources.successfully_login
-import cashwises.composeapp.generated.resources.successfully_registered
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Eye
-import compose.icons.tablericons.EyeOff
-import compose.icons.tablericons.Lock
-import compose.icons.tablericons.Mail
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTextField
@@ -71,17 +68,6 @@ fun LogInView(
                 }
             }
 
-            uiState.isLoginSuccess -> {
-                CustomToast(
-                    modifier = Modifier.zIndex(3f).align(Alignment.BottomCenter)
-                        .padding(bottom = 50.dp),
-                    title = stringResource(Res.string.successfully_login)
-                ) {
-                    toHome()
-                    viewModel.onEvent(LoginEvent.OnSetDefaultState)
-                }
-            }
-
             uiState.errorMessage.isNullOrEmpty().not() -> {
                 CustomPopUp(true, onDismissDisable = true, message = uiState.errorMessage ?: "")
             }
@@ -99,10 +85,13 @@ fun LogInView(
                         placeholder = "E-mail",
                         label = { Text("E-mail") },
                         leadingIcon = {
-                            Icon(TablerIcons.Mail, contentDescription = null)
+                            Icon(
+                                painter = painterResource(Res.drawable.mail),
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
                         },
-                        errorText = if (uiState.emailError.isNullOrEmpty()
-                                .not()
+                        errorText = if (uiState.emailError.isNullOrEmpty().not()
                         ) stringResource(Res.string.invalid_email_address_error) else null,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -115,16 +104,23 @@ fun LogInView(
                         onValueChange = { viewModel.onEvent(LoginEvent.OnPasswordChange(it)) },
                         placeholder = stringResource(Res.string.password),
                         leadingIcon = {
-                            Icon(TablerIcons.Lock, contentDescription = null)
+                            Icon(
+                                painter = painterResource(Res.drawable.lock),
+                                contentDescription = null,
+                                modifier = Modifier.size(26.dp)
+                            )
                         },
                         errorText = if (uiState.passwordError.isNullOrEmpty().not()) stringResource(
                             Res.string.password_required_error
                         ) else null,
                         label = { Text(stringResource(Res.string.password)) },
                         trailingIcon = {
-                            Icon(if (passwordVisible) TablerIcons.Eye else TablerIcons.EyeOff,
+                            Icon(
+                                painter = if (passwordVisible) painterResource(Res.drawable.eye) else painterResource(
+                                    Res.drawable.eye_off
+                                ),
                                 contentDescription = null,
-                                modifier = Modifier.noRippleClickable {
+                                modifier = Modifier.size(26.dp).noRippleClickable {
                                     passwordVisible = !passwordVisible
                                 })
                         },
@@ -153,6 +149,16 @@ fun LogInView(
                         modifier = Modifier.fillMaxWidth().noRippleClickable {
                             toPasswordForget()
                         })
+
+                    if (uiState.isLoginSuccess) {
+                        CustomToast(
+                            modifier = Modifier,
+                            title = stringResource(Res.string.successfully_login)
+                        ) {
+                            toHome()
+                            viewModel.onEvent(LoginEvent.OnSetDefaultState)
+                        }
+                    }
                 }
             }
         }

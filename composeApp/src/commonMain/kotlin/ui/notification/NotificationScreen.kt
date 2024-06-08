@@ -16,8 +16,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import data.repository.ApiConfig
+import data.repository.UserRepository
+import org.company.app.theme.cw_dark_whiteText
+import ui.account.auth.verification.VerificationView
 import ui.components.CustomBackgroundView
+import ui.components.CustomMultiSelection
 import ui.components.CustomTextField
 import ui.components.CustomToast
 import utils.LocalPushNotification
@@ -33,7 +42,7 @@ fun NotificationView(onNavigate: (String) -> Unit) {
     val notification = LocalPushNotification
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
-
+        CustomToast { }
         Column(verticalArrangement = Arrangement.Bottom) {
             Spacer(modifier = Modifier.height(200.dp))
             CustomTextField(value = title, onValueChange = { title = it })
@@ -50,13 +59,20 @@ fun NotificationView(onNavigate: (String) -> Unit) {
                 )
 
                 notification.getPendingRequestCount { count ->
-                        pendingCount = count
+                    pendingCount = count
                 }
             }) {
                 Text("Notification")
             }
             Text("$pendingCount")
-            CustomToast()
+
+            Text(
+                UserRepository.INSTANCE.user?.name ?: "",
+                fontSize = 60.sp,
+                color = cw_dark_whiteText
+            )
+
+            Text(title, modifier = Modifier)
         }
     }
 }

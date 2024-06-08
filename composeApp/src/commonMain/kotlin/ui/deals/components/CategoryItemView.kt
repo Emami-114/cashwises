@@ -2,6 +2,7 @@ package ui.deals.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,31 +18,37 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.seiko.imageloader.rememberImagePainter
 import data.repository.ApiConfig
 import domain.model.CategoryModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import ui.components.customModiefier.customBorder
+import ui.components.customModiefier.noRippleClickable
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun CategoryItemView(modifier: Modifier = Modifier, categoryModel: CategoryModel) {
+fun CategoryItemView(
+    modifier: Modifier = Modifier,
+    categoryModel: CategoryModel,
+    onSearch: (CategoryModel) -> Unit
+) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().noRippleClickable {
+            onSearch(categoryModel)
+        },
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        val painter =
-            rememberImagePainter("${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}")
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxSize()
-                .shadow(3.dp, shape = MaterialTheme.shapes.large)
-                .customBorder()
-                .clip(MaterialTheme.shapes.large).weight(8f)
-        )
+//        val painter =
+//            rememberImagePainter("${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}")
+//        Image(
+//            painter = painter,
+//            contentDescription = null,
+//            contentScale = ContentScale.FillBounds,
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .shadow(3.dp, shape = MaterialTheme.shapes.large)
+//                .customBorder()
+//                .clip(MaterialTheme.shapes.large).weight(8f)
+//        )
         categoryModel.title?.let { title ->
             Text(
                 text = title,

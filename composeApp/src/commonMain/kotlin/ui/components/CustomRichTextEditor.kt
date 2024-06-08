@@ -10,21 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -38,38 +32,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.align_center
+import cashwises.composeapp.generated.resources.align_left
+import cashwises.composeapp.generated.resources.align_right
+import cashwises.composeapp.generated.resources.bold
+import cashwises.composeapp.generated.resources.italic
+import cashwises.composeapp.generated.resources.letter_t
+import cashwises.composeapp.generated.resources.link
+import cashwises.composeapp.generated.resources.list
+import cashwises.composeapp.generated.resources.list_numbers
+import cashwises.composeapp.generated.resources.underline
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
-import compose.icons.TablerIcons
-import compose.icons.tablericons.AlignCenter
-import compose.icons.tablericons.AlignLeft
-import compose.icons.tablericons.AlignRight
-import compose.icons.tablericons.Bold
-import compose.icons.tablericons.Italic
-import compose.icons.tablericons.LetterT
-import compose.icons.tablericons.Link
-import compose.icons.tablericons.List
-import compose.icons.tablericons.Minus
-import compose.icons.tablericons.Plus
-import compose.icons.tablericons.Underline
-import org.company.app.theme.cw_dark_background
 import org.company.app.theme.cw_dark_blackText
 import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
@@ -79,6 +65,8 @@ import org.company.app.theme.cw_dark_onPrimary
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.customBorder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalRichTextApi::class)
@@ -209,25 +197,25 @@ fun EditorControls(
             selected = state.currentSpanStyle.fontWeight == FontWeight.Bold,
             onChangeClick = { boldSelected = it },
             onClick = onBoldClick,
-            icon = TablerIcons.Bold
+            icon = Res.drawable.bold
         )
         ControlWrapper(
             selected = state.currentSpanStyle.fontStyle == FontStyle.Italic,
             onChangeClick = { italicSelected = it },
             onClick = onItalicClick,
-            icon = TablerIcons.Italic
+            icon = Res.drawable.italic
         )
         ControlWrapper(
             selected = state.currentSpanStyle.textDecoration == TextDecoration.Underline,
             onChangeClick = { underlineSelected = it },
             onClick = onUnderlineClick,
-            icon = TablerIcons.Underline
+            icon = Res.drawable.underline
         )
         ControlWrapper(
             selected = state.currentSpanStyle.fontSize == MaterialTheme.typography.titleLarge.fontSize,
             onChangeClick = { titleSelected = it },
             onClick = onTitleClick,
-            icon = TablerIcons.LetterT
+            icon = Res.drawable.letter_t
         )
 //        ControlWrapper(
 //            selected = subtitleSelected,
@@ -235,7 +223,6 @@ fun EditorControls(
 //            onClick = onSubtitleClick,
 //            icon = TablerIcons.LetterT
 //        )
-        FontSizeChoise(onSubtitleClick)
 
         CustomColorPicker(currentColor = state.currentSpanStyle.color) { color ->
             onTextColorClick(color)
@@ -245,25 +232,25 @@ fun EditorControls(
             selected = linkSelected,
             onChangeClick = { linkSelected = it },
             onClick = { showLinkDialog.value = true },
-            icon = TablerIcons.Link
+            icon = Res.drawable.link
         )
         ControlWrapper(
             selected = alignmentSelected == 0,
             onChangeClick = { alignmentSelected = 0 },
             onClick = onStartAlignClick,
-            icon = TablerIcons.AlignLeft
+            icon = Res.drawable.align_left
         )
         ControlWrapper(
             selected = alignmentSelected == 1,
             onChangeClick = { alignmentSelected = 1 },
             onClick = onCenterAlignClick,
-            icon = TablerIcons.AlignCenter
+            icon = Res.drawable.align_center
         )
         ControlWrapper(
             selected = alignmentSelected == 2,
             onChangeClick = { alignmentSelected = 2 },
             onClick = onEndAlignClick,
-            icon = TablerIcons.AlignRight
+            icon = Res.drawable.align_right
         )
         ControlWrapper(
             selected = state.isOrderedList,
@@ -279,7 +266,7 @@ fun EditorControls(
                 }
 //                onFormatNumberClick()
             },
-            icon = TablerIcons.List
+            icon = Res.drawable.list_numbers
         )
         ControlWrapper(
             selected = state.isUnorderedList,
@@ -293,49 +280,8 @@ fun EditorControls(
                     state.removeUnorderedList()
                 }
             },
-            icon = TablerIcons.List
+            icon = Res.drawable.list
         )
-    }
-}
-
-@Composable
-fun FontSizeChoise(fontSize: (TextUnit) -> Unit) {
-    var size by remember { mutableStateOf(12) }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.width(100.dp).height(50.dp)
-    ) {
-        Icon(
-            TablerIcons.Minus,
-            contentDescription = null,
-            tint = cw_dark_whiteText,
-            modifier = Modifier.clickable {
-                size -= 1
-                fontSize(size.sp)
-            })
-        Box(
-            modifier = Modifier.customBorder(shape = MaterialTheme.shapes.small)
-                .background(cw_dark_onBackground, shape = MaterialTheme.shapes.small)
-                .padding(5.dp).padding(horizontal = 5.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                "$size",
-                fontSize = 13.sp,
-                color = cw_dark_whiteText,
-                modifier = Modifier.width(20.dp).height(30.dp),
-                textAlign = TextAlign.Center
-            )
-        }
-        Icon(
-            TablerIcons.Plus,
-            contentDescription = null,
-            tint = cw_dark_whiteText,
-            modifier = Modifier.clickable {
-                size += 1
-                fontSize(size.sp)
-            })
     }
 }
 
@@ -346,7 +292,7 @@ fun ControlWrapper(
     unselectedColor: Color = cw_dark_onPrimary,
     onChangeClick: (Boolean) -> Unit,
     onClick: () -> Unit,
-    icon: ImageVector
+    icon: DrawableResource
 ) {
     Box(
         modifier = Modifier
@@ -368,9 +314,10 @@ fun ControlWrapper(
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            icon,
+            painter = painterResource(icon),
             contentDescription = null,
-            tint = cw_dark_whiteText
+            tint = cw_dark_whiteText,
+            modifier = Modifier.size(26.dp)
         )
     }
 }

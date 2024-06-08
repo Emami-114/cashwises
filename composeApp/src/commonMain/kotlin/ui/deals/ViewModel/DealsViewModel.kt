@@ -1,6 +1,7 @@
 package ui.deals.ViewModel
 
-import com.mohamedrejeb.calf.picker.toImageBitmap
+import data.model.DealsQuery
+import data.repository.UserRepository
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
@@ -13,21 +14,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.deals.DetailDealScreen
-import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
+import useCase.TagsUseCase
 
 class DealsViewModel : ViewModel(), KoinComponent {
     private val useCase: DealsUseCase by inject()
+    private val tagsUseCase: TagsUseCase by inject()
     private val _state = MutableStateFlow(DealsState())
     private val categoriesUseCase: CategoryUseCase by inject()
     val state = _state.asStateFlow()
-//        .stateIn(
-//            viewModelScope,
-//            SharingStarted.Lazily,
-//            DealsState()
-//        )
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            DealsState()
+        )
 
     init {
         getDeals()
@@ -38,6 +39,22 @@ class DealsViewModel : ViewModel(), KoinComponent {
             it.copy(
                 selectedDeal = dealModel
             )
+        }
+    }
+
+    fun doGetSingleDeal(id: String, success: (DealModel?) -> Unit) {
+        viewModelScope.launch {
+            println("test deal view model")
+            try {
+                val deal = useCase.getSingleDeal(id)
+                success(deal)
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        error = e.message
+                    )
+                }
+            }
         }
     }
 
@@ -57,19 +74,25 @@ class DealsViewModel : ViewModel(), KoinComponent {
             is DealEvent.OnImagesChange -> doChangeImages(event)
             is DealEvent.OnVideoUrlChange -> doChangeVideoUrl(event)
             is DealEvent.OnAction -> doCreateDeal(event)
+            is DealEvent.OnCouponCodeChange -> doChangeCouponCode(event)
+            is DealEvent.OnTagsChange -> doChangeTags(event)
+            is DealEvent.OnShippingCostChange -> doChangeShippingCosts(event)
             is DealEvent.OnSetDefaultState -> _state.value = DealsState()
         }
     }
 
-
     fun doChangeThumbnail(image: ImageModel?) {
         _state.update {
-            it.copy(thumbnailByte = image)
+            it.copy(
+                thumbnailByte = image,
+                imagesByte = listOf(image!!)
+            )
         }
     }
+
     fun doChangeImages(image: List<ImageModel>?) {
         _state.update {
-            it.copy(imagesByte = image)
+            it.copy(imagesByte = _state.value.imagesByte?.plus(image!!))
         }
     }
 
@@ -85,21 +108,22 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 }
             }
             if (_state.value.imagesByte != null) {
-                var bitmap = _state.value.thumbnailByte!!.byteArray
                 useCase.uploadImages(_state.value.imagesByte!!) { imagesPath ->
                     _state.update {
                         it.copy(
                             images = imagesPath
                         )
                     }
-                    println("image path von upload image $imagesPath")
                 }
             }
             val deal = DealModel(
                 title = _state.value.title,
                 description = _state.value.description,
-                category = _state.value.category,
+                categories = _state.value.category,
                 isFree = _state.value.isFree,
+                couponCode = _state.value.couponCode,
+                tags = _state.value.selectedTags,
+                shippingCosts = _state.value.shippingCosts,
                 price = _state.value.price?.toDouble(),
                 offerPrice = _state.value.offerPrice?.toDouble(),
                 published = _state.value.published,
@@ -199,7 +223,9 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     private fun doChangeThumbnail(event: DealEvent.OnThumbnailChange) {
         _state.update {
-            it.copy(thumbnail = event.value)
+            it.copy(
+                thumbnail = event.value,
+            )
         }
     }
 
@@ -211,7 +237,75 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     private fun doChangeVideoUrl(event: DealEvent.OnVideoUrlChange) {
         _state.update {
-            it.copy(videoUrl = event.values)
+            it.copy(
+                videoUrl = event.value,
+            )
+        }
+    }
+
+    private fun doChangeCouponCode(event: DealEvent.OnCouponCodeChange) {
+        _state.update {
+            it.copy(
+                couponCode = event.value,
+            )
+        }
+    }
+
+    private fun doChangeTags(event: DealEvent.OnTagsChange) {
+        _state.update {
+            it.copy(
+                selectedTags = event.values,
+            )
+        }
+    }
+
+    private fun doChangeShippingCosts(event: DealEvent.OnShippingCostChange) {
+        _state.update {
+            it.copy(
+                shippingCosts = event.value,
+            )
+        }
+    }
+
+    fun getTags(queryText: String? = null) = viewModelScope.launch {
+        try {
+            _state.value = _state.value.copy(isLoading = true)
+            _state.update {
+                it.copy(
+                    listTag = tagsUseCase.getTags(queryText),
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    error = e.message
+                )
+            }
+            delay(4000)
+            _state.value = DealsState()
+        }
+    }
+
+    fun getCategories() = viewModelScope.launch {
+        try {
+            _state.value = _state.value.copy(isLoading = true)
+            _state.update {
+                it.copy(
+                    categories = categoriesUseCase.getCategories().categories,
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } catch (e: Exception) {
+            _state.update {
+                it.copy(
+                    error = e.message
+                )
+            }
+            delay(4000)
+            _state.value = DealsState()
         }
     }
 
@@ -220,14 +314,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
             _state.value = _state.value.copy(isLoading = true)
             _state.update {
                 it.copy(
-                    deals = useCase.getDeals()?.deals
+                    deals = useCase.getDeals(query = DealsQuery(limit = 50))?.deals
                         ?: listOf(),
                     isLoading = false,
                     error = null,
                 )
-            }
-            _state.update {
-                it.copy(categories = categoriesUseCase.getCategories().categories)
             }
         } catch (e: Exception) {
             _state.update {
@@ -238,6 +329,19 @@ class DealsViewModel : ViewModel(), KoinComponent {
             }
             delay(4000)
             onEvent(DealEvent.OnSetDefaultState)
+        }
+    }
+
+    fun deleteDeal(dealModel: DealModel?) {
+        try {
+            viewModelScope.launch {
+                if (dealModel != null) {
+                    useCase.deleteDeal(dealModel) {
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Fehler beim deleten deals  ${e.message}")
         }
     }
 

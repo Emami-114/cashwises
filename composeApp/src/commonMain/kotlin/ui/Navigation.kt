@@ -1,42 +1,40 @@
 package ui
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Bell
-import compose.icons.tablericons.Home
-import compose.icons.tablericons.Search
-import compose.icons.tablericons.User
+import androidx.navigation.navArgument
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.bell
+import cashwises.composeapp.generated.resources.home
+import cashwises.composeapp.generated.resources.search
+import cashwises.composeapp.generated.resources.user
+import org.jetbrains.compose.resources.DrawableResource
 import ui.account.AccountView
 import ui.account.auth.AuthView
+import ui.account.wish_list.WishListView
 import ui.components.CustomBackgroundView
-import ui.components.CustomToast
-import ui.components.CustomTopAppBar
-import ui.deals.DetailDealScreen
+import ui.deals.DealDetailScreen
 import ui.home.HomeView
 import ui.menu.BottomNavigationView
 import ui.menu.TabBarScreen
 import ui.notification.NotificationView
+import ui.search.SearchScreen
 import ui.search.SearchView
 
 @Composable
@@ -58,26 +56,28 @@ fun NavHostMain(
     navController: NavHostController = rememberNavController(),
     onNavigate: (rootName: String) -> Unit,
 ) {
+
+    val shoWAnimation by animateFloatAsState(
+        targetValue = if (navController.shouldShowBottomBar) 1f else 0f,
+        animationSpec = tween(200)
+    )
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = backStackEntry?.destination
     Scaffold(bottomBar = {
-        if (navController.shouldShowBottomBar)
+        if (navController.shouldShowBottomBar && shoWAnimation == 1f)
             BottomNavigationView(
+                modifier = Modifier,
                 currentScreenRouter = currentScreen?.route ?: ""
             ) { onNavigate(it) }
     }) { innerPadding ->
         CustomBackgroundView()
-        val paddingAnimation by animateDpAsState(
-            targetValue = if (navController.shouldShowBottomBar) innerPadding.calculateBottomPadding() else 0.dp,
-            animationSpec = tween(500)
-        )
+
 
         NavHost(
             navController = navController,
             startDestination = BottomBarScreen.Home.route,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = innerPadding.calculateBottomPadding()),
+                .fillMaxSize(),
             enterTransition = {
                 slideIntoContainer(
                     AnimatedContentTransitionScope.SlideDirection.Left,
@@ -115,7 +115,9 @@ fun NavHostMain(
                     fadeOut(animationSpec = tween(200))
                 }
             ) {
+//                Box(modifier = Modifier.fillMaxSize().padding(bottom = 80.dp)) {
                 HomeView(onNavigate)
+//                }
             }
             composable(
                 route = BottomBarScreen.Search.route,
@@ -127,7 +129,7 @@ fun NavHostMain(
                 },
 
                 ) {
-                SearchView(onNavigate)
+                SearchScreen(onNavigate = onNavigate)
             }
             composable(
                 route = BottomBarScreen.Notification.route,
@@ -152,14 +154,62 @@ fun NavHostMain(
                 AccountView(onNavigate)
             }
 
-            composable(route = AppScreen.Detail.route) {
-                DetailDealScreen(innerPadding = innerPadding, onNavigate = onNavigate) { }
+            composable(
+                route = AppScreen.DealDetail.route + "/{deal_id}",
+                arguments = listOf(navArgument("deal_id") {
+                    type = NavType.StringType
+                    nullable = true
+                })
+            ) {
+                val dealId = it.arguments?.getString("deal_id")
+                DealDetailScreen(dealId = dealId, onNavigate = onNavigate)
             }
             composable(route = AppScreen.Authentication.route) {
                 AuthView(onNavigate)
             }
             composable(route = AppScreen.CreateDeal.route) {
                 TabBarScreen(onNavigate = onNavigate)
+            }
+            composable(route = AppScreen.WishList.route) {
+                WishListView(onNavigate = onNavigate)
+            }
+            composable(
+                route = AppScreen.SearchView.route + "?categoryId={categoryId}&tag={tag}&title={title}&query={query}",
+                arguments = listOf(
+                    navArgument("categoryId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                    navArgument("tag") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                    navArgument("title") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                    navArgument("query") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                )
+            ) { backStackEntry ->
+                val categoryId = backStackEntry.arguments?.getString("categoryId")
+                val tag = backStackEntry.arguments?.getString("tag")
+                val title = backStackEntry.arguments?.getString("title")
+                val query = backStackEntry.arguments?.getString("query")
+                SearchView(
+                    categoryId = categoryId,
+                    tagArgument = tag,
+                    searchQuery = query,
+                    title = title ?: "",
+                    onNavigate = onNavigate
+                )
+
             }
         }
     }
@@ -176,6 +226,7 @@ fun navigateTo(
 
         else -> {
             navController.navigate(routeName)
+
         }
     }
 }
@@ -193,8 +244,8 @@ sealed class AppScreen(
         title = "Home",
     )
 
-    data object Detail : AppScreen(
-        route = "Detail",
+    data object DealDetail : AppScreen(
+        route = "DEAL_DETAIL",
         title = "Detail",
     )
 
@@ -213,6 +264,11 @@ sealed class AppScreen(
         title = "Profile",
     )
 
+    data object WishList : AppScreen(
+        route = "WishList",
+        title = "Wish list",
+    )
+
     data object Settings : AppScreen(
         route = "SETTINGS",
         title = "Settings",
@@ -228,35 +284,40 @@ sealed class AppScreen(
         title = "Privacy Policy",
     )
 
+    data object SearchView : AppScreen(
+        route = "SEARCH",
+        title = "Search",
+    )
+
 }
 
 sealed class BottomBarScreen(
     val route: String,
     var title: String,
-    val defaultIcon: ImageVector
+    val defaultIcon: DrawableResource
 ) {
     data object Home : BottomBarScreen(
         route = "HOME",
         title = "Home",
-        defaultIcon = TablerIcons.Home,
+        defaultIcon = Res.drawable.home,
     )
 
     data object Search : BottomBarScreen(
         route = "Search",
         title = "Search",
-        defaultIcon = TablerIcons.Search,
+        defaultIcon = Res.drawable.search,
     )
 
     data object Notification : BottomBarScreen(
         route = "Notification",
         title = "Notification",
-        defaultIcon = TablerIcons.Bell,
+        defaultIcon = Res.drawable.bell,
     )
 
     data object Account : BottomBarScreen(
         route = "Account",
         title = "Account",
-        defaultIcon = TablerIcons.User,
+        defaultIcon = Res.drawable.user,
     )
 }
 

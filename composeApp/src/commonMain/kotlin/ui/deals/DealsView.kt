@@ -2,8 +2,9 @@ package ui.deals
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,14 +25,17 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.koinInject
 import ui.AppScreen
 import ui.components.CustomBackgroundView
-import ui.components.CustomSlideTransition
-import ui.components.ProductRow
+import ui.components.ProductItem
 import ui.deals.ViewModel.DealsViewModel
+import ui.deals.components.ProductItemRow
 
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
+fun DealsView(
+    modifier: Modifier = Modifier,
+    onNavigate: (String) -> Unit
+) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var selectedDeal by remember { mutableStateOf<DealModel?>(null) }
@@ -53,19 +57,23 @@ fun DealsView(paddingValues: PaddingValues, onNavigate: (String) -> Unit) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(column),
             state = rememberLazyGridState,
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            modifier = Modifier
-//                .padding(paddingValues)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(7.dp),
+            modifier = modifier
                 .padding(all = 5.dp)
         ) {
             items(uiState.deals) { deal ->
-                ProductRow(dealModel = deal, onClick = {
-                    selectedDeal = deal
-                    showDetail = true
-                    viewModel.doChangeSelectedDeal(deal)
-                    onNavigate(AppScreen.Detail.route)
-                })
+                ProductItem(
+                    dealModel = deal,
+                    onClick = {
+                        selectedDeal = deal
+                        showDetail = true
+                        viewModel.doChangeSelectedDeal(deal)
+                        onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
+                    })
+            }
+            item {
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }

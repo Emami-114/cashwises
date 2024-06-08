@@ -1,5 +1,7 @@
 package useCase
 
+import data.model.DealsQuery
+import data.model.MarkedDealForUser
 import data.repository.ImageUploadRepository
 import domain.model.DealModel
 import domain.model.DealsModel
@@ -13,17 +15,21 @@ class DealsUseCase : KoinComponent {
     private val repository: DealRepository by inject()
     private val imageRepository = ImageUploadRepository()
     suspend fun getDeals(
-        query: String = "",
-        page: Int = 1,
-        limit: Int = 20,
+        query: DealsQuery
     ): DealsModel? {
         try {
             return repository.getDeals(
-                query = query,
-                page = page,
-                limit = limit,
+                query = query
             )
 
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun getSingleDeal(id: String): DealModel? {
+        return try {
+            repository.getSingleDeal(id)
         } catch (e: Exception) {
             throw e
         }
@@ -55,7 +61,7 @@ class DealsUseCase : KoinComponent {
     ) {
         try {
             imageRepository.uploadImage(imageModel,
-                subDir = "deals_images",
+                subDir = "deals_thumbnail",
                 imagePath = { paths ->
                     if (paths.isNotEmpty()) {
                         imagePaths(paths)
@@ -84,7 +90,23 @@ class DealsUseCase : KoinComponent {
         }
     }
 
-    suspend fun deleteDeal(id: String) {
-        repository.deleteDeal(id)
+    suspend fun deleteDeal(deal: DealModel, onSuccess: () -> Unit) {
+        try {
+            if (deal.images != null) {
+                deal.images.forEach { imagePath ->
+                    imageRepository.deleteImage(imagePath)
+                }
+            }
+            if (deal.thumbnail != null) {
+                imageRepository.deleteImage(path = deal.thumbnail)
+            }
+            repository.deleteDeal(deal.id ?: "").let { isSuccess ->
+                if (isSuccess) {
+                    onSuccess()
+                }
+            }
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

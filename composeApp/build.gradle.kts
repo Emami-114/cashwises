@@ -1,33 +1,24 @@
-import com.android.aaptcompiler.android.isTruthy
 import com.android.build.api.dsl.ManagedVirtualDevice
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.internal.utils.localPropertiesFile
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.buildConfig)
+    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "${JavaVersion.VERSION_1_8}"
-                freeCompilerArgs += "-Xjdk-release=${JavaVersion.VERSION_1_8}"
-            }
-        }
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant {
-            sourceSetTree.set(KotlinSourceSetTree.test)
-            dependencies {
-                debugImplementation(libs.androidx.testManifest)
-                implementation(libs.androidx.junit4)
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
         }
     }
 
@@ -45,12 +36,6 @@ kotlin {
     }
 
     sourceSets {
-        all {
-            languageSettings {
-                optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
-            }
-        }
-
         val desktopMain by getting
 
         commonTest.dependencies {
@@ -66,6 +51,7 @@ kotlin {
             implementation(libs.ktor.client.android)
             implementation(libs.androidx.appcompat)
             implementation(libs.kotlinx.coroutines.android)
+            implementation(compose.preview)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -73,19 +59,15 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-//            implementation(compose.material)
             implementation(compose.material3)
-//            implementation(compose.materialIconsExtended)
-//            implementation(compose.components.uiToolingPreview)
+//            implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+//            implementation(libs.androidx.compose.material3.adaptive.navigation)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             // navigation
-//            implementation(libs.voyager.navigation)
-//            implementation(libs.voyager.tab)
-//            implementation(libs.voyager.transition)
-
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha02")
+            implementation(libs.compose.navigation)
 
             // Ktor
             implementation(libs.ktor.client.core)
@@ -93,7 +75,7 @@ kotlin {
             implementation(libs.ktor.client.serialization)
             implementation(libs.kotlinx.datetime)
             // Icon
-            implementation(libs.composeIcons.tablerIcons)
+//            implementation(libs.composeIcons.tablerIcons)
             // MOKO
             implementation(libs.moko.mvvm)
             // settings
@@ -110,15 +92,19 @@ kotlin {
             // file picker
             implementation(libs.calf.filepicker)
             // image laoder
-            api(libs.image.loader)
             // rich text editor
             implementation(libs.rich.text)
-//            implementation(libs.napier)
+            // Coil3
+            implementation(libs.coil.compose.core)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.mp)
+            implementation(libs.coil.network.ktor)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }
@@ -138,7 +124,6 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
-
     @Suppress("UnstableApiUsage")
     testOptions {
         managedDevices.devices {
@@ -160,14 +145,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+    dependencies {
+        debugImplementation(compose.uiTooling)
     }
 }
 dependencies {

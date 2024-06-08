@@ -8,8 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import ui.account.auth.AuthView
-import ui.menu.MenuBarEnum
 
 @Composable
 fun CustomSlideTransition(

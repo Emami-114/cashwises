@@ -10,13 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import compose.icons.TablerIcons
-import compose.icons.tablericons.Bell
-import compose.icons.tablericons.Home
-import compose.icons.tablericons.Search
-import compose.icons.tablericons.User
 import org.company.app.theme.cw_dark_background
 import ui.BottomBarScreen
 import ui.components.customModiefier.customBorder
@@ -53,10 +47,3 @@ fun BottomNavigationView(
         }
     }
 }
-
-//enum class BottomBarScreens(val title: String, val icon: ImageVector) {
-//    Home(title = "Home", icon = TablerIcons.Home),
-//    Search(title = "Search", icon = TablerIcons.Search),
-//    Notification(title = "Notification", icon = TablerIcons.Bell),
-//    Account(title = "Account", icon = TablerIcons.User)
-//}

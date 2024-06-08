@@ -2,7 +2,7 @@
     <!-- Http Error -->
     <string name="not_found_error">The requested resource was not found.</string>
     <string name="bad_request_error">The request could not be processed. Please check your entries and try again</string>
-    <string name="unauthorized_error">You are not authorized. Please ensure that you are logged in and have the required authorizations.</string>
+    <string name="unauthorized_error">You are not logged in. Please ensure that you are logged in and have the required authorizations.</string>
     <string name="conflict_error">The requested action could not be completed because there is a conflict with an existing resource.</string>
 
     <!-- Authentication String -->
@@ -22,12 +22,18 @@
     <string name="password_required_error">Password required</string>
     <string name="login_failed_error">Login failed. The username or password is incorrect. Please check your entries and try again.</string>
     <string name="password_forget">Password forget?</string>
-
+    <string name="successfully_logout">Successfully logout</string>
+    <string name="successfully_registered">Successfully registered</string>
+    <string name="successfully_login">Successfully logged</string>
     <!--  Deals String  -->
     <string name="offers_ends_in_some_day">Offers ends in %1$s day</string>
+    <string name="offers_ends_in_some_hour">Offers end in %1$s hour</string>
     <string name="some_day_ago">%1$s day ago</string>
+    <string name="some_hour_ago">%1$s hours ago</string>
+    <string name="some_minute_ago">%1$s minute ago</string>
     <string name="offers_ends_today">Offers ends today</string>
     <string name="offers_expired">Expired</string>
+    <string name="create_deal">Create Deal</string>
 
     <!--  Global Strings  -->
     <string name="btn_send">Send</string>
@@ -38,8 +44,30 @@
     <string name="password_confirm">Password confirm</string>
     <string name="today">Today</string>
     <string name="free">Free</string>
-    <string name="coupon_code">Coupon code: %1$s</string>
-    <string name="successfully_registered">Successfully registered</string>
-    <string name="successfully_login">Successfully logged</string>
-    <string name="successfully_copied">Successfully copied: %1$s</string>
+    <string name="coupon_code">Coupon code</string>
+
+    <string name="successfully_copied">copied: %1$s</string>
+    <string name="successfully_created">Successfully created</string>
+    <string name="successfully_updated">Successfully updated</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="publish">Publish</string>
+    <string name="price">Price</string>
+    <string name="offer_price">Offer price</string>
+    <string name="provider">Provider</string>
+    <string name="provider_url">provider url</string>
+    <string name="video_url">Video url</string>
+    <string name="shipping_costs">Shipping costs</string>
+    <string name="upload_your_image">Upload your Image</string>
+    <string name="profile">Profile</string>
+    <string name="wish_list">Wish list</string>
+    <string name="settings">Settings</string>
+    <string name="imprint">Imprint</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="log_out">Log out</string>
+    <string name="categories">Categories</string>
+    <string name="create_category">Create Category</string>
+    <string name="edit_deal">Edit Deal</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="create_tags">Create Tags</string>
 </resources>

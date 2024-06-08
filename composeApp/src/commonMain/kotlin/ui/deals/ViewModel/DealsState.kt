@@ -3,8 +3,8 @@ package ui.deals.ViewModel
 import domain.model.CategoryModel
 import domain.model.DealModel
 import domain.model.ImageModel
+import domain.model.TagModel
 import kotlinx.serialization.SerialName
-import ui.deals.DetailDealScreen
 
 data class DealsState(
     val id: String = "",
@@ -29,5 +29,9 @@ data class DealsState(
     val thumbnailByte: ImageModel? = null,
     var imagesByte: List<ImageModel>? = null,
     val dealCreatedSuccess: Boolean = false,
-    val selectedDeal: DealModel? = null
+    val selectedDeal: DealModel? = null,
+    val couponCode: String? = null,
+    val selectedTags: List<String> = listOf(),
+    val shippingCosts: Double? = null,
+    val listTag: List<TagModel> = listOf()
 )

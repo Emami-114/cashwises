@@ -3,72 +3,59 @@ package ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import compose.icons.TablerIcons
-import compose.icons.tablericons.ArrowBackUp
-import compose.icons.tablericons.Plus
-import org.company.app.theme.cw_dark_whiteText
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.plus
+import data.repository.UserRepository
+import org.jetbrains.compose.resources.painterResource
 import ui.AppScreen
+import ui.components.CustomTopAppBar
 import ui.deals.DealsView
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(onNavigate: (String) -> Unit) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    Scaffold(modifier = Modifier.nestedScroll(
-        connection = scrollBehavior.nestedScrollConnection,
-    ),
+    val scrollState = rememberScrollState(initial = 10)
+    Scaffold(modifier = Modifier,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("TOP APP BAR", color = cw_dark_whiteText) },
-                navigationIcon = {
-                    Icon(imageVector = TablerIcons.ArrowBackUp, contentDescription = null)
-                },
-                actions = { Icon(TablerIcons.Plus, contentDescription = null) },
-                scrollBehavior = scrollBehavior
-            )
-        },
-        floatingActionButton = {
-            Box(
-                modifier = Modifier.size(50.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.extraLarge
-                    ).clip(MaterialTheme.shapes.extraLarge)
-                    .clickable(role = Role.Image) {
-                        onNavigate(AppScreen.CreateDeal.route)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    TablerIcons.Plus,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-            }
+            CustomTopAppBar(title = "Home", rightAction = {
+                if (UserRepository.INSTANCE.userIsAdmin()) {
+                    Box(
+                        modifier = Modifier.size(30.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                shape = MaterialTheme.shapes.extraLarge
+                            ).clip(MaterialTheme.shapes.extraLarge)
+                            .clickable(role = Role.Image) {
+                                onNavigate(AppScreen.CreateDeal.route)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.plus),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(23.dp)
+                        )
+                    }
+                }
+            })
         }
     ) { paddingValue ->
-
-        Box(modifier = Modifier.fillMaxSize().padding(top = paddingValue.calculateTopPadding())) {
-            DealsView(paddingValue) { route ->
-                onNavigate(route)
-            }
+        DealsView(
+            modifier = Modifier.padding(top = paddingValue.calculateTopPadding())
+        ) { route ->
+            onNavigate(route)
         }
     }
 }
