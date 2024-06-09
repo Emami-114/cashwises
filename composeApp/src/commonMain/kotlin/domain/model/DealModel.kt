@@ -14,7 +14,6 @@ import kotlin.math.absoluteValue
 data class DealsModel(
     val deals: List<DealModel>
 )
-
 @Serializable
 data class DealModel(
     val id: String? = null,

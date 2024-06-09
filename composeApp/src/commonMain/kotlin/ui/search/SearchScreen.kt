@@ -36,9 +36,11 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
 import domain.model.CategoryModel
 import domain.model.DealModel
+import domain.repository.Results
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -195,22 +197,38 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
     val state = _state.asStateFlow().stateIn(viewModelScope, SharingStarted.Lazily, SearchState())
 
     init {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(categories = categoryUseCase.getCategories())
+        getCategories()
+    }
+
+    private fun getCategories() {
+        try {
+            viewModelScope.launch {
+                _state.update {
+                    it.copy(categories = categoryUseCase.getCategories())
+                }
             }
+        } catch (e: Exception) {
+            println("error get categories in search view ${e.message}")
         }
     }
 
     fun doSearch(
         query: DealsQuery
     ) = viewModelScope.launch {
-        _state.update {
-            it.copy(
-                deals = dealUseCase.getDeals(query = query)?.deals
-            )
+        dealUseCase.getDeals(query = query).collectLatest { status ->
+            when(status){
+                is Results.Loading -> {}
+                is Results.Success -> {
+                    _state.update {
+                        it.copy(
+                            deals = status.data?.deals
+                        )
+                    }
+                }
+                is Results.Error -> {
+                }
+            }
         }
-        println("test: deal ${dealUseCase.getDeals(query = query)?.deals}")
     }
 
     fun doChangeSearchCategory(value: CategoryModel?) {

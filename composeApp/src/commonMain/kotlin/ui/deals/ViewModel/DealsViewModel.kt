@@ -1,17 +1,19 @@
 package ui.deals.ViewModel
 
 import data.model.DealsQuery
-import data.repository.UserRepository
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
+import domain.repository.Results
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import useCase.CategoryUseCase
@@ -22,13 +24,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
     private val useCase: DealsUseCase by inject()
     private val tagsUseCase: TagsUseCase by inject()
     private val _state = MutableStateFlow(DealsState())
-    private val categoriesUseCase: CategoryUseCase by inject()
     val state = _state.asStateFlow()
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
             DealsState()
         )
+    private val categoriesUseCase: CategoryUseCase by inject()
 
     init {
         getDeals()
@@ -46,8 +48,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             println("test deal view model")
             try {
-                val deal = useCase.getSingleDeal(id)
-                success(deal)
+                useCase.getSingleDeal(id).collectLatest { status ->
+                    when (status) {
+                        is Results.Loading -> {}
+                        is Results.Success -> success(status.data)
+                        is Results.Error -> {}
+                    }
+                }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
@@ -270,13 +277,21 @@ class DealsViewModel : ViewModel(), KoinComponent {
     fun getTags(queryText: String? = null) = viewModelScope.launch {
         try {
             _state.value = _state.value.copy(isLoading = true)
-            _state.update {
-                it.copy(
-                    listTag = tagsUseCase.getTags(queryText),
-                    isLoading = false,
-                    error = null
-                )
+            tagsUseCase.getTags(queryText).collectLatest { status ->
+                _state.update {
+                    when (status) {
+                        is Results.Loading -> _state.value.copy(isLoading = true, error = null)
+                        is Results.Success -> _state.value.copy(
+                            listTag = status.data ?: listOf(),
+                            error = null
+                        )
+
+                        is Results.Error -> _state.value.copy(error = getString(status.error?.message!!))
+                    }
+
+                }
             }
+
         } catch (e: Exception) {
             _state.update {
                 it.copy(
@@ -310,26 +325,35 @@ class DealsViewModel : ViewModel(), KoinComponent {
     }
 
     fun getDeals() = viewModelScope.launch {
-        try {
-            _state.value = _state.value.copy(isLoading = true)
-            _state.update {
-                it.copy(
-                    deals = useCase.getDeals(query = DealsQuery(limit = 50))?.deals
-                        ?: listOf(),
-                    isLoading = false,
-                    error = null,
-                )
+            useCase.getDeals(query = DealsQuery(limit = 40)).collectLatest { status ->
+                when (status) {
+                    is Results.Loading -> _state.value = _state.value.copy(isLoading = true)
+                    is Results.Success -> {
+                        _state.update {
+                            it.copy(
+                                deals = status.data?.deals
+                                    ?: listOf(),
+                                isLoading = false,
+                                error = null,
+                            )
+                        }
+                    }
+
+                    is Results.Error -> {
+                        status.error?.let { error ->
+                            _state.update {
+                                it.copy(
+                                    error = getString(error.message),
+                                    isLoading = false
+                                )
+                            }
+                        }
+                        delay(4000)
+                        onEvent(DealEvent.OnSetDefaultState)
+                    }
+                }
+
             }
-        } catch (e: Exception) {
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    error = e.message
-                )
-            }
-            delay(4000)
-            onEvent(DealEvent.OnSetDefaultState)
-        }
     }
 
     fun deleteDeal(dealModel: DealModel?) {

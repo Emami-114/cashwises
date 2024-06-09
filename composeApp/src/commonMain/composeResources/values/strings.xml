@@ -4,7 +4,9 @@
     <string name="bad_request_error">The request could not be processed. Please check your entries and try again</string>
     <string name="unauthorized_error">You are not logged in. Please ensure that you are logged in and have the required authorizations.</string>
     <string name="conflict_error">The requested action could not be completed because there is a conflict with an existing resource.</string>
-
+    <string name="no_internet_connection">No internet connection. Please ensure that your device is connected to the Internet.</string>
+    <string name="request_timeout">Request timeout. Please try again later.</string>
+    <string name="unknown_error">An unknown error has occurred. Please try again later.</string>
     <!-- Authentication String -->
     <string name="auth_verification_title">Verification Code</string>
     <string name="auth_verification_description">Please, enter the verification code we send to your E-mail</string>

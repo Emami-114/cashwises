@@ -1,22 +1,22 @@
 package useCase
 
 import data.model.DealsQuery
-import data.model.MarkedDealForUser
 import data.repository.ImageUploadRepository
 import domain.model.DealModel
 import domain.model.DealsModel
 import domain.model.ImageModel
 import domain.repository.DealRepository
+import domain.repository.Results
+import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.settings
 
 class DealsUseCase : KoinComponent {
     private val repository: DealRepository by inject()
     private val imageRepository = ImageUploadRepository()
     suspend fun getDeals(
         query: DealsQuery
-    ): DealsModel? {
+    ): Flow<Results<DealsModel>> {
         try {
             return repository.getDeals(
                 query = query
@@ -27,9 +27,9 @@ class DealsUseCase : KoinComponent {
         }
     }
 
-    suspend fun getSingleDeal(id: String): DealModel? {
-        return try {
-            repository.getSingleDeal(id)
+    suspend fun getSingleDeal(id: String): Flow<Results<DealModel?>> {
+        try {
+            return repository.getSingleDeal(id)
         } catch (e: Exception) {
             throw e
         }

@@ -5,20 +5,14 @@ import cashwises.composeapp.generated.resources.bad_request_error
 import cashwises.composeapp.generated.resources.conflict_error
 import cashwises.composeapp.generated.resources.not_found_error
 import cashwises.composeapp.generated.resources.unauthorized_error
-import domain.enums.HttpError
+import domain.enums.ErrorType
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.statement.request
 import io.ktor.http.ContentType
-import io.ktor.http.Url
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.getString
 import ui.settings
@@ -47,11 +41,11 @@ object ApiConfig {
                 if (statusCode != 0 && statusCode !in 200..300) {
                     when (statusCode) {
                         400 -> {
-                            throw Exception(HttpError.BadRequest(getString(Res.string.bad_request_error)).value)
+                            throw Exception(getString(ErrorType.BadRequest.message))
                         }
 
                         401 -> {
-                            throw Exception(HttpError.Unauthorized(getString(Res.string.unauthorized_error)).value)
+                            throw Exception(getString(Res.string.unauthorized_error))
                         }
 
                         403 -> {
@@ -59,11 +53,11 @@ object ApiConfig {
                         }
 
                         404 -> {
-                            throw Exception(HttpError.NotFound(getString(Res.string.not_found_error)).value)
+                            throw Exception(getString(Res.string.not_found_error))
                         }
 
                         409 -> {
-                            throw Exception(HttpError.Conflict(getString(Res.string.conflict_error)).value)
+                            throw Exception(getString(Res.string.conflict_error))
                         }
                     }
                 }

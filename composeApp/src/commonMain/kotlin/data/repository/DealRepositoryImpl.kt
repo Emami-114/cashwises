@@ -1,30 +1,26 @@
 package data.repository
 
 import data.model.DealsQuery
-import data.model.MarkedDealForUser
 import data.repository.ApiConfig.httpClient
+import domain.enums.ErrorType
 import domain.model.DealModel
 import domain.model.DealsModel
-import domain.repository.AuthRepository
 import domain.repository.DealRepository
+import domain.repository.Results
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import ui.settings
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 
 class DealRepositoryImpl : DealRepository {
@@ -33,9 +29,10 @@ class DealRepositoryImpl : DealRepository {
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getDeals(
         query: DealsQuery
-    ): DealsModel? {
-        return try {
-            val response = client.get("${ApiConfig.BASE_URL}/deals") {
+    ): Flow<Results<DealsModel>> = flow {
+        emit(Results.Loading())
+        try {
+            val result = client.get("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
                 parameter("query", query.searchQuery)
@@ -45,22 +42,25 @@ class DealRepositoryImpl : DealRepository {
                 val filterTags = query.filterTags
                 parameter("categories", filterCategories)
                 parameter("tags", filterTags)
-            }
-            response.body<DealsModel>()
+            }.body<DealsModel>()
+            emit(Results.Success(result))
         } catch (e: Exception) {
-            throw e
+            when (e) {
+                is IOException -> emit(Results.Error(ErrorType.NoInternetConnection))
+                is HttpRequestTimeoutException -> emit(Results.Error(ErrorType.RequestTimeout))
+                else -> emit(Results.Error(ErrorType.UnknownError))
+            }
         }
     }
 
-    override suspend fun getSingleDeal(id: String): DealModel? {
-        return try {
-            val response = client.get("${ApiConfig.BASE_URL}/deals/$id") {
+    override suspend fun getSingleDeal(id: String): Flow<Results<DealModel?>> = flow {
+        emit(Results.Loading())
+        try {
+            val result = client.get("${ApiConfig.BASE_URL}/deals/$id") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
             }.body<DealModel>()
-
-            println("test deal Repo ${response.title}")
-            response
+            emit(Results.Success(result))
         } catch (e: Exception) {
             throw e
         }

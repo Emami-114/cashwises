@@ -4,14 +4,15 @@ import data.model.DealsQuery
 import data.model.MarkedDealForUser
 import domain.model.DealModel
 import domain.model.DealsModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.SerialName
 
 interface DealRepository {
     suspend fun getDeals(
         query: DealsQuery
-    ): DealsModel?
+    ): Flow<Results<DealsModel>>
 
-    suspend fun getSingleDeal(id: String): DealModel?
+    suspend fun getSingleDeal(id: String): Flow<Results<DealModel?>>
     suspend fun addDeal(dealModel: DealModel): Boolean
     suspend fun updateDeal(
         title: String,

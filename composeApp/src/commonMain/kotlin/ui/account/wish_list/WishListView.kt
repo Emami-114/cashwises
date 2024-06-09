@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -21,10 +19,10 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.wish_list
 import data.repository.UserRepository
 import domain.model.DealModel
+import domain.repository.Results
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -76,9 +74,18 @@ class WishListViewModel : ViewModel(), KoinComponent {
     private fun getUserWishList() = viewModelScope.launch {
         try {
             for (dealId in userRepository.userMarkedDeals.value) {
-                _state.update {
-                    (it + dealsUseCase.getSingleDeal(dealId)!!)
+                dealsUseCase.getSingleDeal(dealId).collectLatest { status ->
+                    when (status) {
+                        is Results.Loading -> {}
+                        is Results.Success -> {
+                            _state.update {
+                                ((it + status.data!!))
+                            }
+                        }
+                        is Results.Error -> {}
+                    }
                 }
+
             }
         } catch (e: Exception) {
             error.value = e.message
