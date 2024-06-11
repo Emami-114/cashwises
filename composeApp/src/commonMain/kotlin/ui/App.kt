@@ -47,6 +47,7 @@ fun App() = AppTheme {
             LocalPushNotification.requestAuthorization { }
             UserRepository.INSTANCE.getMe()
         }
+
         HomeNav()
     }
 }

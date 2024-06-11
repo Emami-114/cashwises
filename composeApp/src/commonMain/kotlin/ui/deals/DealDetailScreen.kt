@@ -305,24 +305,24 @@ fun DetailDealView(
         ) {
             Text(dealModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
 
-            Text(
-                text = if (dealModel.currentCreatedHour.toInt() == 0) stringResource(
-                    Res.string.some_minute_ago,
-                    "${dealModel.currentCreatedMinute}"
-                )
-                else if (dealModel.currentCreatedDay == 0 && dealModel.currentCreatedHour < 24) stringResource(
-                    Res.string.some_hour_ago,
-                    "${dealModel.currentCreatedHour}"
-                )
-                else if (dealModel.currentCreatedDay > 0) stringResource(
-                    Res.string.some_day_ago,
-                    "${dealModel.currentCreatedDay}"
-                )
-                else "",
-                fontSize = 10.sp,
-                color = cw_dark_grayText,
-                fontWeight = FontWeight.Medium
-            )
+//            Text(
+//                text = if (dealModel.currentCreatedHour.toInt() == 0) stringResource(
+//                    Res.string.some_minute_ago,
+//                    "${dealModel.currentCreatedMinute}"
+//                )
+//                else if (dealModel.currentCreatedDay == 0 && dealModel.currentCreatedHour < 24) stringResource(
+//                    Res.string.some_hour_ago,
+//                    "${dealModel.currentCreatedHour}"
+//                )
+//                else if (dealModel.currentCreatedDay > 0) stringResource(
+//                    Res.string.some_day_ago,
+//                    "${dealModel.currentCreatedDay}"
+//                )
+//                else "",
+//                fontSize = 10.sp,
+//                color = cw_dark_grayText,
+//                fontWeight = FontWeight.Medium
+//            )
         }
         Text(
             dealModel.title,

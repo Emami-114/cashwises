@@ -148,17 +148,17 @@ fun ProductItemRow(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(dealModel.provider ?: "", fontSize = 10.sp, color = cw_dark_whiteText)
-                Text(
-                    text = if (dealModel.currentCreatedHour.toInt() == 0) "${dealModel.currentCreatedMinute}m"
-                    else if (dealModel.currentCreatedHour < 24) {
-                        "${dealModel.currentCreatedHour}h"
-                    } else {
-                        "${dealModel.currentCreatedDay}T"
-                    },
-                    fontSize = 10.sp,
-                    color = cw_dark_grayText,
-                    fontWeight = FontWeight.Medium
-                )
+//                Text(
+//                    text = if (dealModel.currentCreatedHour.toInt() == 0) "${dealModel.currentCreatedMinute}m"
+//                    else if (dealModel.currentCreatedHour < 24) {
+//                        "${dealModel.currentCreatedHour}h"
+//                    } else {
+//                        "${dealModel.currentCreatedDay}T"
+//                    },
+//                    fontSize = 10.sp,
+//                    color = cw_dark_grayText,
+//                    fontWeight = FontWeight.Medium
+//                )
             }
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 7.dp),

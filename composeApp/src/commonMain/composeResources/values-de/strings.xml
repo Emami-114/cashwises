@@ -47,7 +47,7 @@
     <string name="today">Heute</string>
     <string name="free">Kostenlose</string>
     <string name="coupon_code">Coupon Code</string>
-    <string name="successfully_copied">kopiert: %1$s</string>
+    <string name="successfully_copied">In Zwischenablage kopiert</string>
     <string name="successfully_created">Erfolgreich erstellt</string>
     <string name="successfully_updated">Erfolgreich aktualisiert</string>
     <string name="title">Überschrift</string>

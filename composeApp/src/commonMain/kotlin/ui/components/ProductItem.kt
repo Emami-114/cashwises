@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,6 +42,7 @@ import cashwises.composeapp.generated.resources.free
 import coil3.compose.AsyncImage
 import data.repository.ApiConfig
 import domain.model.DealModel
+import domain.model.SmallDealModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -56,12 +58,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
+import utils.resizeImage
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ProductItem(
-    modifier: Modifier = Modifier, dealModel: DealModel, onClick: () -> Unit
+    modifier: Modifier = Modifier, dealModel: SmallDealModel, onClick: () -> Unit
 ) {
     val roundedCornerShape = RoundedCornerShape(15.dp)
     var imageByte by remember { mutableStateOf(ByteArray(0)) }
@@ -99,7 +102,10 @@ fun ProductItem(
                     }
                 }
                 AsyncImage(
-                    modifier = Modifier.fillMaxSize().clickable { onClick() }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 130.dp)
+                        .clickable { onClick() }
                         .clip(MaterialTheme.shapes.large).customBorder(),
                     model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}",
                     contentDescription = null,

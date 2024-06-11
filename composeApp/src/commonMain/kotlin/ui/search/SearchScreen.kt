@@ -36,6 +36,7 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
 import domain.model.CategoryModel
 import domain.model.DealModel
+import domain.model.SmallDealModel
 import domain.repository.Results
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -145,7 +146,10 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                         focusManager.clearFocus()
                     }
                 },
-                onNavigate = {},
+                onNavigate = {
+                   searchFocused = false
+                    focusManager.clearFocus()
+                },
                 onSearch = { searchQuery ->
                     if (searchQuery.isEmpty().not()) {
                         onNavigate(AppScreen.SearchView.route + "?title=${searchQuery}&query=${searchQuery}")
@@ -216,7 +220,7 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
         query: DealsQuery
     ) = viewModelScope.launch {
         dealUseCase.getDeals(query = query).collectLatest { status ->
-            when(status){
+            when (status) {
                 is Results.Loading -> {}
                 is Results.Success -> {
                     _state.update {
@@ -225,6 +229,7 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
                         )
                     }
                 }
+
                 is Results.Error -> {
                 }
             }
@@ -251,7 +256,7 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
 }
 
 data class SearchState(
-    val deals: List<DealModel>? = null,
+    val deals: List<SmallDealModel>? = null,
     val categories: CategoriesModel? = null,
     val searchQuery: String? = null,
     val page: Int = 1,
@@ -268,10 +273,9 @@ fun SearchTopAppBar(
     focused: Boolean,
     showBackButton: Boolean,
     onFocusedChange: (Boolean) -> Unit,
-    onNavigate: (String) -> Unit,
+    onNavigate: () -> Unit,
     onSearch: (String) -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -293,7 +297,7 @@ fun SearchTopAppBar(
                     contentDescription = null,
                     tint = cw_dark_whiteText,
                     modifier = Modifier.size(30.dp).noRippleClickable {
-                        onNavigate(AppConstants.BackClickRoute.route)
+                        onNavigate()
                     }
                 )
             }

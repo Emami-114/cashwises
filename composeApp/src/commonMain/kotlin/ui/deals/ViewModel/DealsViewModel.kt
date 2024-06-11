@@ -36,13 +36,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
         getDeals()
     }
 
-    fun doChangeSelectedDeal(dealModel: DealModel?) {
-        _state.update {
-            it.copy(
-                selectedDeal = dealModel
-            )
-        }
-    }
+//    fun doChangeSelectedDeal(dealModel: DealModel?) {
+//        _state.update {
+//            it.copy(
+//                selectedDeal = dealModel
+//            )
+//        }
+//    }
 
     fun doGetSingleDeal(id: String, success: (DealModel?) -> Unit) {
         viewModelScope.launch {

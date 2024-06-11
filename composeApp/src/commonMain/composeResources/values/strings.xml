@@ -48,7 +48,7 @@
     <string name="free">Free</string>
     <string name="coupon_code">Coupon code</string>
 
-    <string name="successfully_copied">copied: %1$s</string>
+    <string name="successfully_copied">Copied to clipboard</string>
     <string name="successfully_created">Successfully created</string>
     <string name="successfully_updated">Successfully updated</string>
     <string name="title">Title</string>

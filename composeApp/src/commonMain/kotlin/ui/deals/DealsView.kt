@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import domain.model.DealModel
+import domain.model.SmallDealModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.compose.koinInject
 import ui.AppScreen
@@ -43,7 +44,6 @@ fun DealsView(
 ) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
-    var selectedDeal by remember { mutableStateOf<DealModel?>(null) }
     var showDetail by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.getDeals()
@@ -85,9 +85,7 @@ fun DealsView(
                         ProductItem(
                             dealModel = deal,
                             onClick = {
-                                selectedDeal = deal
                                 showDetail = true
-                                viewModel.doChangeSelectedDeal(deal)
                                 onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
                             })
                     }

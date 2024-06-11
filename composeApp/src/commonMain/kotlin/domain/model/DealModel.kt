@@ -12,7 +12,7 @@ import kotlin.math.absoluteValue
 
 @Serializable
 data class DealsModel(
-    val deals: List<DealModel>
+    val deals: List<SmallDealModel>
 )
 @Serializable
 data class DealModel(
@@ -47,14 +47,37 @@ data class DealModel(
     val createdAt: String? = null,
     @SerialName("updated_at")
     val updatedAt: String? = null
+)
+
+@Serializable
+data class SmallDealModel(
+    val id: String? = null,
+    val title: String,
+    @SerialName("is_free")
+    val isFree: Boolean? = null,
+    val price: Double? = null,
+    @SerialName("offer_price")
+    val offerPrice: Double? = null,
+    @SerialName("expiration_date")
+    val expirationDate: String? = null,
+    val provider: String? = null,
+    @SerialName("provider_url")
+    val providerUrl: String? = null,
+    val thumbnail: String? = null,
+    @SerialName("user_id")
+    val userId: String? = null,
+    @SerialName("shipping_costs")
+    val shippingCosts: Double? = null,
+    @SerialName("updated_at")
+    val updatedAt: String? = null
 ) {
     val currentCreatedHour = Clock.System.now().until(
-        Instant.parse(createdAt ?: ""), unit = DateTimeUnit.HOUR
+        Instant.parse(updatedAt ?: ""), unit = DateTimeUnit.HOUR
     ).absoluteValue
     val currentCreatedMinute = Clock.System.now().until(
-        Instant.parse(createdAt ?: ""), unit = DateTimeUnit.MINUTE
+        Instant.parse(updatedAt ?: ""), unit = DateTimeUnit.MINUTE
     ).absoluteValue
     val currentCreatedDay = Clock.System.now().daysUntil(
-        Instant.parse(createdAt ?: ""), timeZone = TimeZone.UTC
+        Instant.parse(updatedAt ?: ""), timeZone = TimeZone.UTC
     ).absoluteValue
 }

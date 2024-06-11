@@ -3,12 +3,13 @@ package ui.deals.ViewModel
 import domain.model.CategoryModel
 import domain.model.DealModel
 import domain.model.ImageModel
+import domain.model.SmallDealModel
 import domain.model.TagModel
 import kotlinx.serialization.SerialName
 
 data class DealsState(
     val id: String = "",
-    val deals: List<DealModel> = listOf(),
+    val deals: List<SmallDealModel> = listOf(),
     val categories: List<CategoryModel> = listOf(),
     val isLoading: Boolean = false,
     val error: String? = null,
