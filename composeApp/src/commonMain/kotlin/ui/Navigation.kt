@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -22,9 +23,12 @@ import androidx.navigation.navArgument
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.bell
 import cashwises.composeapp.generated.resources.home
+import cashwises.composeapp.generated.resources.push_new_deal_available
+import cashwises.composeapp.generated.resources.push_new_deal_available_desc
 import cashwises.composeapp.generated.resources.search
 import cashwises.composeapp.generated.resources.user
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.stringResource
 import ui.account.AccountView
 import ui.account.auth.AuthView
 import ui.account.wish_list.WishListView
@@ -32,14 +36,29 @@ import ui.components.CustomBackgroundView
 import ui.deals.DealDetailScreen
 import ui.home.HomeView
 import ui.menu.BottomNavigationView
-import ui.menu.TabBarScreen
+import ui.menu.CreateDealAndCategoriesScreen
 import ui.notification.NotificationView
 import ui.search.SearchScreen
 import ui.search.SearchView
+import utils.LocalPushNotification
+import utils.PushNotificationModel
 
 @Composable
 fun HomeNav() {
     val navController = rememberNavController()
+    val pushTitle = stringResource(Res.string.push_new_deal_available)
+    val pushTitleDesc = stringResource(Res.string.push_new_deal_available_desc)
+    LaunchedEffect(Unit) {
+        LocalPushNotification.schedule(
+            pushNotificationModel = PushNotificationModel(
+                identifier = "PuSH_NOTIFICATION",
+                title = pushTitle,
+                body = pushTitleDesc,
+                timeInterval = 64800.0,
+                repeats = true
+            )
+        )
+    }
     NavHostMain(
         navController = navController,
         onNavigate = { routeName ->
@@ -168,7 +187,7 @@ fun NavHostMain(
                 AuthView(onNavigate)
             }
             composable(route = AppScreen.CreateDeal.route) {
-                TabBarScreen(onNavigate = onNavigate)
+                CreateDealAndCategoriesScreen(onNavigate = onNavigate)
             }
             composable(route = AppScreen.WishList.route) {
                 WishListView(onNavigate = onNavigate)

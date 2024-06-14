@@ -107,9 +107,13 @@ fun SearchView(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(uiState.deals ?: listOf()) { deal ->
-                    ProductItem(dealModel = deal) {
-                        onNavigate.invoke(AppScreen.DealDetail.route + "/${deal.id}")
-                    }
+                    ProductItem(
+                        dealModel = deal,
+                        onNavigateToDetail = {
+                            onNavigate.invoke(AppScreen.DealDetail.route + "/${deal.id}")
+                        },
+                        onNavigateToProvider = { url -> }
+                    )
                 }
             }
         }
@@ -147,7 +151,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                     }
                 },
                 onNavigate = {
-                   searchFocused = false
+                    searchFocused = false
                     focusManager.clearFocus()
                 },
                 onSearch = { searchQuery ->

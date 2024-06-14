@@ -84,10 +84,14 @@ fun DealsView(
                     items(uiState.deals) { deal ->
                         ProductItem(
                             dealModel = deal,
-                            onClick = {
+                            onNavigateToDetail = {
                                 showDetail = true
                                 onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
-                            })
+                            },
+                            onNavigateToProvider = { url ->
+
+                            }
+                        )
                     }
                     item {
                         Spacer(modifier = Modifier.height(100.dp))

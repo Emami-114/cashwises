@@ -71,4 +71,8 @@
     <string name="edit_deal">Deal bearbeiten</string>
     <string name="edit_category">Kategorie bearbeiten</string>
     <string name="create_tags">Tags erstellen</string>
+    <string name="registration_required">Registrierung erforderlich</string>
+    <string name="registration_required_desc">Sie sind nicht angemeldet. Wenn Sie einen Deal erstellen möchten, melden Sie sich bitte an.</string>
+    <string name="push_new_deal_available">Neuer Deal verfügbar!</string>
+    <string name="push_new_deal_available_desc">Verpassen Sie nicht das neueste Angebot. Jetzt ansehen und profitieren!</string>
 </resources>

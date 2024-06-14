@@ -72,4 +72,8 @@
     <string name="edit_deal">Edit Deal</string>
     <string name="edit_category">Edit Category</string>
     <string name="create_tags">Create Tags</string>
+    <string name="registration_required">Registration required</string>
+    <string name="registration_required_desc">You are not logged in. If you would like to create a deal, please log in.</string>
+    <string name="push_new_deal_available">New deal available!</string>
+    <string name="push_new_deal_available_desc">Don't miss out on the latest offer. Take a look now and benefit!</string>
 </resources>

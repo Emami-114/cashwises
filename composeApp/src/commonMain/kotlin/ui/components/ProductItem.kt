@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,38 +36,34 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.external_link
-import cashwises.composeapp.generated.resources.flame
 import cashwises.composeapp.generated.resources.free
 import coil3.compose.AsyncImage
 import data.repository.ApiConfig
-import domain.model.DealModel
 import domain.model.SmallDealModel
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
-import kotlinx.datetime.until
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_primary
-import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
-import utils.resizeImage
-import kotlin.math.absoluteValue
+import utils.openUrl
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ProductItem(
-    modifier: Modifier = Modifier, dealModel: SmallDealModel, onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    dealModel: SmallDealModel,
+    onNavigateToDetail: () -> Unit,
+    onNavigateToProvider: (String) -> Unit
 ) {
     val roundedCornerShape = RoundedCornerShape(15.dp)
     var imageByte by remember { mutableStateOf(ByteArray(0)) }
-    val scope = rememberCoroutineScope()
     val expirationDate: Int? = if (dealModel.expirationDate != null) {
         Clock.System.now()
             .daysUntil(Instant.parse(dealModel.expirationDate), timeZone = TimeZone.UTC)
@@ -105,7 +100,7 @@ fun ProductItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(max = 130.dp)
-                        .clickable { onClick() }
+                        .clickable { onNavigateToDetail() }
                         .clip(MaterialTheme.shapes.large).customBorder(),
                     model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}",
                     contentDescription = null,
@@ -181,12 +176,17 @@ fun ProductItem(
                         color = cw_dark_grayText,
                         fontWeight = FontWeight.Medium
                     )
-                    Icon(painter = painterResource(Res.drawable.external_link),
-                        contentDescription = null,
-                        tint = cw_dark_primary,
-                        modifier = Modifier.size(23.dp).noRippleClickable {
-
-                        })
+                    dealModel.providerUrl?.let { url ->
+                        Icon(painter = painterResource(Res.drawable.external_link),
+                            contentDescription = null,
+                            tint = cw_dark_primary,
+                            modifier = Modifier
+                                .size(23.dp)
+                                .noRippleClickable {
+                                   openUrl(url)
+                                }
+                        )
+                    }
                 }
             }
         }

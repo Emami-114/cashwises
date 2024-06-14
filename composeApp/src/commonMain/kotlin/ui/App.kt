@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.push_new_deal_available
+import cashwises.composeapp.generated.resources.push_new_deal_available_desc
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.annotation.ExperimentalCoilApi
@@ -23,8 +26,12 @@ import coil3.util.DebugLogger
 import com.russhwolf.settings.Settings
 import data.repository.UserRepository
 import okio.FileSystem
+import org.jetbrains.compose.resources.stringResource
 import theme.AppTheme
+import ui.components.WebViewScreen
 import utils.LocalPushNotification
+import utils.PushNotificationModel
+import utils.WebPageViewer
 
 var settings = Settings()
 
@@ -33,8 +40,8 @@ var settings = Settings()
 fun App() = AppTheme {
     setSingletonImageLoaderFactory { context ->
         getAsyncImageLoader(context)
-
     }
+
     Column(
         modifier = Modifier.fillMaxSize()
             .windowInsetsPadding(WindowInsets.captionBar)
@@ -44,7 +51,7 @@ fun App() = AppTheme {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LaunchedEffect(Unit) {
-            LocalPushNotification.requestAuthorization { }
+            LocalPushNotification.requestAuthorization {}
             UserRepository.INSTANCE.getMe()
         }
 
@@ -53,8 +60,7 @@ fun App() = AppTheme {
 }
 
 fun getAsyncImageLoader(context: PlatformContext) =
-    ImageLoader.Builder(context)
-        .memoryCachePolicy(CachePolicy.ENABLED).memoryCache {
+    ImageLoader.Builder(context).memoryCachePolicy(CachePolicy.ENABLED).memoryCache {
         MemoryCache.Builder().maxSizePercent(context, 0.3).strongReferencesEnabled(true).build()
     }.diskCachePolicy(CachePolicy.ENABLED).networkCachePolicy(CachePolicy.ENABLED).diskCache {
         newDiskCache()
@@ -65,3 +71,4 @@ fun newDiskCache(): DiskCache {
         .maxSizeBytes(800L * 800 * 800) // 512MB
         .build()
 }
+

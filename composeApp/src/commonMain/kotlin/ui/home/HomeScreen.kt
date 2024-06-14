@@ -29,7 +29,7 @@ fun HomeView(onNavigate: (String) -> Unit) {
     Scaffold(modifier = Modifier,
         topBar = {
             CustomTopAppBar(title = "Home", rightAction = {
-                if (UserRepository.INSTANCE.userIsAdmin()) {
+//                if (UserRepository.INSTANCE.userIsAdmin()) {
                     Box(
                         modifier = Modifier.size(30.dp)
                             .background(
@@ -48,7 +48,7 @@ fun HomeView(onNavigate: (String) -> Unit) {
                             modifier = Modifier.size(23.dp)
                         )
                     }
-                }
+//                }
             })
         }
     ) { paddingValue ->

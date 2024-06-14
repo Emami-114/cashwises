@@ -17,6 +17,7 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
     jvm("desktop")
@@ -29,6 +30,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+//            export("com.mohamedrejeb.calf:calf-ui:0.4.1")
         }
     }
 
@@ -57,22 +59,17 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
-//            implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
-//            implementation(libs.androidx.compose.material3.adaptive.navigation)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             // navigation
             implementation(libs.compose.navigation)
-
             // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.client.serialization)
             implementation(libs.kotlinx.datetime)
-            // Icon
-//            implementation(libs.composeIcons.tablerIcons)
             // MOKO
             implementation(libs.moko.mvvm)
             // settings
@@ -88,7 +85,7 @@ kotlin {
 
             // file picker
             implementation(libs.calf.filepicker)
-            // image laoder
+
             // rich text editor
             implementation(libs.rich.text)
             // Coil3

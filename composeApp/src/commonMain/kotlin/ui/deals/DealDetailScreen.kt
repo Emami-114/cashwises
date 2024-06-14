@@ -97,6 +97,7 @@ import ui.components.CustomTopAppBar
 import ui.components.ToastStatus
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.ViewModel.DealsViewModel
+import utils.openUrl
 import kotlin.math.absoluteValue
 
 
@@ -193,53 +194,57 @@ fun DealDetailScreen(
                     showToast = true
                 })
         }
-        Box(
-            modifier = Modifier.height(80.dp).background(cw_dark_background)
-                .align(Alignment.BottomStart), contentAlignment = Alignment.BottomStart
-        ) {
-            Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth().height(45.dp).align(Alignment.TopStart)
-                    .padding(top = 5.dp).padding(horizontal = 25.dp)
-                    .background(cw_dark_primary, shape = MaterialTheme.shapes.large)
+        deal?.providerUrl?.let { url ->
+            Box(
+                modifier = Modifier.height(80.dp).background(cw_dark_background)
+                    .align(Alignment.BottomStart), contentAlignment = Alignment.BottomStart
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Button(
+                    onClick = {
+                        openUrl(url)
+                    },
+                    modifier = Modifier.fillMaxWidth().height(45.dp).align(Alignment.TopStart)
+                        .padding(top = 5.dp).padding(horizontal = 25.dp)
+                        .background(cw_dark_primary, shape = MaterialTheme.shapes.large)
                 ) {
-                    if (uiState.selectedDeal?.isFree == true) {
-                        Text(
-                            text = stringResource(Res.string.free),
-                            color = cw_dark_whiteText,
-                            fontSize = 17.sp
-                        )
-                    } else if (uiState.selectedDeal?.offerPrice != null) {
-                        Text(
-                            text = "${uiState.selectedDeal?.offerPrice ?: 0}€",
-                            color = cw_dark_whiteText,
-                            fontSize = 17.sp
-                        )
-                        Text(
-                            text = "${uiState.selectedDeal?.price ?: 0}€",
-                            color = cw_dark_whiteText,
-                            fontSize = 10.sp,
-                            style = TextStyle(textDecoration = TextDecoration.LineThrough)
-                        )
-                    } else {
-                        Text(
-                            text = "${uiState.selectedDeal?.price ?: 0}€",
-                            color = cw_dark_whiteText,
-                            fontSize = 17.sp
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (uiState.selectedDeal?.isFree == true) {
+                            Text(
+                                text = stringResource(Res.string.free),
+                                color = cw_dark_whiteText,
+                                fontSize = 17.sp
+                            )
+                        } else if (uiState.selectedDeal?.offerPrice != null) {
+                            Text(
+                                text = "${uiState.selectedDeal?.offerPrice ?: 0}€",
+                                color = cw_dark_whiteText,
+                                fontSize = 17.sp
+                            )
+                            Text(
+                                text = "${uiState.selectedDeal?.price ?: 0}€",
+                                color = cw_dark_whiteText,
+                                fontSize = 10.sp,
+                                style = TextStyle(textDecoration = TextDecoration.LineThrough)
+                            )
+                        } else {
+                            Text(
+                                text = "${uiState.selectedDeal?.price ?: 0}€",
+                                color = cw_dark_whiteText,
+                                fontSize = 17.sp
+                            )
+                        }
+                        Icon(
+                            painter = painterResource(Res.drawable.external_link),
+                            contentDescription = null,
+                            tint = cw_dark_whiteText,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
-                    Icon(
-                        painter = painterResource(Res.drawable.external_link),
-                        contentDescription = null,
-                        tint = cw_dark_whiteText,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
 
+                }
             }
         }
         if (showToast) {
