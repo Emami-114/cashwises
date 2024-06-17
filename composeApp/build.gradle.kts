@@ -71,7 +71,7 @@ kotlin {
             implementation(libs.ktor.client.serialization)
             implementation(libs.kotlinx.datetime)
             // MOKO
-            implementation(libs.moko.mvvm)
+           // implementation(libs.moko.mvvm)
             // settings
             implementation(libs.multiplatformSettings)
             implementation(libs.multiplatformSettings.noArg)

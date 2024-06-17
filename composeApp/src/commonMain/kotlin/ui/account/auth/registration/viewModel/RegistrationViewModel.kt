@@ -1,21 +1,16 @@
 package ui.account.auth.registration.viewModel
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cashwises.composeapp.generated.resources.Res
-import cashwises.composeapp.generated.resources.accept_data_protection_error
 import cashwises.composeapp.generated.resources.auth_verification_required
-import cashwises.composeapp.generated.resources.invalid_email_address_error
-import cashwises.composeapp.generated.resources.password_confirm_not_match_error
-import cashwises.composeapp.generated.resources.password_must_be_6characters_error
-import cashwises.composeapp.generated.resources.username_required_error
 import data.model.RegisterModel
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
-import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ui.account.auth.registration.RegistrationEvent

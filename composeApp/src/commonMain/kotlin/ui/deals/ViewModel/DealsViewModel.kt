@@ -1,7 +1,8 @@
 package ui.deals.ViewModel
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import data.model.DealsQuery
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.DealModel
 import domain.model.ImageModel
 import domain.repository.Results

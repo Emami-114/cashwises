@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 import ui.account.AccountView
 import ui.account.auth.AuthView
+import ui.account.profile.ProfileView
 import ui.account.wish_list.WishListView
 import ui.components.CustomBackgroundView
 import ui.deals.DealDetailScreen
@@ -229,6 +230,10 @@ fun NavHostMain(
                     onNavigate = onNavigate
                 )
 
+            }
+
+            composable(route = AppScreen.Profile.route) {
+                ProfileView(onNavigate = onNavigate)
             }
         }
     }

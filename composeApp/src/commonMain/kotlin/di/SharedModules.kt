@@ -16,6 +16,7 @@ import ui.category.viewModel.CategoryViewModel
 import ui.deals.ViewModel.DealsViewModel
 import ui.home.tags.CreateTagViewModel
 import ui.home.tags.TagsViewModel
+import ui.notification.NotificationViewModel
 import ui.search.SearchScreenViewModel
 import useCase.AuthUseCase
 import useCase.CategoryUseCase
@@ -42,6 +43,7 @@ private var presentationModule = module {
     single { TagsViewModel() }
     single { CreateTagViewModel() }
     single { WishListViewModel() }
+    single { NotificationViewModel() }
 }
 
 

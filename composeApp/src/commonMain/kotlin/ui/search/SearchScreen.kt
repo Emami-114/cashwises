@@ -29,13 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.chevron_left
 import data.model.DealsQuery
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import domain.model.CategoriesModel
 import domain.model.CategoryModel
-import domain.model.DealModel
 import domain.model.SmallDealModel
 import domain.repository.Results
 import kotlinx.coroutines.flow.MutableStateFlow
