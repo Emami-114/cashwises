@@ -44,7 +44,12 @@ fun CustomPopUp(
     var dialogPresent by remember { mutableStateOf(present) }
     AnimatedVisibility(visible = dialogPresent) {
         BasicAlertDialog(
-            onDismissRequest = { if (!onDismissDisable) dialogPresent = false },
+            onDismissRequest = {
+                if (!onDismissDisable) {
+                    dialogPresent = false
+                    cancelAction()
+                }
+            },
             modifier = Modifier.background(cw_dark_whiteText, shape = MaterialTheme.shapes.large),
         ) {
             Column(

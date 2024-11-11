@@ -65,6 +65,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             // navigation
             implementation(libs.compose.navigation)
+            implementation(libs.compose.navigation2)
             // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
@@ -77,22 +78,23 @@ kotlin {
             implementation(libs.multiplatformSettings.noArg)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
-
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
-
             // file picker
             implementation(libs.calf.filepicker)
-
             // rich text editor
             implementation(libs.rich.text)
             // Coil3
-            implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
-            implementation(libs.coil.mp)
+            implementation(libs.coil)
             implementation(libs.coil.network.ktor)
+            // material adaptive
+            implementation(libs.compose.material3.adaptive.adaptive)
+            implementation(libs.compose.material3.adaptive.layout)
+            implementation(libs.compose.material3.adaptive.navigation)
+            implementation(libs.compose.material3.windowsSize)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

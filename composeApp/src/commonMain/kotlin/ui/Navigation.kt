@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 import ui.account.AccountView
 import ui.account.auth.AuthView
+import ui.account.imprint.ImprintView
 import ui.account.profile.ProfileView
 import ui.account.wish_list.WishListView
 import ui.components.CustomBackgroundView
@@ -235,6 +236,9 @@ fun NavHostMain(
             composable(route = AppScreen.Profile.route) {
                 ProfileView(onNavigate = onNavigate)
             }
+            composable(route = AppScreen.Imprint.route) {
+                ImprintView(onNavigate = onNavigate)
+            }
         }
     }
 }
@@ -247,10 +251,8 @@ fun navigateTo(
         AppConstants.BackClickRoute.route -> {
             navController.popBackStack()
         }
-
         else -> {
             navController.navigate(routeName)
-
         }
     }
 }

@@ -7,21 +7,18 @@ import io.ktor.client.request.delete
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.url
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.util.InternalAPI
+import io.ktor.utils.io.InternalAPI
 import kotlinx.serialization.json.Json
 import utils.resizeImage
-import kotlin.random.Random
 
 class ImageUploadRepository {
-
-    @OptIn(InternalAPI::class)
+    @OptIn(InternalAPI::class, InternalAPI::class)
     suspend fun uploadImage(
         imageModel: ImageModel,
         subDir: String = "",

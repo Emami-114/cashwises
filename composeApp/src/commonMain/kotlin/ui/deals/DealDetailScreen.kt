@@ -59,9 +59,8 @@ import cashwises.composeapp.generated.resources.heart_fill
 import cashwises.composeapp.generated.resources.offers_ends_in_some_day
 import cashwises.composeapp.generated.resources.offers_ends_in_some_hour
 import cashwises.composeapp.generated.resources.offers_expired
-import cashwises.composeapp.generated.resources.some_day_ago
-import cashwises.composeapp.generated.resources.some_hour_ago
-import cashwises.composeapp.generated.resources.some_minute_ago
+import cashwises.composeapp.generated.resources.registration_required
+import cashwises.composeapp.generated.resources.registration_required_desc
 import cashwises.composeapp.generated.resources.successfully_copied
 import cashwises.composeapp.generated.resources.trash
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
@@ -86,17 +85,20 @@ import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.AppConstants
 import ui.components.CustomBackgroundView
 import ui.components.CustomImagesSlider
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
+import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
-import ui.components.ToastStatus
+import ui.components.ToastStatusEnum
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.ViewModel.DealsViewModel
+import utils.Utils
 import utils.openUrl
 import kotlin.math.absoluteValue
 
@@ -110,6 +112,7 @@ fun DealDetailScreen(
     val uiState by viewModel.state.collectAsState()
     val scrollState = rememberScrollState(0)
     var showToast by remember { mutableStateOf(false) }
+    var showErrorPopUp by remember { mutableStateOf(false) }
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
     var deal by remember { mutableStateOf<DealModel?>(null) }
@@ -121,6 +124,7 @@ fun DealDetailScreen(
     var isDealMarked by remember { mutableStateOf(false) }
 
     LaunchedEffect(dealId) {
+        Utils.showNotification
         dealId?.let {
             viewModel.doGetSingleDeal(dealId) { dealModel ->
                 deal = dealModel
@@ -135,6 +139,7 @@ fun DealDetailScreen(
         val scope = this
         val maxWidth = scope.maxWidth
         CustomBackgroundView()
+
         CustomTopAppBar(
             modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
             title = if (scrollState.value >= 800) deal?.title ?: "" else "",
@@ -154,7 +159,7 @@ fun DealDetailScreen(
                         contentDescription = null,
                         tint = if (isDealMarked) cw_dark_red else cw_dark_whiteText,
                         modifier = Modifier.size(26.dp).clickable {
-                            if (dealId != null) {
+                            if (dealId != null && UserRepository.INSTANCE.user != null) {
                                 scopeCoroutine.launch {
                                     UserRepository.INSTANCE.addMarkDealForUser(dealId)
                                         .let { isSuccess ->
@@ -167,6 +172,8 @@ fun DealDetailScreen(
                                         }
 
                                 }
+                            } else {
+                                showErrorPopUp = true
                             }
                         })
 
@@ -247,13 +254,20 @@ fun DealDetailScreen(
                 }
             }
         }
+        if (showErrorPopUp) {
+            CustomPopUp(
+                true,
+                message = stringResource(Res.string.registration_required_desc),
+                cancelAction = { showErrorPopUp = false })
+        }
         if (showToast) {
-            CustomToast(
+            CustomNotificationToast(
                 modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 50.dp),
-                status = ToastStatus.SUCCESS,
+                status = ToastStatusEnum.SUCCESS,
                 title = stringResource(Res.string.successfully_copied, clipCopyText)
             ) { showToast = false }
         }
+
     }
 }
 

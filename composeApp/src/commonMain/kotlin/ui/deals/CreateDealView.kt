@@ -69,7 +69,7 @@ import ui.components.CustomPopUp
 import ui.components.CustomRichTextEditor
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsViewModel
 import ui.deals.components.MainAndSubCategoryList
@@ -102,7 +102,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
             ) {
                 CustomBackgroundView()
                 if (uiState.dealCreatedSuccess) {
-                    CustomToast(title = stringResource(Res.string.successfully_created)) {
+                    CustomNotificationToast(title = stringResource(Res.string.successfully_created)) {
                         viewModel.onEvent(DealEvent.OnSetDefaultState)
                     }
                 }

@@ -9,8 +9,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import di.getSharedModules
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.context.startKoin
 import ui.App
 

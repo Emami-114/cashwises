@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -176,8 +177,13 @@ fun CreateDealAndCategoriesScreen(onNavigate: (String) -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(stringResource(Res.string.registration_required), fontSize = 30.sp, color = cw_dark_whiteText)
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        stringResource(Res.string.registration_required),
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = cw_dark_whiteText
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
                     Text(stringResource(Res.string.registration_required_desc), fontSize = 15.sp, textAlign = TextAlign.Center, color = cw_dark_whiteText)
                 }
             }

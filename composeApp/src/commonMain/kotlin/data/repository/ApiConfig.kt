@@ -1,7 +1,6 @@
 package data.repository
 
 import cashwises.composeapp.generated.resources.Res
-import cashwises.composeapp.generated.resources.bad_request_error
 import cashwises.composeapp.generated.resources.conflict_error
 import cashwises.composeapp.generated.resources.not_found_error
 import cashwises.composeapp.generated.resources.unauthorized_error
@@ -20,7 +19,7 @@ import ui.settings
 object ApiConfig {
     const val BASE_URL = "https://cashwises.backend.api.cwcash.de/api"
 
-//    const val BASE_URL = "http://192.168.178.22:8000/api"
+    //    const val BASE_URL = "http://192.168.178.22:8000/api"
     var userToken = settings.getString("TOKEN", "Token not found")
     private const val API_KEY = "4FeR43JKi453NO0mv4HN657aGD34Vc%2"
 

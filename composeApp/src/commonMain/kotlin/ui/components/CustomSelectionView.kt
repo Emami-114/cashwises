@@ -41,6 +41,7 @@ fun CustomSelectionView(
                 shape = MaterialTheme.shapes.medium
             )
             .customBorder(shape = MaterialTheme.shapes.medium)
+            .padding(all = 5.dp)
             .noRippleClickable {
                 onAction()
             },
@@ -54,14 +55,14 @@ fun CustomSelectionView(
             Text(
                 text,
                 color = cw_dark_whiteText,
-                modifier = Modifier.padding(5.dp),
-                fontSize = 10.sp
+                modifier = Modifier.padding(3.dp).weight(9f),
+                fontSize = 14.sp
             )
             icon?.let { icon ->
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = null,
-                    modifier = Modifier.size(15.dp)
+                    modifier = Modifier.size(17.dp).weight(2f)
                 )
             }
         }

@@ -47,7 +47,7 @@ import ui.components.CustomImagePicker
 import ui.components.CustomPopUp
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
@@ -67,7 +67,7 @@ fun CreateCategory(
         else -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 if (uiState.createdSuccessfully || uiState.updateSuccessfully) {
-                    CustomToast(title = stringResource(if (uiState.createdSuccessfully) Res.string.successfully_created else Res.string.successfully_copied)) {
+                    CustomNotificationToast(title = stringResource(if (uiState.createdSuccessfully) Res.string.successfully_created else Res.string.successfully_copied)) {
                         viewModel.onEvent(CategoryEvent.OnDefaultState)
                     }
                 }

@@ -26,7 +26,6 @@ import cashwises.composeapp.generated.resources.book
 import cashwises.composeapp.generated.resources.book_2
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.compose_multiplatform
-import cashwises.composeapp.generated.resources.heart
 import cashwises.composeapp.generated.resources.heart_fill
 import cashwises.composeapp.generated.resources.imprint
 import cashwises.composeapp.generated.resources.log_out
@@ -46,7 +45,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.AppScreen
 import ui.components.CustomBackgroundView
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.menu.components.MenuBarItem
 
 @Composable
@@ -57,7 +56,7 @@ fun AccountView(onNavigate: (String) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         CustomBackgroundView()
         if (showLogOutToast) {
-            CustomToast(
+            CustomNotificationToast(
                 modifier = Modifier.padding(bottom = 50.dp),
                 title = stringResource(Res.string.successfully_logout)
             ) { showLogOutToast = false }
@@ -111,7 +110,9 @@ fun AccountView(onNavigate: (String) -> Unit) {
                 modifier = Modifier.height(60.dp),
                 title = MenuBarEnum.IMPRINT.title,
                 icon = MenuBarEnum.IMPRINT.icon
-            ) {}
+            ) {
+                onNavigate(AppScreen.Imprint.route)
+            }
 
             MenuBarItem(
                 modifier = Modifier.height(60.dp),

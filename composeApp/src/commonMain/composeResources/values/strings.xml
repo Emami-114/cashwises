@@ -76,4 +76,7 @@
     <string name="registration_required_desc">You are not logged in. If you would like to create a deal, please log in.</string>
     <string name="push_new_deal_available">New deal available!</string>
     <string name="push_new_deal_available_desc">Don't miss out on the latest offer. Take a look now and benefit!</string>
+    <string name="create_notification">Create notification</string>
+    <string name="required_select_notification">You haven’t selected a notification category. To receive notifications, please click the button below.</string>
+    <string name="registration_required_notification">You are not logged in. To create a notification, please log in.</string>
 </resources>

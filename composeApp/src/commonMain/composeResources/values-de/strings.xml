@@ -75,4 +75,7 @@
     <string name="registration_required_desc">Sie sind nicht angemeldet. Wenn Sie einen Deal erstellen möchten, melden Sie sich bitte an.</string>
     <string name="push_new_deal_available">Neuer Deal verfügbar!</string>
     <string name="push_new_deal_available_desc">Verpassen Sie nicht das neueste Angebot. Jetzt ansehen und profitieren!</string>
+    <string name="create_notification">Benachrichtigung erstellen</string>
+    <string name="required_select_notification">Sie haben keine Benachrichtigungskategorie ausgewählt. Um Benachrichtigungen zu erhalten, klicken Sie bitte auf den Button unten.</string>
+    <string name="registration_required_notification">Sie sind nicht angemeldet. Um eine Benachrichtigung zu erstellen, melden Sie sich bitte an.</string>
 </resources>

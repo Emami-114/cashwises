@@ -43,7 +43,7 @@ import ui.account.auth.verification.VerificationView
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomPopUp
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.components.CustomTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +62,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
         })
     }, snackbarHost = {
         if (registerUiState.isVerificationSuccess)
-            CustomToast {}
+            CustomNotificationToast {}
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
