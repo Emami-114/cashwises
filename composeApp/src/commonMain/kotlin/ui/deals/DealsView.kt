@@ -1,5 +1,8 @@
 package ui.deals
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -11,8 +14,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.pullToRefresh
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,25 +40,29 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomPopUp
 import ui.components.ProductItem
 import ui.deals.ViewModel.DealEvent
+import ui.deals.ViewModel.DealsState
 import ui.deals.ViewModel.DealsViewModel
 import ui.deals.components.ProductItemRow
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DealsView(
     modifier: Modifier = Modifier,
+    viewModel: DealsViewModel,
+    uiState: DealsState,
     onNavigate: (String) -> Unit
 ) {
-    val viewModel: DealsViewModel = koinInject()
-    val uiState by viewModel.state.collectAsState()
-    var showDetail by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        viewModel.getDeals()
-    }
-    val rememberLazyGridState = rememberLazyGridState()
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    val rememberLazyGridState = rememberLazyGridState()
+    var isRefreshed by remember { mutableStateOf(false) }
+    val pullRefresh = rememberPullToRefreshState()
+
+    BoxWithConstraints(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
         CustomBackgroundView()
         val scope = this
         val maxWidth = scope.maxWidth
@@ -73,19 +85,19 @@ fun DealsView(
             }
 
             else -> {
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(column),
                     state = rememberLazyGridState,
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(7.dp),
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(all = 5.dp)
                 ) {
                     items(uiState.deals) { deal ->
                         ProductItem(
                             dealModel = deal,
                             onNavigateToDetail = {
-                                showDetail = true
                                 onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
                             },
                             onNavigateToProvider = { url ->
@@ -97,6 +109,7 @@ fun DealsView(
                         Spacer(modifier = Modifier.height(100.dp))
                     }
                 }
+
             }
         }
     }

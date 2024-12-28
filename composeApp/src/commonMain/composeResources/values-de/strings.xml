@@ -36,7 +36,10 @@
     <string name="offers_ends_today">Angebote endet Heute</string>
     <string name="offers_expired">Abgelaufen</string>
     <string name="create_deals">Deal erstellen</string>
-
+    <!--  Deals Category  -->
+    <string name="category_deals">Deals</string>
+    <string name="category_free">kostenlos</string>
+    <string name="category_mobile_tariffs">Handytarif</string>
     <!--  Global Strings  -->
     <string name="button_send">Senden</string>
     <string name="btn_register">Registrieren</string>

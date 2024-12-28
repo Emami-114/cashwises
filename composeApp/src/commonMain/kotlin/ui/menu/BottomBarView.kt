@@ -10,6 +10,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import org.company.app.theme.cw_dark_background
 import ui.BottomBarScreen
@@ -22,6 +24,8 @@ fun BottomNavigationView(
     currentScreenRouter: String,
     onNavigate: (String) -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Row(
         modifier = modifier.padding(bottom = 20.dp).padding(horizontal = 15.dp).fillMaxWidth()
             .height(70.dp).customBorder(shape = MaterialTheme.shapes.extraLarge)
@@ -42,6 +46,7 @@ fun BottomNavigationView(
                 tab = bottomBarScreen,
                 isSelected = currentScreenRouter == bottomBarScreen.route
             ) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 onNavigate(bottomBarScreen.route)
             }
         }

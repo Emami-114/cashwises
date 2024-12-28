@@ -63,6 +63,7 @@ kotlin {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(compose.material3AdaptiveNavigationSuite)
             // navigation
             implementation(libs.compose.navigation)
             implementation(libs.compose.navigation2)

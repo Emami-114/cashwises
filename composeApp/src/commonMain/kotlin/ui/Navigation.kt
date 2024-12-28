@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.bell
 import cashwises.composeapp.generated.resources.home
@@ -27,6 +28,7 @@ import cashwises.composeapp.generated.resources.push_new_deal_available
 import cashwises.composeapp.generated.resources.push_new_deal_available_desc
 import cashwises.composeapp.generated.resources.search
 import cashwises.composeapp.generated.resources.user
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 import ui.account.AccountView
@@ -92,8 +94,6 @@ fun NavHostMain(
             ) { onNavigate(it) }
     }) { innerPadding ->
         CustomBackgroundView()
-
-
         NavHost(
             navController = navController,
             startDestination = BottomBarScreen.Home.route,
@@ -127,7 +127,7 @@ fun NavHostMain(
             composable(
                 route = BottomBarScreen.Home.route,
                 deepLinks = listOf(
-                    NavDeepLink("https://cashwises.backend.api.cwcash.de")
+                    NavDeepLink("https://cwcash.de")
                 ),
                 enterTransition = {
                     fadeIn(animationSpec = tween(200))
@@ -174,7 +174,6 @@ fun NavHostMain(
             ) {
                 AccountView(onNavigate)
             }
-
             composable(
                 route = AppScreen.DealDetail.route + "/{deal_id}",
                 arguments = listOf(navArgument("deal_id") {
@@ -251,8 +250,12 @@ fun navigateTo(
         AppConstants.BackClickRoute.route -> {
             navController.popBackStack()
         }
+
         else -> {
-            navController.navigate(routeName)
+            println(navController.currentBackStackEntry?.id)
+            if (!navController.visibleEntries.value.contains(navController.previousBackStackEntry)) {
+                navController.navigate(routeName)
+            }
         }
     }
 }
@@ -261,6 +264,11 @@ sealed class AppConstants(val route: String) {
     data object BackClickRoute : AppConstants(route = "BACK_CLICK_ROUTE")
 }
 
+@Serializable
+object Home
+
+@Serializable
+data class Detail(val id: String)
 sealed class AppScreen(
     val route: String,
     var title: String,
@@ -353,7 +361,7 @@ private val NavController.shouldShowBottomBar
         BottomBarScreen.Search.route,
         BottomBarScreen.Notification.route,
         BottomBarScreen.Account.route,
-        -> true
+            -> true
 
         else -> false
     }

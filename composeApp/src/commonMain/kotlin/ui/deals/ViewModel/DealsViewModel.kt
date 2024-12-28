@@ -31,6 +31,8 @@ class DealsViewModel : ViewModel(), KoinComponent {
             SharingStarted.Lazily,
             DealsState()
         )
+    private val _selectedCategory = MutableStateFlow("Deals")
+    val selectedCategory = _selectedCategory.asStateFlow()
     private val categoriesUseCase: CategoryUseCase by inject()
 
     init {
@@ -44,6 +46,10 @@ class DealsViewModel : ViewModel(), KoinComponent {
 //            )
 //        }
 //    }
+
+    fun doChangeSelectedCategory(value: String) {
+        _selectedCategory.update { value }
+    }
 
     fun doGetSingleDeal(id: String, success: (DealModel?) -> Unit) {
         viewModelScope.launch {
@@ -325,8 +331,8 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun getDeals() = viewModelScope.launch {
-            useCase.getDeals(query = DealsQuery(limit = 40)).collectLatest { status ->
+    fun getDeals(query: DealsQuery = DealsQuery(limit = 40)) = viewModelScope.launch {
+            useCase.getDeals(query = query).collectLatest { status ->
                 when (status) {
                     is Results.Loading -> _state.value = _state.value.copy(isLoading = true)
                     is Results.Success -> {

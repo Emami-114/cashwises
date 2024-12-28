@@ -1,61 +1,117 @@
 package ui.home
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.ViewModel
+import cashwises.composeapp.generated.resources.*
 import cashwises.composeapp.generated.resources.Res
-import cashwises.composeapp.generated.resources.plus
+import cashwises.composeapp.generated.resources.category_deals
+import cashwises.composeapp.generated.resources.compose_multiplatform
 import data.repository.UserRepository
+import org.company.app.theme.md_theme_dark_primary
+import org.company.app.theme.md_theme_dark_secondary
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import ui.AppScreen
-import ui.components.CustomTopAppBar
+import ui.components.*
+import ui.components.customModiefier.noRippleClickable
 import ui.deals.DealsView
+import ui.deals.ViewModel.DealsViewModel
 
 @Composable
 fun HomeView(onNavigate: (String) -> Unit) {
-    val scrollState = rememberScrollState(initial = 10)
-    Scaffold(modifier = Modifier,
+    val viewModel: DealsViewModel = koinInject()
+    val uiState by viewModel.state.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+
+    Scaffold(
+        modifier = Modifier,
         topBar = {
-            CustomTopAppBar(title = "Home", rightAction = {
-//                if (UserRepository.INSTANCE.userIsAdmin()) {
-                    Box(
-                        modifier = Modifier.size(30.dp)
-                            .background(
-                                MaterialTheme.colorScheme.primary,
-                                shape = MaterialTheme.shapes.extraLarge
-                            ).clip(MaterialTheme.shapes.extraLarge)
-                            .clickable(role = Role.Image) {
-                                onNavigate(AppScreen.CreateDeal.route)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.plus),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.size(23.dp)
-                        )
-                    }
-//                }
-            })
+            HomeTopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                selectedItem = selectedCategory,
+                onClick = { viewModel.doChangeSelectedCategory(it) })
         }
     ) { paddingValue ->
-        DealsView(
-            modifier = Modifier.padding(top = paddingValue.calculateTopPadding())
-        ) { route ->
-            onNavigate(route)
+        Box(modifier = Modifier.fillMaxSize()) {
+            CustomBackgroundView()
+            DealsView(
+                modifier = Modifier.padding(top = paddingValue.calculateTopPadding() - 20.dp),
+                viewModel = viewModel,
+                uiState = uiState
+            ) { route ->
+                onNavigate(route)
+            }
         }
+    }
+}
+
+@Composable
+fun HomeTopAppBar(modifier: Modifier = Modifier, selectedItem: String, onClick: (String) -> Unit) {
+    val scrollState = rememberScrollState()
+    val items = listOf<String>(stringResource(Res.string.category_deals), stringResource(Res.string.category_free), stringResource(Res.string.category_mobile_tariffs))
+
+    Column(modifier = Modifier.height(150.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Image(
+                painter = painterResource(Res.drawable.compose_multiplatform),
+                contentDescription = null,
+                modifier = Modifier.size(80.dp)
+            )
+        }
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 15.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(items) { item ->
+                val color by animateColorAsState(
+                    targetValue = if (item == selectedItem) md_theme_dark_primary else Color.Transparent,
+                    animationSpec = tween(delayMillis = 80, easing = EaseInOut)
+                )
+                Text(
+                    text = item,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = md_theme_dark_secondary,
+                    modifier = Modifier
+                        .background(
+                            color = color,
+                            shape = RoundedCornerShape(7.dp)
+                        )
+                        .noRippleClickable {
+                            onClick(item)
+                        }
+                        .padding(vertical = 3.dp, horizontal = 6.dp)
+                )
+            }
+        }
+        CustomDivider(modifier = Modifier.zIndex(1f))
     }
 }

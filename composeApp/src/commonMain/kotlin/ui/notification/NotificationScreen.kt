@@ -141,10 +141,11 @@ fun NotificationView(onNavigate: (String) -> Unit) {
                     ) {
                         Text(
                             stringResource(Res.string.required_select_notification),
-                            fontSize = 20.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Normal,
                             color = cw_dark_whiteText,
-                            lineHeight = 28.sp
+                            lineHeight = 28.sp,
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         CustomButton(
