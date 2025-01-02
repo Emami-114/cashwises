@@ -75,16 +75,14 @@ import ui.menu.components.TabBarItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateDealAndCategoriesScreen(onNavigate: (String) -> Unit) {
+fun CreateDealAndCategoriesScreen(onNavigateBack: () -> Unit) {
     var currentItem by remember { mutableStateOf(TabItemEnum.CREATE_DEAL) }
     var isExpanded by remember { mutableStateOf(false) }
     val categoriesViewModel: CategoryViewModel = koinInject()
     val categoriesUiState by categoriesViewModel.state.collectAsState()
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = "", backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
-            }, rightAction = {
+            CustomTopAppBar(title = "", backButtonAction = onNavigateBack, rightAction = {
                 if (UserRepository.INSTANCE.userIsCreator() || UserRepository.INSTANCE.userIsAdmin())
                 Icon(
                     if (isExpanded) Icons.Default.Close else Icons.Default.Menu,

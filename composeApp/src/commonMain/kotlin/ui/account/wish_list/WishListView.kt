@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,23 +30,22 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.AppConstants
-import ui.AppScreen
+import ui.Detail
 import ui.components.CustomTopAppBar
 import ui.deals.components.ProductItemRow
 import useCase.DealsUseCase
 
 @Composable
-fun WishListView(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
+fun WishListView(modifier: Modifier = Modifier, onNavigate: (Any) -> Unit) {
     val viewModel: WishListViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
-
+    LaunchedEffect(viewModel.userRepository.userMarkedDeals.value) {
+        viewModel.getUserWishList()
+    }
     Column {
         CustomTopAppBar(
             title = stringResource(Res.string.wish_list),
-            backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
-            })
+        )
         Spacer(modifier = Modifier.height(5.dp))
         LazyColumn(
             modifier = Modifier.padding(5.dp),
@@ -53,7 +53,9 @@ fun WishListView(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
         ) {
             items(uiState) { deal ->
                 ProductItemRow(dealModel = deal) {
-                    onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
+                    deal.id?.let { id ->
+                        onNavigate(Detail(id = id))
+                    }
                 }
             }
         }
@@ -62,26 +64,29 @@ fun WishListView(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
 
 class WishListViewModel : ViewModel(), KoinComponent {
     private val dealsUseCase: DealsUseCase by inject()
-    private val userRepository = UserRepository.INSTANCE
+    val userRepository = UserRepository.INSTANCE
     private val _state = MutableStateFlow<List<DealModel>>(listOf())
     val state = _state.asStateFlow()
     var error = mutableStateOf<String?>(null)
 
     init {
-        getUserWishList()
     }
 
-    private fun getUserWishList() = viewModelScope.launch {
+    fun getUserWishList() = viewModelScope.launch {
         try {
+            _state.emit(listOf())
             for (dealId in userRepository.userMarkedDeals.value) {
                 dealsUseCase.getSingleDeal(dealId).collectLatest { status ->
                     when (status) {
                         is Results.Loading -> {}
                         is Results.Success -> {
-                            _state.update {
-                                ((it + status.data!!))
+                            if (!_state.value.contains(status.data)) {
+                                _state.update {
+                                    it.plus(status.data!!)
+                                }
                             }
                         }
+
                         is Results.Error -> {}
                     }
                 }

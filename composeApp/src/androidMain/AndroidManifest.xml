@@ -24,11 +24,10 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan">
-            <tools:validation testUrl="https://cashwises.backend.api.cwcash.de" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <data android:scheme="https" android:host="https://www.cwcash.de" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

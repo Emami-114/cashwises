@@ -30,10 +30,13 @@ import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
+import cashwises.composeapp.generated.resources.password_forget
+import cashwises.composeapp.generated.resources.password_reset
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import ui.AppConstants
 import ui.AppScreen
+import ui.Home
 import ui.account.auth.login.LogInView
 import ui.account.auth.login.LoginViewModel
 import ui.account.auth.registration.PasswordForget
@@ -48,7 +51,7 @@ import ui.components.CustomTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthView(onNavigate: (String) -> Unit) {
+fun AuthView(onNavigate: (Any) -> Unit, onNavigateBack: () -> Unit) {
     val registerViewModel: RegistrationViewModel = koinInject()
     val registerUiState by registerViewModel.state.collectAsState()
     val loginViewModel: LoginViewModel = koinInject()
@@ -57,8 +60,13 @@ fun AuthView(onNavigate: (String) -> Unit) {
     var animationState by remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
-        CustomTopAppBar(title = currentView.name, backButtonAction = {
-            onNavigate(AppConstants.BackClickRoute.route)
+        CustomTopAppBar(title = when(currentView) {
+            AuthEnum.LOGIN -> stringResource(Res.string.btn_login)
+            AuthEnum.REGISTRATION -> stringResource(Res.string.btn_register)
+            AuthEnum.PASSWORDFORGET -> stringResource(Res.string.password_reset)
+            AuthEnum.VERIFICATION -> currentView.name
+        }, backButtonAction = {
+            onNavigateBack()
         })
     }, snackbarHost = {
         if (registerUiState.isVerificationSuccess)
@@ -133,7 +141,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
                                         toPasswordForget = {
                                             currentView = AuthEnum.PASSWORDFORGET
                                         }, toHome = {
-                                            onNavigate(AppScreen.Home.route)
+                                            onNavigate(Home)
                                         })
                                 }
                             }

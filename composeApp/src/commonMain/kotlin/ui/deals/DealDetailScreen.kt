@@ -106,7 +106,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun DealDetailScreen(
     dealId: String? = null,
-    onNavigate: (String) -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
@@ -146,9 +146,7 @@ fun DealDetailScreen(
             hasBackground = scrollState.value >= 800,
             textColor = cw_dark_whiteText,
             isDivider = false,
-            backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
-            },
+            backButtonAction =onNavigateBack,
             rightAction = {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -184,7 +182,7 @@ fun DealDetailScreen(
                             tint = cw_dark_whiteText,
                             modifier = Modifier.size(26.dp).clickable {
                                 viewModel.deleteDeal(deal)
-                                onNavigate(AppConstants.BackClickRoute.route)
+                                onNavigateBack()
                             })
                     }
                 }

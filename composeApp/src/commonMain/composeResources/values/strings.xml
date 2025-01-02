@@ -35,9 +35,13 @@
         try again.
     </string>
     <string name="password_forget">Password forget?</string>
+    <string name="password_forget_title">Password forget?</string>
     <string name="successfully_logout">Successfully logout</string>
     <string name="successfully_registered">Successfully registered</string>
     <string name="successfully_login">Successfully logged</string>
+    <string name="password_reset">password reset</string>
+    <string name="password_forget_desc">Forgot your password? No problem! Enter your email address here and we will send you an email to the linked address. This will allow you to reset your password.</string>
+
     <!--  Deals String  -->
     <string name="offers_ends_in_some_day">Offers ends in %1$s day</string>
     <string name="offers_ends_in_some_hour">Offers end in %1$s hour</string>
@@ -52,6 +56,11 @@
     <string name="category_free">Free</string>
     <string name="category_mobile_tariffs">Mobile tariffs</string>
     <!--  Global Strings  -->
+    <string name="global_deals">Deals</string>
+    <string name="global_search">Search</string>
+    <string name="global_wishList">Wishlist</string>
+    <string name="global_myAccount">Account</string>
+
     <string name="btn_send">Send</string>
     <string name="btn_register">Register</string>
     <string name="btn_login">Login</string>

@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontStyle
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.*
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.category_deals
@@ -45,10 +47,11 @@ import ui.deals.DealsView
 import ui.deals.ViewModel.DealsViewModel
 
 @Composable
-fun HomeView(onNavigate: (String) -> Unit) {
+fun HomeView(onNavigateToDealDetail: (String) -> Unit) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    var isExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier,
@@ -56,6 +59,10 @@ fun HomeView(onNavigate: (String) -> Unit) {
             HomeTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 selectedItem = selectedCategory,
+                isExpanded = uiState.isItemExpanded,
+                onExpanded = {
+                    viewModel.doChangeExpandedItem()
+                },
                 onClick = { viewModel.doChangeSelectedCategory(it) })
         }
     ) { paddingValue ->
@@ -64,25 +71,49 @@ fun HomeView(onNavigate: (String) -> Unit) {
             DealsView(
                 modifier = Modifier.padding(top = paddingValue.calculateTopPadding() - 20.dp),
                 viewModel = viewModel,
-                uiState = uiState
-            ) { route ->
-                onNavigate(route)
-            }
+                uiState = uiState,
+                isExpanded = uiState.isItemExpanded,
+                onNavigateToDetail = { dealId ->
+                    onNavigateToDealDetail(dealId)
+                }
+            )
         }
     }
 }
 
 @Composable
-fun HomeTopAppBar(modifier: Modifier = Modifier, selectedItem: String, onClick: (String) -> Unit) {
+fun HomeTopAppBar(
+    modifier: Modifier = Modifier,
+    selectedItem: String,
+    isExpanded: Boolean = false,
+    onExpanded: () -> Unit,
+    onClick: (String) -> Unit
+) {
     val scrollState = rememberScrollState()
-    val items = listOf<String>(stringResource(Res.string.category_deals), stringResource(Res.string.category_free), stringResource(Res.string.category_mobile_tariffs))
-
-    Column(modifier = Modifier.height(150.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+    val items = listOf<String>(
+        stringResource(Res.string.category_deals),
+        stringResource(Res.string.category_free),
+        stringResource(Res.string.category_mobile_tariffs)
+    )
+    Column(modifier = Modifier.height(150.dp).padding(top = 10.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(30.dp))
             Image(
                 painter = painterResource(Res.drawable.compose_multiplatform),
                 contentDescription = null,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier.size(80.dp),
+            )
+            Image(
+                painterResource(if (isExpanded) Res.drawable.layout_grid else Res.drawable.list),
+                contentDescription = null,
+                modifier = Modifier.size(25.dp).noRippleClickable {
+                    onExpanded()
+                },
+                colorFilter = ColorFilter.tint(color = md_theme_dark_secondary)
             )
         }
         LazyRow(

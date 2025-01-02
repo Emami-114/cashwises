@@ -53,12 +53,14 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ui.AppConstants
 import ui.AppScreen
+import ui.Detail
+import ui.OnSearch
 import ui.components.CustomBackgroundView
 import ui.components.CustomDivider
 import ui.components.CustomSearchView
 import ui.components.CustomSlideTransition
 import ui.components.CustomTopAppBar
-import ui.components.ProductItem
+import ui.deals.components.ProductGridItem
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.components.CategoryItemView
 import ui.home.tags.TagsView
@@ -72,7 +74,8 @@ fun SearchView(
     tagArgument: String? = null,
     searchQuery: String? = null,
     title: String = "",
-    onNavigate: (String) -> Unit
+    onNavigate: (Any) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
@@ -98,7 +101,7 @@ fun SearchView(
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             CustomTopAppBar(modifier = Modifier.fillMaxWidth(), title = title, backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
+                onNavigateBack()
             })
             LazyVerticalGrid(
                 modifier = Modifier.padding(top = 10.dp).padding(horizontal = 5.dp),
@@ -107,10 +110,12 @@ fun SearchView(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(uiState.deals ?: listOf()) { deal ->
-                    ProductItem(
+                    ProductGridItem(
                         dealModel = deal,
                         onNavigateToDetail = {
-                            onNavigate.invoke(AppScreen.DealDetail.route + "/${deal.id}")
+                            deal.id?.let { id ->
+                                onNavigate.invoke(Detail(id = id))
+                            }
                         },
                         onNavigateToProvider = { url -> }
                     )
@@ -121,7 +126,7 @@ fun SearchView(
 }
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
+fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (Any) -> Unit) {
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var searchFocused by remember { mutableStateOf(false) }
@@ -156,7 +161,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                 },
                 onSearch = { searchQuery ->
                     if (searchQuery.isEmpty().not()) {
-                        onNavigate(AppScreen.SearchView.route + "?title=${searchQuery}&query=${searchQuery}")
+                        onNavigate(OnSearch(title = searchQuery, searchText = searchQuery))
                     }
                 }
             )
@@ -178,7 +183,12 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                                         .widthIn(max = 100.dp),
                                     categoryModel = category
                                 ) { selectedCategory ->
-                                    onNavigate(AppScreen.SearchView.route + "?categoryId=${selectedCategory.id}&title=${selectedCategory.title}")
+                                    onNavigate(
+                                        OnSearch(
+                                            categoryId = selectedCategory.id,
+                                            title = selectedCategory.title
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -186,12 +196,11 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                 },
                 slideView = {
                     TagsView(uiState = uiState, onSelectedTag = { tag ->
-                        onNavigate(AppScreen.SearchView.route + "?tag=${tag}&title=${tag}")
+                        onNavigate(OnSearch(tag = tag, title = tag))
                         focusManager.clearFocus()
                     })
                 }
             )
-
         }
         Spacer(modifier = Modifier.height(15.dp))
     }

@@ -1,8 +1,6 @@
 package ui.deals
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -10,20 +8,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,19 +25,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import domain.model.DealModel
-import domain.model.SmallDealModel
+import androidx.navigation.NavHostController
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.koin.compose.koinInject
 import ui.AppScreen
+import ui.Detail
 import ui.components.CustomBackgroundView
+import ui.components.CustomDivider
 import ui.components.CustomPopUp
-import ui.components.ProductItem
+import ui.deals.components.ProductGridItem
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsState
 import ui.deals.ViewModel.DealsViewModel
-import ui.deals.components.ProductItemRow
-import kotlin.math.roundToInt
+import ui.deals.components.ProductItem
 
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
@@ -51,10 +44,10 @@ import kotlin.math.roundToInt
 fun DealsView(
     modifier: Modifier = Modifier,
     viewModel: DealsViewModel,
+    isExpanded: Boolean,
     uiState: DealsState,
-    onNavigate: (String) -> Unit
+    onNavigateToDetail: (String) -> Unit
 ) {
-
     val rememberLazyGridState = rememberLazyGridState()
     var isRefreshed by remember { mutableStateOf(false) }
     val pullRefresh = rememberPullToRefreshState()
@@ -85,31 +78,49 @@ fun DealsView(
             }
 
             else -> {
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(column),
-                    state = rememberLazyGridState,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(7.dp),
-                    modifier = Modifier
-                        .padding(all = 5.dp)
-                ) {
-                    items(uiState.deals) { deal ->
-                        ProductItem(
-                            dealModel = deal,
-                            onNavigateToDetail = {
-                                onNavigate(AppScreen.DealDetail.route + "/${deal.id}")
-                            },
-                            onNavigateToProvider = { url ->
-
-                            }
-                        )
+                if (isExpanded) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(all = 5.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(uiState.deals) { deal ->
+                            ProductItem(
+                                dealModel = deal,
+                                onNavigateToDetail = {
+                                    deal.id?.let { onNavigateToDetail(it) }
+                                },
+                                onNavigateToProvider = {})
+                            CustomDivider(height = 0.6.dp)
+                        }
                     }
-                    item {
-                        Spacer(modifier = Modifier.height(100.dp))
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(column),
+                        state = rememberLazyGridState,
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(7.dp),
+                        modifier = Modifier
+                            .padding(all = 5.dp)
+                            .fillMaxSize()
+                    ) {
+                        items(uiState.deals) { deal ->
+                            ProductGridItem(
+                                dealModel = deal,
+                                onNavigateToDetail = {
+                                    deal.id?.let { onNavigateToDetail(it) }
+                                },
+                                onNavigateToProvider = { url ->
+
+                                }
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(100.dp))
+                        }
                     }
                 }
-
             }
         }
     }

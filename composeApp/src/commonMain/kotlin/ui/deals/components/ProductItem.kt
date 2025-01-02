@@ -1,12 +1,12 @@
-package ui.components
+package ui.deals.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,14 +47,12 @@ import kotlinx.datetime.daysUntil
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 import utils.openUrl
 
-@OptIn(ExperimentalResourceApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ProductItem(
     modifier: Modifier = Modifier,
@@ -77,10 +75,10 @@ fun ProductItem(
             .clip(MaterialTheme.shapes.large), contentAlignment = Alignment.Center
     ) {
 
-        Column(
-            modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)
+        Row(
+            modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Box(modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.large)) {
+            Box(modifier = Modifier.fillMaxHeight().clip(MaterialTheme.shapes.large)) {
                 if (dealModel.offerPrice != null) {
                     val offerPercent =
                         (((dealModel.price!! - dealModel.offerPrice) / dealModel.price) * 100).toInt()
@@ -98,7 +96,6 @@ fun ProductItem(
                 }
                 AsyncImage(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .heightIn(max = 130.dp)
                         .clickable { onNavigateToDetail() }
                         .clip(MaterialTheme.shapes.large).customBorder(),
@@ -109,61 +106,15 @@ fun ProductItem(
                     onLoading = {},
                 )
             }
-            Text(
-                dealModel.title,
-                fontSize = 12.sp,
-                lineHeight = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 3,
-                color = cw_dark_whiteText,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 7.dp)
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 7.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Row(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (dealModel.isFree == true) {
-                        Text(
-                            text = stringResource(Res.string.free),
-                            color = cw_dark_primary,
-                            fontSize = 15.sp
-                        )
-                    } else {
-                        if (dealModel.offerPrice != null) {
-                            Text(
-                                text = "${dealModel.offerPrice}€",
-                                color = cw_dark_primary,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                text = "${dealModel.price ?: 0}€",
-                                color = cw_dark_grayText,
-                                fontSize = 10.sp,
-                                style = TextStyle(textDecoration = TextDecoration.LineThrough)
-                            )
-                        } else {
-                            Text(
-                                text = "${dealModel.price ?: 0}€",
-                                color = cw_dark_primary,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                }
-                Row(
-                    modifier = Modifier,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                    Text("Test")
                     Text(
                         text = if (dealModel.currentCreatedHour.toInt() == 0)
                             "${dealModel.currentCreatedMinute}m"
@@ -176,6 +127,57 @@ fun ProductItem(
                         color = cw_dark_grayText,
                         fontWeight = FontWeight.Medium
                     )
+                }
+                Text(
+                    dealModel.title,
+                    fontSize = 16.sp,
+                    lineHeight = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 3,
+                    color = cw_dark_whiteText,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 7.dp)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 7.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (dealModel.isFree == true) {
+                            Text(
+                                text = stringResource(Res.string.free),
+                                color = cw_dark_primary,
+                                fontSize = 15.sp
+                            )
+                        } else {
+                            if (dealModel.offerPrice != null) {
+                                Text(
+                                    text = "${dealModel.offerPrice}€",
+                                    color = cw_dark_primary,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    text = "${dealModel.price ?: 0}€",
+                                    color = cw_dark_grayText,
+                                    fontSize = 10.sp,
+                                    style = TextStyle(textDecoration = TextDecoration.LineThrough)
+                                )
+                            } else {
+                                Text(
+                                    text = "${dealModel.price ?: 0}€",
+                                    color = cw_dark_primary,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
                     dealModel.providerUrl?.let { url ->
                         Icon(painter = painterResource(Res.drawable.external_link),
                             contentDescription = null,
@@ -183,11 +185,12 @@ fun ProductItem(
                             modifier = Modifier
                                 .size(23.dp)
                                 .noRippleClickable {
-                                   openUrl(url)
+                                    openUrl(url)
                                 }
                         )
                     }
                 }
+
             }
         }
     }

@@ -6,12 +6,14 @@ import domain.model.ImageModel
 import domain.model.SmallDealModel
 import domain.model.TagModel
 import kotlinx.serialization.SerialName
+import ui.settings
 
 data class DealsState(
     val id: String = "",
     val deals: List<SmallDealModel> = listOf(),
     val categories: List<CategoryModel> = listOf(),
     val isLoading: Boolean = false,
+    val isItemExpanded: Boolean = settings.getBoolean("is_item_expanded", false),
     val error: String? = null,
     val title: String = "",
     val description: String = "",

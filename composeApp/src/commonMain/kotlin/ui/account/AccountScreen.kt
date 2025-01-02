@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -19,8 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.book
 import cashwises.composeapp.generated.resources.book_2
@@ -44,12 +49,16 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ui.AppScreen
+import ui.Auth
+import ui.Imprint
+import ui.PrivacyPolicy
+import ui.Profile
 import ui.components.CustomBackgroundView
 import ui.components.CustomNotificationToast
 import ui.menu.components.MenuBarItem
 
 @Composable
-fun AccountView(onNavigate: (String) -> Unit) {
+fun AccountView(onNavigate: (Any) -> Unit) {
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState(0)
     var showLogOutToast by remember { mutableStateOf(false) }
@@ -82,7 +91,7 @@ fun AccountView(onNavigate: (String) -> Unit) {
                     title = MenuBarEnum.LOGIN.title,
                     icon = MenuBarEnum.LOGIN.icon
                 ) {
-                    onNavigate(AppScreen.Authentication.route)
+                    onNavigate(Auth)
                 }
             }
 
@@ -91,35 +100,32 @@ fun AccountView(onNavigate: (String) -> Unit) {
                 title = MenuBarEnum.PROFILE.title,
                 icon = MenuBarEnum.PROFILE.icon
             ) {
-                onNavigate(AppScreen.Profile.route)
+                onNavigate(Profile)
             }
-            MenuBarItem(
-                modifier = Modifier.height(60.dp),
-                title = MenuBarEnum.WISHLIST.title,
-                icon = MenuBarEnum.WISHLIST.icon
-            ) {
-                onNavigate(AppScreen.WishList.route)
-            }
-            MenuBarItem(
-                modifier = Modifier.height(60.dp),
-                title = MenuBarEnum.SETTING.title,
-                icon = MenuBarEnum.SETTING.icon
-            ) {}
+//            MenuBarItem(
+//                modifier = Modifier.height(60.dp),
+//                title = MenuBarEnum.SETTING.title,
+//                icon = MenuBarEnum.SETTING.icon
+//            ) {}
 
             MenuBarItem(
                 modifier = Modifier.height(60.dp),
                 title = MenuBarEnum.IMPRINT.title,
                 icon = MenuBarEnum.IMPRINT.icon
             ) {
-                onNavigate(AppScreen.Imprint.route)
+                onNavigate(Imprint)
             }
 
             MenuBarItem(
                 modifier = Modifier.height(60.dp),
                 title = MenuBarEnum.PRIVACY_POLICY.title,
                 icon = MenuBarEnum.PRIVACY_POLICY.icon
-            ) {}
-
+            ) { onNavigate(PrivacyPolicy) }
+        }
+        Box(
+            modifier = Modifier.fillMaxHeight().padding(bottom = 100.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
             if (UserRepository.INSTANCE.userIsLogged) {
                 Spacer(modifier = Modifier.height(50.dp))
                 MenuBarItem(

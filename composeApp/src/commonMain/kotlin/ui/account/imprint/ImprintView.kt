@@ -21,7 +21,7 @@ import ui.AppConstants
 import ui.components.CustomTopAppBar
 
 @Composable
-fun ImprintView(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
+fun ImprintView(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     val richTextState = rememberRichTextState()
     val scrollState = rememberScrollState()
     LaunchedEffect(Unit) {
@@ -32,7 +32,7 @@ fun ImprintView(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
     Scaffold(
         topBar = {
             CustomTopAppBar(title = stringResource(Res.string.imprint), backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
+                onNavigateBack()
             })
         }, containerColor = Color.Transparent
     ) { innerPadding ->

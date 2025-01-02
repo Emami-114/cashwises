@@ -40,11 +40,9 @@ import data.repository.UserRepository
 import domain.model.DealModel
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
-import kotlinx.datetime.until
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
@@ -52,7 +50,6 @@ import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
-import kotlin.math.absoluteValue
 
 @Composable
 fun ProductItemRow(
@@ -67,7 +64,7 @@ fun ProductItemRow(
         null
     }
     Row(
-        modifier = Modifier.fillMaxWidth().customBorder()
+        modifier = Modifier.fillMaxWidth().customBorder().clickable { onClick() }
             .alpha(if (expirationDate != null && expirationDate < 0) 0.3f else 1f),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -90,7 +87,7 @@ fun ProductItemRow(
                 }
             }
             AsyncImage(
-                modifier = Modifier.fillMaxSize().clickable { onClick() }
+                modifier = Modifier.fillMaxSize()
                     .clip(MaterialTheme.shapes.large).customBorder(),
                 model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}",
                 contentDescription = null,

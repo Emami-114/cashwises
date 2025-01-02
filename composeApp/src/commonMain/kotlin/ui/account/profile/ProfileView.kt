@@ -19,7 +19,7 @@ import ui.components.CustomTopAppBar
 @Composable
 fun ProfileView(
     modifier: Modifier = Modifier,
-    onNavigate: (String) -> Unit
+    onNavigateBack: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -32,7 +32,7 @@ fun ProfileView(
     }
     Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
         CustomTopAppBar(title = "Profile", backButtonAction = {
-            onNavigate(AppConstants.BackClickRoute.route)
+            onNavigateBack()
         })
         Column(
             modifier = Modifier.padding(horizontal = 5.dp),

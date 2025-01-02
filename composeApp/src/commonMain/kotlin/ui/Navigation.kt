@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +15,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavDeepLink
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,6 +28,11 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.bell
+import cashwises.composeapp.generated.resources.global_deals
+import cashwises.composeapp.generated.resources.global_myAccount
+import cashwises.composeapp.generated.resources.global_search
+import cashwises.composeapp.generated.resources.global_wishList
+import cashwises.composeapp.generated.resources.heart
 import cashwises.composeapp.generated.resources.home
 import cashwises.composeapp.generated.resources.push_new_deal_available
 import cashwises.composeapp.generated.resources.push_new_deal_available_desc
@@ -30,6 +40,7 @@ import cashwises.composeapp.generated.resources.search
 import cashwises.composeapp.generated.resources.user
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import ui.account.AccountView
 import ui.account.auth.AuthView
@@ -45,6 +56,7 @@ import ui.notification.NotificationView
 import ui.search.SearchScreen
 import ui.search.SearchView
 import utils.LocalPushNotification
+import utils.NavRouteExtension
 import utils.PushNotificationModel
 
 @Composable
@@ -66,9 +78,7 @@ fun HomeNav() {
     NavHostMain(
         navController = navController,
         onNavigate = { routeName ->
-            if (navController.currentBackStackEntry?.destination?.route != routeName) {
-                navigateTo(routeName, navController)
-            }
+            navigateTo(routeName, navController)
         }
     )
 }
@@ -77,7 +87,7 @@ fun HomeNav() {
 fun NavHostMain(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    onNavigate: (rootName: String) -> Unit,
+    onNavigate: (routerScreen: Any) -> Unit,
 ) {
 
     val shoWAnimation by animateFloatAsState(
@@ -90,13 +100,13 @@ fun NavHostMain(
         if (navController.shouldShowBottomBar && shoWAnimation == 1f)
             BottomNavigationView(
                 modifier = Modifier,
-                currentScreenRouter = currentScreen?.route ?: ""
+                currentDestination = currentScreen
             ) { onNavigate(it) }
     }) { innerPadding ->
         CustomBackgroundView()
         NavHost(
             navController = navController,
-            startDestination = BottomBarScreen.Home.route,
+            startDestination = Home,
             modifier = Modifier
                 .fillMaxSize(),
             enterTransition = {
@@ -124,10 +134,9 @@ fun NavHostMain(
                 )
             }
         ) {
-            composable(
-                route = BottomBarScreen.Home.route,
+            composable<Home>(
                 deepLinks = listOf(
-                    NavDeepLink("https://cwcash.de")
+                    NavDeepLink("https://www.cwcash.de")
                 ),
                 enterTransition = {
                     fadeIn(animationSpec = tween(200))
@@ -137,23 +146,24 @@ fun NavHostMain(
                 }
             ) {
 //                Box(modifier = Modifier.fillMaxSize().padding(bottom = 80.dp)) {
-                HomeView(onNavigate)
+                HomeView(onNavigateToDealDetail = { onNavigate(Detail(id = it)) })
 //                }
             }
-            composable(
-                route = BottomBarScreen.Search.route,
+            composable<Detail> { navBackStackEntry ->
+                val args = navBackStackEntry.toRoute<Detail>()
+                DealDetailScreen(dealId = args.id) { navController.popBackStack() }
+            }
+            composable<Search>(
                 enterTransition = {
                     fadeIn(animationSpec = tween(200))
                 },
                 exitTransition = {
                     fadeOut(animationSpec = tween(200))
                 },
-
-                ) {
+            ) {
                 SearchScreen(onNavigate = onNavigate)
             }
-            composable(
-                route = BottomBarScreen.Notification.route,
+            composable<Wishlist>(
                 enterTransition = {
                     fadeIn(animationSpec = tween(200))
                 },
@@ -161,10 +171,9 @@ fun NavHostMain(
                     fadeOut(animationSpec = tween(200))
                 }
             ) {
-                NotificationView(onNavigate)
+                WishListView(onNavigate = onNavigate)
             }
-            composable(
-                route = BottomBarScreen.Account.route,
+            composable<Account>(
                 enterTransition = {
                     fadeIn(animationSpec = tween(200))
                 },
@@ -174,89 +183,38 @@ fun NavHostMain(
             ) {
                 AccountView(onNavigate)
             }
-            composable(
-                route = AppScreen.DealDetail.route + "/{deal_id}",
-                arguments = listOf(navArgument("deal_id") {
-                    type = NavType.StringType
-                    nullable = true
-                })
-            ) {
-                val dealId = it.arguments?.getString("deal_id")
-                DealDetailScreen(dealId = dealId, onNavigate = onNavigate)
-            }
-            composable(route = AppScreen.Authentication.route) {
-                AuthView(onNavigate)
-            }
-            composable(route = AppScreen.CreateDeal.route) {
-                CreateDealAndCategoriesScreen(onNavigate = onNavigate)
-            }
-            composable(route = AppScreen.WishList.route) {
-                WishListView(onNavigate = onNavigate)
-            }
-            composable(
-                route = AppScreen.SearchView.route + "?categoryId={categoryId}&tag={tag}&title={title}&query={query}",
-                arguments = listOf(
-                    navArgument("categoryId") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = null
-                    },
-                    navArgument("tag") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = null
-                    },
-                    navArgument("title") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = null
-                    },
-                    navArgument("query") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = null
-                    },
-                )
-            ) { backStackEntry ->
-                val categoryId = backStackEntry.arguments?.getString("categoryId")
-                val tag = backStackEntry.arguments?.getString("tag")
-                val title = backStackEntry.arguments?.getString("title")
-                val query = backStackEntry.arguments?.getString("query")
+            composable<OnSearch> {
+                val args = it.toRoute<OnSearch>()
                 SearchView(
-                    categoryId = categoryId,
-                    tagArgument = tag,
-                    searchQuery = query,
-                    title = title ?: "",
+                    categoryId = args.categoryId,
+                    tagArgument = args.tag,
+                    searchQuery = args.searchText,
+                    title = args.title ?: "",
                     onNavigate = onNavigate
-                )
-
+                ) { navController.popBackStack() }
             }
-
-            composable(route = AppScreen.Profile.route) {
-                ProfileView(onNavigate = onNavigate)
+            composable<Auth> {
+                AuthView(onNavigate = onNavigate) { navController.popBackStack() }
             }
-            composable(route = AppScreen.Imprint.route) {
-                ImprintView(onNavigate = onNavigate)
+            composable<CreateDeal> {
+                CreateDealAndCategoriesScreen { navController.popBackStack() }
+            }
+            composable<Profile> {
+                ProfileView { navController.popBackStack() }
+            }
+            composable<Imprint> {
+                ImprintView { navController.popBackStack() }
             }
         }
     }
 }
 
 fun navigateTo(
-    routeName: String,
+    routeScreen: Any,
     navController: NavController
 ) {
-    when (routeName) {
-        AppConstants.BackClickRoute.route -> {
-            navController.popBackStack()
-        }
-
-        else -> {
-            println(navController.currentBackStackEntry?.id)
-            if (!navController.visibleEntries.value.contains(navController.previousBackStackEntry)) {
-                navController.navigate(routeName)
-            }
-        }
+    if (!navController.visibleEntries.value.contains(navController.previousBackStackEntry)) {
+        navController.navigate(routeScreen)
     }
 }
 
@@ -268,7 +226,55 @@ sealed class AppConstants(val route: String) {
 object Home
 
 @Serializable
+object Search
+
+@Serializable
+data class OnSearch(
+    val categoryId: String? = null,
+    val tag: String? = null,
+    val searchText: String? = null,
+    val title: String? = null
+)
+
+@Serializable
+object Wishlist
+
+@Serializable
+object Account
+
+@Serializable
+object Auth
+
+@Serializable
+object CreateDeal
+
+@Serializable
+object Profile
+
+@Serializable
+object Imprint
+
+@Serializable
+object PrivacyPolicy
+
+@Serializable
 data class Detail(val id: String)
+
+val bottomBarRouter = listOf(
+    NavRouteExtension(name = Res.string.global_deals, route = Home, icon = Res.drawable.home),
+    NavRouteExtension(name = Res.string.global_search, route = Search, icon = Res.drawable.search),
+    NavRouteExtension(
+        name = Res.string.global_wishList,
+        route = Wishlist,
+        icon = Res.drawable.heart
+    ),
+    NavRouteExtension(
+        name = Res.string.global_myAccount,
+        route = Account,
+        icon = Res.drawable.user
+    ),
+)
+
 sealed class AppScreen(
     val route: String,
     var title: String,
@@ -298,11 +304,6 @@ sealed class AppScreen(
         title = "Profile",
     )
 
-    data object WishList : AppScreen(
-        route = "WishList",
-        title = "Wish list",
-    )
-
     data object Settings : AppScreen(
         route = "SETTINGS",
         title = "Settings",
@@ -325,43 +326,9 @@ sealed class AppScreen(
 
 }
 
-sealed class BottomBarScreen(
-    val route: String,
-    var title: String,
-    val defaultIcon: DrawableResource
-) {
-    data object Home : BottomBarScreen(
-        route = "HOME",
-        title = "Home",
-        defaultIcon = Res.drawable.home,
-    )
-
-    data object Search : BottomBarScreen(
-        route = "Search",
-        title = "Search",
-        defaultIcon = Res.drawable.search,
-    )
-
-    data object Notification : BottomBarScreen(
-        route = "Notification",
-        title = "Notification",
-        defaultIcon = Res.drawable.bell,
-    )
-
-    data object Account : BottomBarScreen(
-        route = "Account",
-        title = "Account",
-        defaultIcon = Res.drawable.user,
-    )
-}
 
 private val NavController.shouldShowBottomBar
-    get() = when (this.currentBackStackEntry?.destination?.route) {
-        BottomBarScreen.Home.route,
-        BottomBarScreen.Search.route,
-        BottomBarScreen.Notification.route,
-        BottomBarScreen.Account.route,
-            -> true
-
-        else -> false
-    }
+    get() = currentDestination?.hasRoute(Home::class) == true ||
+            currentDestination?.hasRoute(Search::class) == true ||
+            currentDestination?.hasRoute(Wishlist::class) == true ||
+            currentDestination?.hasRoute(Account::class) == true

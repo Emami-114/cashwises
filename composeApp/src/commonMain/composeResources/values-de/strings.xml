@@ -27,6 +27,8 @@
     <string name="successfully_logout">Erfolgreich abgemeldet</string>
     <string name="successfully_registered">Erfolgreich registriert</string>
     <string name="successfully_login">Erfolgreich eingeloggt</string>
+    <string name="password_reset">Passwort zurücksetzen</string>
+    <string name="password_forget_desc">Password vergessen? Kein Problem! Tragen hier deine E-mail-Adresse ein und wir schicken Dir eine E-mail an die verknüpfte Adresse. Damit kann das Password zurückgesetzt werden.</string>
     <!--  Deals String  -->
     <string name="offers_ends_in_some_day">Angebote endet in %1$s Tag</string>
     <string name="offers_ends_in_some_hour">Angebote enden in %1$s Stunde</string>
@@ -41,6 +43,11 @@
     <string name="category_free">kostenlos</string>
     <string name="category_mobile_tariffs">Handytarif</string>
     <!--  Global Strings  -->
+    <string name="global_deals">Deals</string>
+    <string name="global_search">Suchen</string>
+    <string name="global_wishList">Merkzettel</string>
+    <string name="global_myAccount">Konto</string>
+
     <string name="button_send">Senden</string>
     <string name="btn_register">Registrieren</string>
     <string name="btn_login">Anmelden</string>

@@ -2,6 +2,7 @@ package ui.deals.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.russhwolf.settings.set
 import data.model.DealsQuery
 import domain.model.DealModel
 import domain.model.ImageModel
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
 import useCase.TagsUseCase
@@ -49,6 +51,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     fun doChangeSelectedCategory(value: String) {
         _selectedCategory.update { value }
+    }
+
+    fun doChangeExpandedItem() = viewModelScope.launch {
+        var isExpanded = state.value.isItemExpanded
+        isExpanded = !isExpanded
+        _state.update { it.copy(isItemExpanded = isExpanded) }
+        settings.set("is_item_expanded", value = isExpanded)
     }
 
     fun doGetSingleDeal(id: String, success: (DealModel?) -> Unit) {
@@ -332,35 +341,35 @@ class DealsViewModel : ViewModel(), KoinComponent {
     }
 
     fun getDeals(query: DealsQuery = DealsQuery(limit = 40)) = viewModelScope.launch {
-            useCase.getDeals(query = query).collectLatest { status ->
-                when (status) {
-                    is Results.Loading -> _state.value = _state.value.copy(isLoading = true)
-                    is Results.Success -> {
-                        _state.update {
-                            it.copy(
-                                deals = status.data?.deals
-                                    ?: listOf(),
-                                isLoading = false,
-                                error = null,
-                            )
-                        }
-                    }
-
-                    is Results.Error -> {
-                        status.error?.let { error ->
-                            _state.update {
-                                it.copy(
-                                    error = getString(error.message),
-                                    isLoading = false
-                                )
-                            }
-                        }
-                        delay(4000)
-                        onEvent(DealEvent.OnSetDefaultState)
+        useCase.getDeals(query = query).collectLatest { status ->
+            when (status) {
+                is Results.Loading -> _state.value = _state.value.copy(isLoading = true)
+                is Results.Success -> {
+                    _state.update {
+                        it.copy(
+                            deals = status.data?.deals
+                                ?: listOf(),
+                            isLoading = false,
+                            error = null,
+                        )
                     }
                 }
 
+                is Results.Error -> {
+                    status.error?.let { error ->
+                        _state.update {
+                            it.copy(
+                                error = getString(error.message),
+                                isLoading = false
+                            )
+                        }
+                    }
+                    delay(4000)
+                    onEvent(DealEvent.OnSetDefaultState)
+                }
             }
+
+        }
     }
 
     fun deleteDeal(dealModel: DealModel?) {
