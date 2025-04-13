@@ -1,17 +1,19 @@
 package useCase
 
+import data.model.DealModel
 import data.repository.ImageUploadRepository
-import domain.model.CategoriesModel
 import domain.model.CategoryModel
 import domain.model.ImageModel
 import domain.repository.CategoryRepository
+import domain.repository.Result
+import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class CategoryUseCase : KoinComponent {
     private val repository: CategoryRepository by inject()
     private var imageRepository = ImageUploadRepository()
-    suspend fun getCategories(): CategoriesModel {
+    suspend fun getCategories(): Flow<Result<List<CategoryModel>>> {
         try {
             return repository.getCategories()
         } catch (e: Exception) {
@@ -19,21 +21,9 @@ class CategoryUseCase : KoinComponent {
         }
     }
 
-    suspend fun uploadImage(
-        imageModel: ImageModel,
-        imagePaths: (String) -> Unit,
-    ) {
+    suspend fun getCategory(id: String): Flow<Result<CategoryModel>> {
         try {
-            imageRepository.uploadImage(
-                imageModel,
-                subDir = "categories_images",
-                imagePath = { path ->
-                    if (path.isNotEmpty()) {
-                        imagePaths(path)
-                    } else {
-                        throw Exception("oh, something went wrong!")
-                    }
-                })
+            return repository.getCategory(id)
         } catch (e: Exception) {
             throw e
         }

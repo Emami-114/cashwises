@@ -108,7 +108,7 @@ kotlin {
 
 android {
     namespace = "org.emami.cashwises"
-    compileSdk = 34
+    compileSdk = 35
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -117,7 +117,7 @@ android {
     defaultConfig {
         applicationId = "org.emami.cashwises"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }

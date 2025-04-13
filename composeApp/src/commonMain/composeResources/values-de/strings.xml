@@ -47,6 +47,7 @@
     <string name="global_search">Suchen</string>
     <string name="global_wishList">Merkzettel</string>
     <string name="global_myAccount">Konto</string>
+    <string name="global_notification">Benachrichtigung</string>
 
     <string name="button_send">Senden</string>
     <string name="btn_register">Registrieren</string>

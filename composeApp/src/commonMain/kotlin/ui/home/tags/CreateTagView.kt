@@ -30,7 +30,7 @@ import cashwises.composeapp.generated.resources.trash
 import data.repository.UserRepository
 import domain.model.TagModel
 import domain.model.UserRole
-import domain.repository.Results
+import domain.repository.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -141,16 +141,16 @@ class CreateTagViewModel : ViewModel(), KoinComponent {
         try {
             useCase.getTags(null).collectLatest { status ->
                 when (status) {
-                    is Results.Loading -> _state.update {
+                    is Result.Loading -> _state.update {
                         it.copy(
                             isLoading = true,
                             errorString = null
                         )
                     }
 
-                    is Results.Success -> _tags.update { status.data ?: emptyList() }
+                    is Result.Success -> _tags.update { status.data ?: emptyList() }
 
-                    is Results.Error -> _state.update { it.copy(errorString = getString(status.error?.message!!)) }
+                    is Result.Error -> _state.update { it.copy(errorString = getString(status.error?.message!!)) }
                 }
 
 

@@ -80,8 +80,7 @@ class RegistrationViewModel : ViewModel(), KoinComponent {
                         val registerModel = RegisterModel(
                             name = _state.value.nameText,
                             email = _state.value.emailText,
-                            password = _state.value.passwordText,
-                            passwordConfirm = _state.value.passwordConfirm
+                            password = _state.value.passwordText
                         )
                         useCase.register(registerModel) {
                             _state.update {

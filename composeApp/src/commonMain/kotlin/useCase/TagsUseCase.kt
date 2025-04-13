@@ -1,19 +1,16 @@
 package useCase
 
-import data.model.DealsQuery
 import domain.model.TagModel
-import domain.repository.Results
+import domain.repository.Result
 import domain.repository.TagRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class TagsUseCase : KoinComponent {
     private val repository: TagRepository by inject()
 
-    suspend fun getTags(query: String?): Flow<Results<List<TagModel>>> {
+    suspend fun getTags(query: String?): Flow<Result<List<TagModel>>> {
         try {
            return repository.getTags(query = query)
         } catch (e: Exception) {

@@ -60,6 +60,7 @@
     <string name="global_search">Search</string>
     <string name="global_wishList">Wishlist</string>
     <string name="global_myAccount">Account</string>
+    <string name="global_notification">Notification</string>
 
     <string name="btn_send">Send</string>
     <string name="btn_register">Register</string>

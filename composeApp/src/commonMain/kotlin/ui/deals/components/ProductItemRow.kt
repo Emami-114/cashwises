@@ -37,7 +37,7 @@ import cashwises.composeapp.generated.resources.heart_fill
 import coil3.compose.AsyncImage
 import data.repository.ApiConfig
 import data.repository.UserRepository
-import domain.model.DealModel
+import domain.model.DealDetailModel
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -54,26 +54,21 @@ import ui.components.customModiefier.noRippleClickable
 @Composable
 fun ProductItemRow(
     modifier: Modifier = Modifier,
-    dealModel: DealModel,
+    dealDetailModel: DealDetailModel,
     onClick: () -> Unit
 ) {
-    val expirationDate: Int? = if (dealModel.expirationDate != null) {
-        Clock.System.now()
-            .daysUntil(Instant.parse(dealModel.expirationDate), timeZone = TimeZone.UTC)
-    } else {
-        null
-    }
     Row(
         modifier = Modifier.fillMaxWidth().customBorder().clickable { onClick() }
-            .alpha(if (expirationDate != null && expirationDate < 0) 0.3f else 1f),
+//            .alpha(if (expirationDate != null && expirationDate < 0) 0.3f else 1f)
+    ,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(0.3f).fillMaxHeight().clip(MaterialTheme.shapes.large)
         ) {
-            if (dealModel.offerPrice != null) {
+            if (dealDetailModel.offerPrice != null) {
                 val offerPercent =
-                    (((dealModel.price!! - dealModel.offerPrice) / dealModel.price) * 100).toInt()
+                    (((dealDetailModel.price!! - dealDetailModel.offerPrice) / dealDetailModel.price) * 100).toInt()
                 Box(
                     modifier = Modifier.padding(start = 18.dp).height(25.dp)
                         .background(cw_dark_primary).padding(2.dp).zIndex(1f),
@@ -89,7 +84,7 @@ fun ProductItemRow(
             AsyncImage(
                 modifier = Modifier.fillMaxSize()
                     .clip(MaterialTheme.shapes.large).customBorder(),
-                model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}",
+                model = "${ApiConfig.IMAGE_URL}/${dealDetailModel.thumbnailUrl}",
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 onError = {},
@@ -108,7 +103,7 @@ fun ProductItemRow(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    dealModel.title,
+                    dealDetailModel.title,
                     fontSize = 13.sp,
                     lineHeight = 15.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -122,18 +117,18 @@ fun ProductItemRow(
                     Icon(
                         painter = painterResource(
                             if (UserRepository.INSTANCE.isDealMarked(
-                                    dealId = dealModel.id ?: ""
+                                    dealId = dealDetailModel.id ?: ""
                                 )
                             ) Res.drawable.heart_fill else Res.drawable.heart
                         ), contentDescription = null,
                         tint = if (UserRepository.INSTANCE.isDealMarked(
-                                dealId = dealModel.id ?: ""
+                                dealId = dealDetailModel.id ?: ""
                             )
                         ) cw_dark_red else cw_dark_whiteText,
                         modifier = Modifier.size(20.dp).noRippleClickable {
                             runBlocking {
                                 UserRepository.INSTANCE.addMarkDealForUser(
-                                    dealId = dealModel.id ?: ""
+                                    dealId = dealDetailModel.id ?: ""
                                 )
                             }
                         }
@@ -144,7 +139,7 @@ fun ProductItemRow(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(dealModel.provider ?: "", fontSize = 10.sp, color = cw_dark_whiteText)
+                Text(dealDetailModel.provider ?: "", fontSize = 10.sp, color = cw_dark_whiteText)
 //                Text(
 //                    text = if (dealModel.currentCreatedHour.toInt() == 0) "${dealModel.currentCreatedMinute}m"
 //                    else if (dealModel.currentCreatedHour < 24) {
@@ -167,24 +162,24 @@ fun ProductItemRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (dealModel.isFree == true) {
+                    if (dealDetailModel.isFree == true) {
                         Text(text = "Free", color = cw_dark_primary, fontSize = 17.sp)
                     } else {
-                        if (dealModel.offerPrice != null) {
+                        if (dealDetailModel.offerPrice != null) {
                             Text(
-                                text = "${dealModel.offerPrice}€",
+                                text = "${dealDetailModel.offerPrice}€",
                                 color = cw_dark_primary,
                                 fontSize = 17.sp
                             )
                             Text(
-                                text = "${dealModel.price ?: 0}€",
+                                text = "${dealDetailModel.price ?: 0}€",
                                 color = cw_dark_grayText,
                                 fontSize = 10.sp,
                                 style = TextStyle(textDecoration = TextDecoration.LineThrough)
                             )
                         } else {
                             Text(
-                                text = "${dealModel.price ?: 0}€",
+                                text = "${dealDetailModel.price ?: 0}€",
                                 color = cw_dark_primary,
                                 fontSize = 17.sp
                             )

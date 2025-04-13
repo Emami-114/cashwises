@@ -38,8 +38,8 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.external_link
 import cashwises.composeapp.generated.resources.free
 import coil3.compose.AsyncImage
+import data.model.DealModel
 import data.repository.ApiConfig
-import domain.model.SmallDealModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -56,7 +56,7 @@ import utils.openUrl
 @Composable
 fun ProductItem(
     modifier: Modifier = Modifier,
-    dealModel: SmallDealModel,
+    dealModel: DealModel,
     onNavigateToDetail: () -> Unit,
     onNavigateToProvider: (String) -> Unit
 ) {
@@ -99,7 +99,7 @@ fun ProductItem(
                         .heightIn(max = 130.dp)
                         .clickable { onNavigateToDetail() }
                         .clip(MaterialTheme.shapes.large).customBorder(),
-                    model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}",
+                    model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnailUrl}",
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     onError = {},

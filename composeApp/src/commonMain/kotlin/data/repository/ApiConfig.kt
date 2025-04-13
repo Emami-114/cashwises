@@ -12,27 +12,35 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.serializers.LocalDateTimeIso8601Serializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import org.jetbrains.compose.resources.getString
 import ui.settings
 
 object ApiConfig {
-    const val BASE_URL = "https://cashwises.backend.api.cwcash.de/api"
+    const val BASE_URL = "https://api2.maldeals.de/api"
+    const val IMAGE_URL = "https://minio.maldeals.de"
 
     //    const val BASE_URL = "http://192.168.178.22:8000/api"
     var userToken = settings.getString("TOKEN", "Token not found")
-    private const val API_KEY = "4FeR43JKi453NO0mv4HN657aGD34Vc%2"
+    private const val API_KEY = "MyDevice:1743553316102:QgyGvPkTiFTbIi5LclkI38Va88Vyrgm8qfPYR3v8j5E"
 
     val httpClient = HttpClient {
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
+                serializersModule = SerializersModule {
+                    contextual(LocalDateTime::class, LocalDateTimeIso8601Serializer)
+                }
             }, contentType = ContentType.Any)
 
         }
         defaultRequest {
-            header("X-API-Key", API_KEY)
+             header("X-API-Key", API_KEY)
         }
+
 
         HttpResponseValidator {
             validateResponse { response ->

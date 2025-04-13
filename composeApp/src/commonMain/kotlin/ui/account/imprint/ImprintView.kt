@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.imprint
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
@@ -21,7 +22,10 @@ import ui.AppConstants
 import ui.components.CustomTopAppBar
 
 @Composable
-fun ImprintView(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
+fun ImprintView(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     val richTextState = rememberRichTextState()
     val scrollState = rememberScrollState()
     LaunchedEffect(Unit) {
@@ -31,9 +35,12 @@ fun ImprintView(modifier: Modifier = Modifier, onNavigateBack: () -> Unit) {
     }
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = stringResource(Res.string.imprint), backButtonAction = {
-                onNavigateBack()
-            })
+            CustomTopAppBar(
+                modifier = modifier,
+                title = stringResource(Res.string.imprint),
+                backButtonAction = {
+                    navController.popBackStack()
+                })
         }, containerColor = Color.Transparent
     ) { innerPadding ->
         Column(modifier = Modifier.verticalScroll(state = scrollState)) {

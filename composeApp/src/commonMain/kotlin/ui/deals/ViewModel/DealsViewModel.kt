@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.russhwolf.settings.set
 import data.model.DealsQuery
-import domain.model.DealModel
+import domain.model.DealDetailModel
 import domain.model.ImageModel
-import domain.repository.Results
+import domain.repository.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,10 +21,12 @@ import org.koin.core.component.inject
 import ui.settings
 import useCase.CategoryUseCase
 import useCase.DealsUseCase
+import useCase.ImageUploadUseCase
 import useCase.TagsUseCase
 
 class DealsViewModel : ViewModel(), KoinComponent {
     private val useCase: DealsUseCase by inject()
+    private val imageUseCase: ImageUploadUseCase by inject()
     private val tagsUseCase: TagsUseCase by inject()
     private val _state = MutableStateFlow(DealsState())
     val state = _state.asStateFlow()
@@ -38,7 +40,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
     private val categoriesUseCase: CategoryUseCase by inject()
 
     init {
-        getDeals()
+//        getDeals()
     }
 
 //    fun doChangeSelectedDeal(dealModel: DealModel?) {
@@ -60,15 +62,15 @@ class DealsViewModel : ViewModel(), KoinComponent {
         settings.set("is_item_expanded", value = isExpanded)
     }
 
-    fun doGetSingleDeal(id: String, success: (DealModel?) -> Unit) {
+    fun doGetSingleDeal(id: String, success: (DealDetailModel?) -> Unit) {
         viewModelScope.launch {
             println("test deal view model")
             try {
                 useCase.getSingleDeal(id).collectLatest { status ->
                     when (status) {
-                        is Results.Loading -> {}
-                        is Results.Success -> success(status.data)
-                        is Results.Error -> {}
+                        is Result.Loading -> {}
+                        is Result.Success -> success(status.data)
+                        is Result.Error -> {}
                     }
                 }
             } catch (e: Exception) {
@@ -124,14 +126,15 @@ class DealsViewModel : ViewModel(), KoinComponent {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
             if (_state.value.thumbnailByte != null) {
-                useCase.uploadImage(_state.value.thumbnailByte!!) { path ->
+                imageUseCase.uploadThumbnailImage(_state.value.thumbnailByte!!) { path ->
+                    println("image path viewModel: $path")
                     _state.update {
                         it.copy(thumbnail = path)
                     }
                 }
             }
             if (_state.value.imagesByte != null) {
-                useCase.uploadImages(_state.value.imagesByte!!) { imagesPath ->
+                imageUseCase.uploadDealImage(_state.value.imagesByte!!) { imagesPath ->
                     _state.update {
                         it.copy(
                             images = imagesPath
@@ -139,22 +142,22 @@ class DealsViewModel : ViewModel(), KoinComponent {
                     }
                 }
             }
-            val deal = DealModel(
+            val deal = DealDetailModel(
                 title = _state.value.title,
                 description = _state.value.description,
                 categories = _state.value.category,
                 isFree = _state.value.isFree,
                 couponCode = _state.value.couponCode,
                 tags = _state.value.selectedTags,
-                shippingCosts = _state.value.shippingCosts,
+                shippingCost = _state.value.shippingCosts,
                 price = _state.value.price?.toDouble(),
                 offerPrice = _state.value.offerPrice?.toDouble(),
-                published = _state.value.published,
+                isPublish = _state.value.published,
                 expirationDate = _state.value.expirationDate,
                 provider = _state.value.provider,
                 providerUrl = _state.value.providerUrl,
-                thumbnail = _state.value.thumbnail,
-                images = _state.value.images,
+                thumbnailUrl = _state.value.thumbnail,
+                imagesUrl = _state.value.images,
                 userId = _state.value.userId,
                 videoUrl = _state.value.videoUrl,
             )
@@ -296,13 +299,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
             tagsUseCase.getTags(queryText).collectLatest { status ->
                 _state.update {
                     when (status) {
-                        is Results.Loading -> _state.value.copy(isLoading = true, error = null)
-                        is Results.Success -> _state.value.copy(
+                        is Result.Loading -> _state.value.copy(isLoading = true, error = null)
+                        is Result.Success -> _state.value.copy(
                             listTag = status.data ?: listOf(),
                             error = null
                         )
 
-                        is Results.Error -> _state.value.copy(error = getString(status.error?.message!!))
+                        is Result.Error -> _state.value.copy(error = getString(status.error?.message!!))
                     }
 
                 }
@@ -321,13 +324,20 @@ class DealsViewModel : ViewModel(), KoinComponent {
 
     fun getCategories() = viewModelScope.launch {
         try {
-            _state.value = _state.value.copy(isLoading = true)
-            _state.update {
-                it.copy(
-                    categories = categoriesUseCase.getCategories().categories,
-                    isLoading = false,
-                    error = null
-                )
+            categoriesUseCase.getCategories().collect { status ->
+                when (status) {
+                    is Result.Loading -> _state.value.copy(isLoading = true, error = null)
+                    is Result.Success -> _state.value.copy(
+                        categories = status.data ?: listOf(),
+                        isLoading = false,
+                        error = null
+                    )
+
+                    is Result.Error<*> -> _state.value.copy(
+                        error = getString(status.error?.message!!),
+                        isLoading = false
+                    )
+                }
             }
         } catch (e: Exception) {
             _state.update {
@@ -341,13 +351,14 @@ class DealsViewModel : ViewModel(), KoinComponent {
     }
 
     fun getDeals(query: DealsQuery = DealsQuery(limit = 40)) = viewModelScope.launch {
-        useCase.getDeals(query = query).collectLatest { status ->
+
+        useCase.getDeals(query = query).collect { status ->
             when (status) {
-                is Results.Loading -> _state.value = _state.value.copy(isLoading = true)
-                is Results.Success -> {
+                is Result.Loading -> _state.value = _state.value.copy(isLoading = true)
+                is Result.Success -> {
                     _state.update {
                         it.copy(
-                            deals = status.data?.deals
+                            deals = status.data
                                 ?: listOf(),
                             isLoading = false,
                             error = null,
@@ -355,7 +366,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
                     }
                 }
 
-                is Results.Error -> {
+                is Result.Error -> {
                     status.error?.let { error ->
                         _state.update {
                             it.copy(
@@ -372,11 +383,11 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun deleteDeal(dealModel: DealModel?) {
+    fun deleteDeal(dealDetailModel: DealDetailModel?) {
         try {
             viewModelScope.launch {
-                if (dealModel != null) {
-                    useCase.deleteDeal(dealModel) {
+                if (dealDetailModel != null) {
+                    useCase.deleteDeal(dealDetailModel) {
                     }
                 }
             }

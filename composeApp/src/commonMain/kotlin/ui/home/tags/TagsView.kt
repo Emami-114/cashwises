@@ -1,9 +1,7 @@
 package ui.home.tags
 
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,8 +28,7 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.arrow_up_right
 import cashwises.composeapp.generated.resources.search
 import domain.model.TagModel
-import domain.repository.Results
-import domain.repository.TagRepository
+import domain.repository.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +39,6 @@ import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -121,13 +117,13 @@ class TagsViewModel : ViewModel(), KoinComponent {
         try {
             useCase.getTags(query = query).collectLatest { status ->
                 when (status) {
-                    is Results.Loading -> isLoading = true
-                    is Results.Success -> {
+                    is Result.Loading -> isLoading = true
+                    is Result.Success -> {
                         _state.update { status.data ?: emptyList() }
                         isLoading = false
                     }
 
-                    is Results.Error -> {
+                    is Result.Error -> {
                         isLoading = false
                         isError = getString(status.error?.message!!)
                     }

@@ -1,19 +1,17 @@
 package domain.repository
 
+import data.model.DealModel
 import data.model.DealsQuery
-import data.model.MarkedDealForUser
-import domain.model.DealModel
-import domain.model.DealsModel
+import domain.model.DealDetailModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.SerialName
 
 interface DealRepository {
     suspend fun getDeals(
         query: DealsQuery
-    ): Flow<Results<DealsModel>>
+    ): Flow<Result<List<DealModel>>>
 
-    suspend fun getSingleDeal(id: String): Flow<Results<DealModel?>>
-    suspend fun addDeal(dealModel: DealModel): Boolean
+    suspend fun getSingleDeal(id: String): Flow<Result<DealDetailModel?>>
+    suspend fun addDeal(dealModel: DealDetailModel): Boolean
     suspend fun updateDeal(
         title: String,
         description: String,

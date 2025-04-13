@@ -44,7 +44,7 @@ fun CategoryItemView(
                 .customBorder()
                 .clip(MaterialTheme.shapes.large)
                 .weight(8f),
-            model = "${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}",
+            model = "${ApiConfig.IMAGE_URL}/${categoryModel.thumbnail}",
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
             onError = {},

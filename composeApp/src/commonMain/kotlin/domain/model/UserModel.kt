@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserModel(
     val id: String? = null,
-    val name: String,
+    var name: String,
     val email: String,
     val password: String? = null,
-    val role: UserRole,
+    var role: UserRole,
     val photo: String,
     val verified: Boolean = false,
     @SerialName("verification_code")

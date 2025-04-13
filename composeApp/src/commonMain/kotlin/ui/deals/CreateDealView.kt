@@ -303,8 +303,10 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                                     timePickerState.minute
                                 )
                             }
-                            val instant = dateTime?.toInstant(TimeZone.UTC).toString()
-                            viewModel.onEvent(DealEvent.OnExpirationDateChange(instant))
+                            if (dateTime != null) {
+                                val instant = dateTime.toInstant(TimeZone.UTC).toString()
+                                viewModel.onEvent(DealEvent.OnExpirationDateChange(instant))
+                            }
                             viewModel.onEvent(DealEvent.OnDescriptionChange(richTextState.toHtml()))
                             viewModel.onEvent(DealEvent.OnAction)
                             richTextState.clear()

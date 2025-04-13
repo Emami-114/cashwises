@@ -1,11 +1,8 @@
 package data.repository
 
-import data.model.DealsQuery
 import domain.enums.ErrorType
-import domain.model.DealModel
 import domain.model.TagModel
-import domain.repository.ResultStatus
-import domain.repository.Results
+import domain.repository.Result
 import domain.repository.TagRepository
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
@@ -20,24 +17,23 @@ import io.ktor.http.contentType
 import io.ktor.utils.io.errors.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import ui.settings
 
 class TagRepositoryImpl : TagRepository {
     private val client = ApiConfig.httpClient
-    override suspend fun getTags(query: String?): Flow<Results<List<TagModel>>> = flow {
-        emit(Results.Loading())
+    override suspend fun getTags(query: String?): Flow<Result<List<TagModel>>> = flow {
+        emit(Result.Loading())
         try {
             val results = client.get("${ApiConfig.BASE_URL}/tags") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
                 parameter("query", query)
             }.body<List<TagModel>>()
-            emit(Results.Success(results))
+            emit(Result.Success(results))
         } catch (e: Exception) {
             when (e) {
-                is IOException -> emit(Results.Error(ErrorType.NoInternetConnection))
-                is HttpRequestTimeoutException -> emit(Results.Error(ErrorType.RequestTimeout))
-                else -> emit(Results.Error(ErrorType.UnknownError))
+                is IOException -> emit(Result.Error(ErrorType.NoInternetConnection))
+                is HttpRequestTimeoutException -> emit(Result.Error(ErrorType.RequestTimeout))
+                else -> emit(Result.Error(ErrorType.UnknownError))
             }
         }
     }

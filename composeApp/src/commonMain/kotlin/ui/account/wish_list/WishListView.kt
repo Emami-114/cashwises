@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.wish_list
 import data.repository.UserRepository
-import domain.model.DealModel
-import domain.repository.Results
+import domain.model.DealDetailModel
+import domain.model.DetailRoute
+import domain.repository.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -30,13 +32,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.Detail
 import ui.components.CustomTopAppBar
+import ui.customNavigate
 import ui.deals.components.ProductItemRow
 import useCase.DealsUseCase
 
 @Composable
-fun WishListView(modifier: Modifier = Modifier, onNavigate: (Any) -> Unit) {
+fun WishListView(modifier: Modifier = Modifier, navController: NavHostController) {
     val viewModel: WishListViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     LaunchedEffect(viewModel.userRepository.userMarkedDeals.value) {
@@ -45,16 +47,18 @@ fun WishListView(modifier: Modifier = Modifier, onNavigate: (Any) -> Unit) {
     Column {
         CustomTopAppBar(
             title = stringResource(Res.string.wish_list),
-        )
+            backButtonAction = {
+                navController.popBackStack()
+            })
         Spacer(modifier = Modifier.height(5.dp))
         LazyColumn(
             modifier = Modifier.padding(5.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(uiState) { deal ->
-                ProductItemRow(dealModel = deal) {
-                    deal.id?.let { id ->
-                        onNavigate(Detail(id = id))
+                ProductItemRow(dealDetailModel = deal) {
+                    deal.id?.let { dealId ->
+                        navController.customNavigate(DetailRoute(dealId))
                     }
                 }
             }
@@ -65,7 +69,7 @@ fun WishListView(modifier: Modifier = Modifier, onNavigate: (Any) -> Unit) {
 class WishListViewModel : ViewModel(), KoinComponent {
     private val dealsUseCase: DealsUseCase by inject()
     val userRepository = UserRepository.INSTANCE
-    private val _state = MutableStateFlow<List<DealModel>>(listOf())
+    private val _state = MutableStateFlow<List<DealDetailModel>>(listOf())
     val state = _state.asStateFlow()
     var error = mutableStateOf<String?>(null)
 
@@ -78,16 +82,13 @@ class WishListViewModel : ViewModel(), KoinComponent {
             for (dealId in userRepository.userMarkedDeals.value) {
                 dealsUseCase.getSingleDeal(dealId).collectLatest { status ->
                     when (status) {
-                        is Results.Loading -> {}
-                        is Results.Success -> {
-                            if (!_state.value.contains(status.data)) {
-                                _state.update {
-                                    it.plus(status.data!!)
-                                }
+                        is Result.Loading -> {}
+                        is Result.Success -> {
+                            _state.update {
+                                ((it + status.data!!))
                             }
                         }
-
-                        is Results.Error -> {}
+                        is Result.Error -> {}
                     }
                 }
 

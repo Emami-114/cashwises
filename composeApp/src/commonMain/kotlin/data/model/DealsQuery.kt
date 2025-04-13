@@ -8,9 +8,7 @@ import kotlinx.serialization.Serializer
 data class DealsQuery(
     val page: Int? = null,
     val limit: Int? = null,
-    @SerialName("query")
-    val searchQuery: String? = null,
-    @SerialName("tags")
-    val filterTags: String? = null,
-    val categories: String? = null
+    val searchTerm: String? = null,
+    val tag: String? = null,
+    val category: String? = null
 )

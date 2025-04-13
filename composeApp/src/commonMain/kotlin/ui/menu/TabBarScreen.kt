@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.categories
 import cashwises.composeapp.generated.resources.create_category
@@ -75,14 +78,17 @@ import ui.menu.components.TabBarItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateDealAndCategoriesScreen(onNavigateBack: () -> Unit) {
+fun CreateDealAndCategoriesScreen(navController: NavHostController) {
     var currentItem by remember { mutableStateOf(TabItemEnum.CREATE_DEAL) }
     var isExpanded by remember { mutableStateOf(false) }
     val categoriesViewModel: CategoryViewModel = koinInject()
     val categoriesUiState by categoriesViewModel.state.collectAsState()
+
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = "", backButtonAction = onNavigateBack, rightAction = {
+            CustomTopAppBar(title = "", backButtonAction = {
+                navController.popBackStack()
+            }, rightAction = {
                 if (UserRepository.INSTANCE.userIsCreator() || UserRepository.INSTANCE.userIsAdmin())
                 Icon(
                     if (isExpanded) Icons.Default.Close else Icons.Default.Menu,

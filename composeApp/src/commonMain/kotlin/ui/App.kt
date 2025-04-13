@@ -31,12 +31,16 @@ import coil3.request.CachePolicy
 import coil3.request.crossfade
 import coil3.util.DebugLogger
 import com.russhwolf.settings.Settings
+import data.repository.ApiConfig
 import data.repository.UserRepository
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
 import okio.FileSystem
 import theme.AppTheme
 import ui.components.CustomNotificationToast
 import utils.LocalPushNotification
 import utils.Utils
+import utils.decodeJWT
 
 var settings = Settings()
 
@@ -67,7 +71,9 @@ fun App() = AppTheme {
         ) {
             LaunchedEffect(Unit) {
                 LocalPushNotification.requestAuthorization {}
-                UserRepository.INSTANCE.getMe()
+              //  UserRepository.INSTANCE.getMe()
+                println("is jwt valid: ${Utils.isJwtTokenValid()}")
+                Utils.isJwtTokenValid()
             }
             HomeNav()
         }

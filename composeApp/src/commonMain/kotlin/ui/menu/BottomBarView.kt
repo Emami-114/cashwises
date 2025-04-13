@@ -15,21 +15,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.allStringArrayResources
+import cashwises.composeapp.generated.resources.allStringResources
+import cashwises.composeapp.generated.resources.title
+import domain.model.AccountRoute
+import domain.model.HomeRoute
+import domain.model.NotificationsRoute
+import domain.model.SearchRoute
 import org.company.app.theme.cw_dark_background
-import ui.bottomBarRouter
+import ui.BottomBarScreen
 import ui.components.customModiefier.customBorder
+import ui.customFindRoute
+import ui.customNavigate
 import ui.menu.components.BottomBarItem
 
 @Composable
 fun BottomNavigationView(
     modifier: Modifier = Modifier,
-    currentDestination: NavDestination?,
-    onNavigate: (Any) -> Unit
+    currentScreenRouter: String,
+    navController: NavHostController,
 ) {
     val haptic = LocalHapticFeedback.current
 
@@ -41,16 +49,37 @@ fun BottomNavigationView(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        var bottomBarScreen = listOf(
+            BottomBarScreen.Home,
+            BottomBarScreen.Search,
+            BottomBarScreen.Notification,
+            BottomBarScreen.Account
+        )
 
-        bottomBarRouter.forEach { tab ->
+        bottomBarScreen.forEach { tab ->
             BottomBarItem(
                 modifier = Modifier,
-                title = tab.name,
-                icon = tab.icon,
-                isSelected = currentDestination?.hierarchy?.any { it.hasRoute(tab.route::class) } == true
+                title = tab.title,
+                icon = tab.defaultIcon,
+                isSelected =
+                    when(tab) {
+                        BottomBarScreen.Home -> currentScreenRouter == navController.customFindRoute(HomeRoute)
+                        BottomBarScreen.Search -> currentScreenRouter == navController.customFindRoute(SearchRoute)
+                        BottomBarScreen.Notification -> currentScreenRouter == navController.customFindRoute(NotificationsRoute)
+                        BottomBarScreen.Account -> currentScreenRouter == navController.customFindRoute(AccountRoute)
+                    }
+
             ) {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                onNavigate(tab.route)
+                // onNavigate(bottomBarScreen.route)
+                navController.customNavigate(
+                    when(tab) {
+                        BottomBarScreen.Home -> HomeRoute
+                        BottomBarScreen.Search -> SearchRoute
+                        BottomBarScreen.Notification -> NotificationsRoute
+                        BottomBarScreen.Account -> AccountRoute
+                    }
+                )
             }
         }
     }

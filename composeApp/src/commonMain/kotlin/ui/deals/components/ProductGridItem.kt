@@ -38,8 +38,8 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.external_link
 import cashwises.composeapp.generated.resources.free
 import coil3.compose.AsyncImage
+import data.model.DealModel
 import data.repository.ApiConfig
-import domain.model.SmallDealModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -58,22 +58,16 @@ import utils.openUrl
 @Composable
 fun ProductGridItem(
     modifier: Modifier = Modifier,
-    dealModel: SmallDealModel,
+    dealModel: DealModel,
     onNavigateToDetail: () -> Unit,
     onNavigateToProvider: (String) -> Unit
 ) {
     val roundedCornerShape = RoundedCornerShape(15.dp)
     var imageByte by remember { mutableStateOf(ByteArray(0)) }
-    val expirationDate: Int? = if (dealModel.expirationDate != null) {
-        Clock.System.now()
-            .daysUntil(Instant.parse(dealModel.expirationDate), timeZone = TimeZone.UTC)
-    } else {
-        null
-    }
 
     Box(
         modifier = modifier.fillMaxSize()
-            .alpha(if (expirationDate != null && expirationDate < 0) 0.3f else 1f)
+            .alpha(if (dealModel.hasExpirationDate() && dealModel.expirationDateToDay() < 0) 0.3f else 1f)
             .clip(MaterialTheme.shapes.large), contentAlignment = Alignment.Center
     ) {
 
@@ -102,7 +96,7 @@ fun ProductGridItem(
                         .heightIn(max = 130.dp)
                         .clickable { onNavigateToDetail() }
                         .clip(MaterialTheme.shapes.large).customBorder(),
-                    model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnail}",
+                    model = "${ApiConfig.IMAGE_URL}/${dealModel.thumbnailUrl}",
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     onError = {},

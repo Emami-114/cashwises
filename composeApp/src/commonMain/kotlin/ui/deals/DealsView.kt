@@ -1,6 +1,5 @@
 package ui.deals
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,18 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import domain.model.DetailRoute
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import ui.AppScreen
-import ui.Detail
 import ui.components.CustomBackgroundView
 import ui.components.CustomDivider
 import ui.components.CustomPopUp
+import ui.customNavigate
 import ui.deals.components.ProductGridItem
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsState
 import ui.deals.ViewModel.DealsViewModel
 import ui.deals.components.ProductItem
-
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -46,15 +44,15 @@ fun DealsView(
     viewModel: DealsViewModel,
     isExpanded: Boolean,
     uiState: DealsState,
-    onNavigateToDetail: (String) -> Unit
+    navController: NavHostController
 ) {
     val rememberLazyGridState = rememberLazyGridState()
     var isRefreshed by remember { mutableStateOf(false) }
     val pullRefresh = rememberPullToRefreshState()
 
     BoxWithConstraints(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopStart
     ) {
         CustomBackgroundView()
         val scope = this
@@ -89,7 +87,7 @@ fun DealsView(
                             ProductItem(
                                 dealModel = deal,
                                 onNavigateToDetail = {
-                                    deal.id?.let { onNavigateToDetail(it) }
+                                    navController.customNavigate(DetailRoute(deal.id))
                                 },
                                 onNavigateToProvider = {})
                             CustomDivider(height = 0.6.dp)
@@ -109,7 +107,7 @@ fun DealsView(
                             ProductGridItem(
                                 dealModel = deal,
                                 onNavigateToDetail = {
-                                    deal.id?.let { onNavigateToDetail(it) }
+                                    navController.customNavigate(DetailRoute(deal.id))
                                 },
                                 onNavigateToProvider = { url ->
 

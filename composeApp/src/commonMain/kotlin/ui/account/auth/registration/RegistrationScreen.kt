@@ -120,7 +120,6 @@ fun RegistrationView(
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-//        CustomBackgroundView()
         when {
             uiState.isLoading -> {
                 Column(
@@ -143,7 +142,8 @@ fun RegistrationView(
                         .padding(horizontal = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(15.dp)
                 ) {
-                    CustomTextField(value = uiState.nameText,
+                    CustomTextField(
+                        value = uiState.nameText,
                         onValueChange = {
                             viewModel.onRegisterEvent(
                                 RegistrationEvent.OnUserNameChange(
@@ -247,9 +247,10 @@ fun RegistrationView(
                             Res.string.password_confirm_not_match_error
                         ) else null,
                         trailingIcon = {
-                            Icon(painter = if (passwordConfirmVisible) painterResource(Res.drawable.eye) else painterResource(
-                                Res.drawable.eye_off
-                            ),
+                            Icon(
+                                painter = if (passwordConfirmVisible) painterResource(Res.drawable.eye) else painterResource(
+                                    Res.drawable.eye_off
+                                ),
                                 contentDescription = null,
                                 modifier = Modifier.size(26.dp).noRippleClickable {
                                     passwordConfirmVisible = !passwordConfirmVisible

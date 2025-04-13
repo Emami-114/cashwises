@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.copy
 import cashwises.composeapp.generated.resources.external_link
@@ -59,7 +60,6 @@ import cashwises.composeapp.generated.resources.heart_fill
 import cashwises.composeapp.generated.resources.offers_ends_in_some_day
 import cashwises.composeapp.generated.resources.offers_ends_in_some_hour
 import cashwises.composeapp.generated.resources.offers_expired
-import cashwises.composeapp.generated.resources.registration_required
 import cashwises.composeapp.generated.resources.registration_required_desc
 import cashwises.composeapp.generated.resources.successfully_copied
 import cashwises.composeapp.generated.resources.trash
@@ -67,7 +67,7 @@ import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 import data.repository.UserRepository
-import domain.model.DealModel
+import domain.model.DealDetailModel
 import domain.model.UserRole
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -85,11 +85,9 @@ import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_red
 import org.company.app.theme.cw_dark_whiteText
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import ui.AppConstants
 import ui.components.CustomBackgroundView
 import ui.components.CustomImagesSlider
 import ui.components.CustomNotificationToast
@@ -106,7 +104,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun DealDetailScreen(
     dealId: String? = null,
-    onNavigateBack: () -> Unit,
+    navController: NavHostController,
 ) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
@@ -115,7 +113,7 @@ fun DealDetailScreen(
     var showErrorPopUp by remember { mutableStateOf(false) }
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
-    var deal by remember { mutableStateOf<DealModel?>(null) }
+    var deal by remember { mutableStateOf<DealDetailModel?>(null) }
     val scopeCoroutine = rememberCoroutineScope()
     val colorAnimation by animateColorAsState(
         targetValue = if (scrollState.value < 700) cw_dark_background.copy(alpha = 0.03f) else cw_dark_background,
@@ -146,7 +144,9 @@ fun DealDetailScreen(
             hasBackground = scrollState.value >= 800,
             textColor = cw_dark_whiteText,
             isDivider = false,
-            backButtonAction =onNavigateBack,
+            backButtonAction = {
+                navController.popBackStack()
+            },
             rightAction = {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -182,7 +182,7 @@ fun DealDetailScreen(
                             tint = cw_dark_whiteText,
                             modifier = Modifier.size(26.dp).clickable {
                                 viewModel.deleteDeal(deal)
-                                onNavigateBack()
+                                navController.popBackStack()
                             })
                     }
                 }
@@ -191,7 +191,7 @@ fun DealDetailScreen(
         deal?.let { deal ->
             DetailDealView(
                 modifier = Modifier,
-                dealModel = deal,
+                dealDetailModel = deal,
                 scrollState = scrollState,
                 clipBoard = { copyText ->
                     clipBoard.setText(annotatedString = AnnotatedString(text = copyText))
@@ -274,14 +274,14 @@ fun DealDetailScreen(
 @Composable
 fun DetailDealView(
     modifier: Modifier = Modifier,
-    dealModel: DealModel,
+    dealDetailModel: DealDetailModel,
     scrollState: ScrollState,
     clipBoard: (String) -> Unit
 ) {
     val richTextState = rememberRichTextState()
 
     LaunchedEffect(Unit) {
-        richTextState.setHtml(dealModel.description)
+        richTextState.setHtml(dealDetailModel.description ?: "")
     }
     Column(
         modifier = modifier.fillMaxSize().widthIn(min = 300.dp, max = 900.dp)
@@ -289,13 +289,13 @@ fun DetailDealView(
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
         Box {
-            dealModel.thumbnail?.let { _ ->
+            dealDetailModel.thumbnailUrl?.let { _ ->
                 CustomImagesSlider(
-                    paths = dealModel.images,
+                    paths = dealDetailModel.imagesUrl,
                 )
-                if (dealModel.offerPrice != null) {
+                if (dealDetailModel.offerPrice != null) {
                     val offerPercent =
-                        (((dealModel.price!! - dealModel.offerPrice) / dealModel.price) * 100).toInt()
+                        (((dealDetailModel.price!! - dealDetailModel.offerPrice) / dealDetailModel.price) * 100).toInt()
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
@@ -320,7 +320,7 @@ fun DetailDealView(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(dealModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
+            Text(dealDetailModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
 
 //            Text(
 //                text = if (dealModel.currentCreatedHour.toInt() == 0) stringResource(
@@ -342,13 +342,13 @@ fun DetailDealView(
 //            )
         }
         Text(
-            dealModel.title,
+            dealDetailModel.title,
             fontSize = 18.sp,
             color = cw_dark_whiteText,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
         )
         Spacer(modifier = Modifier.height(5.dp))
-        dealModel.expirationDate?.let { expirationDate ->
+        dealDetailModel.expirationDate?.let { expirationDate ->
             val expiration = Clock.System.now().daysUntil(
                 Instant.parse(expirationDate), timeZone = TimeZone.UTC
             )
@@ -382,8 +382,9 @@ fun DetailDealView(
             }
         }
         Spacer(modifier = Modifier.height(5.dp))
-        dealModel.couponCode?.let { couponCode ->
-            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+        dealDetailModel.couponCode?.let { couponCode ->
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
                 .background(cw_dark_onBackground, shape = MaterialTheme.shapes.large).height(50.dp)
                 .drawBehind {
                     val stroke = Stroke(

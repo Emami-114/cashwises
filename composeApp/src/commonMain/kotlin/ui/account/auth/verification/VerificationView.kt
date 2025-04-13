@@ -27,6 +27,7 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.auth_verification_description
 import cashwises.composeapp.generated.resources.auth_verification_not_receive
 import cashwises.composeapp.generated.resources.auth_verification_title
+import cashwises.composeapp.generated.resources.btn_send
 import cashwises.composeapp.generated.resources.button_send
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_red
@@ -111,7 +112,7 @@ fun VerificationView(
             TextButton(onClick = {}) {
                 Text(stringResource(Res.string.auth_verification_not_receive))
             }
-            CustomButton(title = stringResource(Res.string.button_send)) {
+            CustomButton(title = stringResource(Res.string.btn_send)) {
                 focusManager.clearFocus()
                 onAction()
             }

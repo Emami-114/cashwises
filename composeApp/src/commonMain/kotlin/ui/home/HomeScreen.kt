@@ -1,58 +1,50 @@
 package ui.home
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.*
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.category_deals
 import cashwises.composeapp.generated.resources.compose_multiplatform
-import data.repository.UserRepository
+import domain.model.CreateDealRoute
+import domain.model.DetailRoute
 import org.company.app.theme.md_theme_dark_primary
 import org.company.app.theme.md_theme_dark_secondary
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import ui.AppScreen
 import ui.components.*
 import ui.components.customModiefier.noRippleClickable
+import ui.customNavigate
 import ui.deals.DealsView
 import ui.deals.ViewModel.DealsViewModel
 
 @Composable
-fun HomeView(onNavigateToDealDetail: (String) -> Unit) {
+fun HomeView(navController: NavHostController) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
-    var isExpanded by remember { mutableStateOf(false) }
-
+    LaunchedEffect(Unit) {
+        viewModel.getCategories()
+        viewModel.getDeals()
+    }
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -64,6 +56,15 @@ fun HomeView(onNavigateToDealDetail: (String) -> Unit) {
                     viewModel.doChangeExpandedItem()
                 },
                 onClick = { viewModel.doChangeSelectedCategory(it) })
+        },
+        floatingActionButton = {
+            Button(
+                modifier = Modifier.padding(bottom = 60.dp),
+                onClick = {
+                    navController.customNavigate(CreateDealRoute)
+                }) {
+                Image(Icons.Default.Add, contentDescription = null)
+            }
         }
     ) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
@@ -73,9 +74,7 @@ fun HomeView(onNavigateToDealDetail: (String) -> Unit) {
                 viewModel = viewModel,
                 uiState = uiState,
                 isExpanded = uiState.isItemExpanded,
-                onNavigateToDetail = { dealId ->
-                    onNavigateToDealDetail(dealId)
-                }
+                navController = navController
             )
         }
     }
@@ -95,13 +94,10 @@ fun HomeTopAppBar(
         stringResource(Res.string.category_free),
         stringResource(Res.string.category_mobile_tariffs)
     )
-    Column(modifier = Modifier.height(150.dp).padding(top = 10.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.width(30.dp))
+
+
+    Column(modifier = Modifier.height(150.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Image(
                 painter = painterResource(Res.drawable.compose_multiplatform),
                 contentDescription = null,
