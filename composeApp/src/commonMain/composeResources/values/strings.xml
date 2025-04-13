@@ -1,10 +1,19 @@
 <resources>
     <!-- Http Error -->
     <string name="not_found_error">The requested resource was not found.</string>
-    <string name="bad_request_error">The request could not be processed. Please check your entries and try again</string>
-    <string name="unauthorized_error">You are not logged in. Please ensure that you are logged in and have the required authorizations.</string>
-    <string name="conflict_error">The requested action could not be completed because there is a conflict with an existing resource.</string>
-
+    <string name="bad_request_error">The request could not be processed. Please check your entries and try again
+    </string>
+    <string name="unauthorized_error">You are not logged in. Please ensure that you are logged in and have the required
+        authorizations.
+    </string>
+    <string name="conflict_error">The requested action could not be completed because there is a conflict with an
+        existing resource.
+    </string>
+    <string name="no_internet_connection">No internet connection. Please ensure that your device is connected to the
+        Internet.
+    </string>
+    <string name="request_timeout">Request timeout. Please try again later.</string>
+    <string name="unknown_error">An unknown error has occurred. Please try again later.</string>
     <!-- Authentication String -->
     <string name="auth_verification_title">Verification Code</string>
     <string name="auth_verification_description">Please, enter the verification code we send to your E-mail</string>
@@ -13,18 +22,26 @@
 
     <string name="username_required_error">Username required. Please enter a username.</string>
     <string name="password_must_be_6characters_error">Password must be at least 6 characters long.</string>
-    <string name="password_confirm_not_match_error">The password and the confirmation do not match. Please make sure that both passwords match.</string>
+    <string name="password_confirm_not_match_error">The password and the confirmation do not match. Please make sure
+        that both passwords match.
+    </string>
     <string name="invalid_email_address_error">Invalid e-mail address. Please enter a valid e-mail address.</string>
     <string name="accept_data_protection_error">Please accept the data protection regulations.</string>
     <string name="accept_data_protection_description">I accept the privacy policy and the terms of use</string>
     <string name="privacy_policy_placeholder">privacy policy</string>
     <string name="terms_of_use_placeholder">terms of use</string>
     <string name="password_required_error">Password required</string>
-    <string name="login_failed_error">Login failed. The username or password is incorrect. Please check your entries and try again.</string>
+    <string name="login_failed_error">Login failed. The username or password is incorrect. Please check your entries and
+        try again.
+    </string>
     <string name="password_forget">Password forget?</string>
+    <string name="password_forget_title">Password forget?</string>
     <string name="successfully_logout">Successfully logout</string>
     <string name="successfully_registered">Successfully registered</string>
     <string name="successfully_login">Successfully logged</string>
+    <string name="password_reset">password reset</string>
+    <string name="password_forget_desc">Forgot your password? No problem! Enter your email address here and we will send you an email to the linked address. This will allow you to reset your password.</string>
+
     <!--  Deals String  -->
     <string name="offers_ends_in_some_day">Offers ends in %1$s day</string>
     <string name="offers_ends_in_some_hour">Offers end in %1$s hour</string>
@@ -34,8 +51,17 @@
     <string name="offers_ends_today">Offers ends today</string>
     <string name="offers_expired">Expired</string>
     <string name="create_deal">Create Deal</string>
-
+    <!--  Deals Category  -->
+    <string name="category_deals">Deals</string>
+    <string name="category_free">Free</string>
+    <string name="category_mobile_tariffs">Mobile tariffs</string>
     <!--  Global Strings  -->
+    <string name="global_deals">Deals</string>
+    <string name="global_search">Search</string>
+    <string name="global_wishList">Wishlist</string>
+    <string name="global_myAccount">Account</string>
+    <string name="global_notification">Notification</string>
+
     <string name="btn_send">Send</string>
     <string name="btn_register">Register</string>
     <string name="btn_login">Login</string>
@@ -46,7 +72,7 @@
     <string name="free">Free</string>
     <string name="coupon_code">Coupon code</string>
 
-    <string name="successfully_copied">copied: %1$s</string>
+    <string name="successfully_copied">Copied to clipboard</string>
     <string name="successfully_created">Successfully created</string>
     <string name="successfully_updated">Successfully updated</string>
     <string name="title">Title</string>
@@ -70,4 +96,18 @@
     <string name="edit_deal">Edit Deal</string>
     <string name="edit_category">Edit Category</string>
     <string name="create_tags">Create Tags</string>
+    <string name="registration_required">Registration required</string>
+    <string name="registration_required_desc">You are not logged in. If you would like to create a deal, please log
+        in.
+    </string>
+    <string name="push_new_deal_available">New deal available!</string>
+    <string name="push_new_deal_available_desc">Don't miss out on the latest offer. Take a look now and benefit!
+    </string>
+    <string name="create_notification">Create notification</string>
+    <string name="required_select_notification">You haven’t selected a notification category. To receive notifications,
+        please click the button below.
+    </string>
+    <string name="registration_required_notification">You are not logged in. To create a notification, please log in.
+    </string>
+
 </resources>

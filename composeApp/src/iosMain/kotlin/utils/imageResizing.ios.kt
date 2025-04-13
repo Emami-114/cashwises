@@ -26,14 +26,17 @@ actual fun resizeImage(
     val data = imageData.toNSData()
     val image = UIImage(data = data)
 
+    val jpegData = UIImageJPEGRepresentation(image, quality / 100.0)
+    val jpegImage = UIImage(data = jpegData ?: data)
+
     val size = CGSizeMake(width.toDouble(), height.toDouble())
     UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-    image.drawInRect(CGRectMake(0.0, 0.0, width.toDouble(), height.toDouble()))
+    jpegImage.drawInRect(CGRectMake(0.0, 0.0, width.toDouble(), height.toDouble()))
     val newImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
 
-    val jpegData = UIImageJPEGRepresentation(newImage ?: UIImage(), quality / 100.0)
-    return jpegData?.toByteArray() ?: ByteArray(0)
+    val resizedJpegData = UIImageJPEGRepresentation(newImage ?: UIImage(), quality / 100.0)
+    return resizedJpegData?.toByteArray() ?: ByteArray(0)
 }
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -51,6 +54,3 @@ fun NSData.toByteArray(): ByteArray {
     }
     return data
 }
-//fun UIImage?.JPEGRepresentation(compressionQuality: Double): NSData? {
-//    return this?.JPEGRepresentationWithCompressionQuality(compressionQuality)
-//}

@@ -30,11 +30,13 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.cloud_upload
 import cashwises.composeapp.generated.resources.upload_your_image
+import coil3.compose.AsyncImage
 import com.mohamedrejeb.calf.core.LocalPlatformContext
 import com.mohamedrejeb.calf.io.getName
 import com.mohamedrejeb.calf.io.getPath
@@ -74,14 +76,10 @@ fun CustomImagePicker(
                         ImageModel(
                             name = file.getName(context) ?: "",
                             path = file.getPath(context) ?: "",
-                            byteArray = resizeImage(
-                                imageData = file.readByteArray(context),
-                                width = 1024,
-                                height = 1024,
-                                quality = 100
-                            )
+                            byteArray = file.readByteArray(context)
                         )
                     )
+                    println("image path: ${file.getPath(context)}")
                 }
                 isImageShowing = true
             }
@@ -92,22 +90,18 @@ fun CustomImagePicker(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            val imageByte = resizeImage(
-                imageData = selectedImage.byteArray,
-                width = 1024,
-                height = 1024,
-                quality = 50
-            )
-            Image(
-                bitmap = imageByte.toImageBitmap(),
+            AsyncImage(
+                model = selectedImage.path,
                 contentDescription = null,
-                modifier = Modifier
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxWidth()
                     .heightIn(max = 300.dp)
                     .customBorder()
                     .clip(shape = MaterialTheme.shapes.large)
                     .clickable {
                         pickerLaunch.launch()
-                    })
+                    }
+            )
             Spacer(modifier = Modifier.height(10.dp))
             CustomButton(title = "Remove") {
                 onImageChange(null)

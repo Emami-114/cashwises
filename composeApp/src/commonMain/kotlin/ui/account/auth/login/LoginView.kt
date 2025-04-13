@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 import ui.components.CustomButton
 import ui.components.CustomPopUp
 import ui.components.CustomTextField
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
@@ -151,7 +151,7 @@ fun LogInView(
                         })
 
                     if (uiState.isLoginSuccess) {
-                        CustomToast(
+                        CustomNotificationToast(
                             modifier = Modifier,
                             title = stringResource(Res.string.successfully_login)
                         ) {

@@ -29,16 +29,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.chevron_left
+import data.model.DealModel
 import data.model.DealsQuery
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import domain.model.CategoriesModel
 import domain.model.CategoryModel
-import domain.model.DealModel
+import domain.model.DetailRoute
+import domain.model.SearchResultRoute
+import domain.repository.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,15 +53,14 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.AppConstants
-import ui.AppScreen
 import ui.components.CustomBackgroundView
 import ui.components.CustomDivider
 import ui.components.CustomSearchView
 import ui.components.CustomSlideTransition
 import ui.components.CustomTopAppBar
-import ui.components.ProductItem
+import ui.deals.components.ProductGridItem
 import ui.components.customModiefier.noRippleClickable
+import ui.customNavigate
 import ui.deals.components.CategoryItemView
 import ui.home.tags.TagsView
 import useCase.CategoryUseCase
@@ -64,21 +68,21 @@ import useCase.DealsUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchView(
+fun SearchResultView(
     categoryId: String? = null,
     tagArgument: String? = null,
     searchQuery: String? = null,
     title: String = "",
-    onNavigate: (String) -> Unit
+    navController: NavHostController
 ) {
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     LaunchedEffect(key1 = categoryId, key2 = tagArgument, key3 = searchQuery) {
         viewModel.doSearch(
             DealsQuery(
-                categories = categoryId,
-                filterTags = tagArgument,
-                searchQuery = searchQuery
+                category = categoryId,
+                tag = tagArgument,
+                searchTerm = searchQuery
             )
         )
     }
@@ -95,7 +99,7 @@ fun SearchView(
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             CustomTopAppBar(modifier = Modifier.fillMaxWidth(), title = title, backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
+                navController.popBackStack()
             })
             LazyVerticalGrid(
                 modifier = Modifier.padding(top = 10.dp).padding(horizontal = 5.dp),
@@ -104,9 +108,15 @@ fun SearchView(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(uiState.deals ?: listOf()) { deal ->
-                    ProductItem(dealModel = deal) {
-                        onNavigate.invoke(AppScreen.DealDetail.route + "/${deal.id}")
-                    }
+                    ProductGridItem(
+                        dealModel = deal,
+                        onNavigateToDetail = {
+                            deal.id?.let { dealId ->
+                                navController.navigate(DetailRoute(dealId))
+                            }
+                        },
+                        onNavigateToProvider = { url -> }
+                    )
                 }
             }
         }
@@ -114,11 +124,20 @@ fun SearchView(
 }
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
+fun SearchScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     val viewModel: SearchScreenViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     var searchFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        viewModel.getCategories()
+        println("category count: ${uiState.categories?.size}")
+    }
+
     BoxWithConstraints {
         val scope = this
         val maxWidth = scope.maxWidth
@@ -134,7 +153,7 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                 searchQuery = uiState.searchQuery ?: "",
                 onQueryChange = { viewModel.doChangeSearchText(it) },
                 focused = searchFocused,
-                showBackButton = searchFocused && uiState.searchQuery?.isEmpty() ?: false,
+                showBackButton = searchFocused && uiState.searchQuery?.isEmpty() == true,
                 onFocusedChange = { isFocused ->
                     searchFocused = isFocused
                     if (isFocused) {
@@ -143,15 +162,22 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                         focusManager.clearFocus()
                     }
                 },
-                onNavigate = {},
+                onNavigate = {
+                    searchFocused = false
+                    focusManager.clearFocus()
+                },
                 onSearch = { searchQuery ->
                     if (searchQuery.isEmpty().not()) {
-                        onNavigate(AppScreen.SearchView.route + "?title=${searchQuery}&query=${searchQuery}")
+                        navController.customNavigate(
+                            SearchResultRoute(
+                                title = searchQuery,
+                                searchText = searchQuery
+                            )
+                        )
                     }
                 }
             )
             Spacer(modifier = Modifier.height(10.dp))
-
             CustomSlideTransition(
                 visible = searchFocused,
                 currentView = {
@@ -161,14 +187,19 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.fillMaxSize().padding(horizontal = 5.dp)
                     ) {
-                        uiState.categories?.categories?.let { categories ->
+                        uiState.categories?.let { categories ->
                             items(categories) { category ->
                                 CategoryItemView(
                                     modifier = Modifier.heightIn(max = 120.dp)
                                         .widthIn(max = 100.dp),
                                     categoryModel = category
                                 ) { selectedCategory ->
-                                    onNavigate(AppScreen.SearchView.route + "?categoryId=${selectedCategory.id}&title=${selectedCategory.title}")
+                                    navController.customNavigate(
+                                        SearchResultRoute(
+                                            title = selectedCategory.title,
+                                            categoryId = selectedCategory.id
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -176,12 +207,11 @@ fun SearchScreen(modifier: Modifier = Modifier, onNavigate: (String) -> Unit) {
                 },
                 slideView = {
                     TagsView(uiState = uiState, onSelectedTag = { tag ->
-                        onNavigate(AppScreen.SearchView.route + "?tag=${tag}&title=${tag}")
+                        navController.navigate(SearchResultRoute(title = tag, tag = tag))
                         focusManager.clearFocus()
                     })
                 }
             )
-
         }
         Spacer(modifier = Modifier.height(15.dp))
     }
@@ -195,22 +225,44 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
     val state = _state.asStateFlow().stateIn(viewModelScope, SharingStarted.Lazily, SearchState())
 
     init {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(categories = categoryUseCase.getCategories())
+        getCategories()
+    }
+
+     fun getCategories() = viewModelScope.launch {
+        categoryUseCase.getCategories()
+            .collect { result ->
+                when(result) {
+                    is Result.Loading -> {_state.update { it.copy(isLoading = true) }}
+                    is Result.Success -> {
+                        _state.update {
+                            it.copy(
+                                categories = result.data
+                            )
+                        }
+                    }
+                    is Result.Error -> {}
+                }
             }
-        }
     }
 
     fun doSearch(
         query: DealsQuery
     ) = viewModelScope.launch {
-        _state.update {
-            it.copy(
-                deals = dealUseCase.getDeals(query = query)?.deals
-            )
+        dealUseCase.getDeals(query = query).collectLatest { status ->
+            when (status) {
+                is Result.Loading -> {}
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            deals = status.data
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                }
+            }
         }
-        println("test: deal ${dealUseCase.getDeals(query = query)?.deals}")
     }
 
     fun doChangeSearchCategory(value: CategoryModel?) {
@@ -234,12 +286,14 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
 
 data class SearchState(
     val deals: List<DealModel>? = null,
-    val categories: CategoriesModel? = null,
+    val categories: List<CategoryModel>? = null,
     val searchQuery: String? = null,
     val page: Int = 1,
     val limit: Int = 20,
     val searchSelectedCategory: CategoryModel? = null,
     val searchSelectedTag: String? = null,
+    var isLoading: Boolean = false,
+    var error: String? = null
 )
 
 @Composable
@@ -250,10 +304,9 @@ fun SearchTopAppBar(
     focused: Boolean,
     showBackButton: Boolean,
     onFocusedChange: (Boolean) -> Unit,
-    onNavigate: (String) -> Unit,
+    onNavigate: () -> Unit,
     onSearch: (String) -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -275,7 +328,7 @@ fun SearchTopAppBar(
                     contentDescription = null,
                     tint = cw_dark_whiteText,
                     modifier = Modifier.size(30.dp).noRippleClickable {
-                        onNavigate(AppConstants.BackClickRoute.route)
+                        onNavigate()
                     }
                 )
             }

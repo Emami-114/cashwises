@@ -30,13 +30,16 @@ import cashwises.composeapp.generated.resources.trash
 import data.repository.UserRepository
 import domain.model.TagModel
 import domain.model.UserRole
+import domain.repository.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
@@ -136,7 +139,23 @@ class CreateTagViewModel : ViewModel(), KoinComponent {
 
     private fun getTags() = viewModelScope.launch {
         try {
-            _tags.update { useCase.getTags(null) }
+            useCase.getTags(null).collectLatest { status ->
+                when (status) {
+                    is Result.Loading -> _state.update {
+                        it.copy(
+                            isLoading = true,
+                            errorString = null
+                        )
+                    }
+
+                    is Result.Success -> _tags.update { status.data ?: emptyList() }
+
+                    is Result.Error -> _state.update { it.copy(errorString = getString(status.error?.message!!)) }
+                }
+
+
+            }
+
         } catch (e: Exception) {
             _state.update {
                 it.copy(errorString = e.message)
@@ -201,6 +220,7 @@ class CreateTagViewModel : ViewModel(), KoinComponent {
 data class CreateTagState(
     val title: String = "",
     val titleError: String? = null,
+    val tags: List<TagModel> = listOf(),
     val successfullyCreated: Boolean = false,
     val errorString: String? = null,
     val isLoading: Boolean = false

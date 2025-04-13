@@ -1,10 +1,8 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.compose.internal.utils.localPropertiesFile
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -19,9 +17,9 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
-
     jvm("desktop")
 
     listOf(
@@ -32,6 +30,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+//            export("com.mohamedrejeb.calf:calf-ui:0.4.1")
         }
     }
 
@@ -60,45 +59,43 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
-//            implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
-//            implementation(libs.androidx.compose.material3.adaptive.navigation)
             implementation(compose.ui)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(compose.material3AdaptiveNavigationSuite)
             // navigation
             implementation(libs.compose.navigation)
-
+            implementation(libs.compose.navigation2)
             // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.negotiation)
             implementation(libs.ktor.client.serialization)
             implementation(libs.kotlinx.datetime)
-            // Icon
-//            implementation(libs.composeIcons.tablerIcons)
             // MOKO
-            implementation(libs.moko.mvvm)
+           // implementation(libs.moko.mvvm)
             // settings
             implementation(libs.multiplatformSettings)
             implementation(libs.multiplatformSettings.noArg)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.coroutines.core)
-
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
-
             // file picker
             implementation(libs.calf.filepicker)
-            // image laoder
             // rich text editor
             implementation(libs.rich.text)
             // Coil3
-            implementation(libs.coil.compose.core)
             implementation(libs.coil.compose)
-            implementation(libs.coil.mp)
+            implementation(libs.coil)
             implementation(libs.coil.network.ktor)
+            // material adaptive
+            implementation(libs.compose.material3.adaptive.adaptive)
+            implementation(libs.compose.material3.adaptive.layout)
+            implementation(libs.compose.material3.adaptive.navigation)
+            implementation(libs.compose.material3.windowsSize)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -111,7 +108,7 @@ kotlin {
 
 android {
     namespace = "org.emami.cashwises"
-    compileSdk = 34
+    compileSdk = 35
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -120,7 +117,7 @@ android {
     defaultConfig {
         applicationId = "org.emami.cashwises"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }

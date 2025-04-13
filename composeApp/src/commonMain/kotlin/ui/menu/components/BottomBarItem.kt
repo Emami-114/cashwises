@@ -23,20 +23,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
-import ui.BottomBarScreen
+import org.jetbrains.compose.resources.stringResource
 import ui.components.customModiefier.noRippleClickable
 
 @Composable
 fun BottomBarItem(
     modifier: Modifier = Modifier,
-    tab: BottomBarScreen,
+    title: StringResource?,
+    icon: DrawableResource?,
     isSelected: Boolean = false,
-    onClick: (BottomBarScreen) -> Unit
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier.noRippleClickable {
-            onClick(tab)
+            onClick()
         },
         contentAlignment = Alignment.Center
     ) {
@@ -50,21 +53,24 @@ fun BottomBarItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-
-            Icon(
-                painter = painterResource(tab.defaultIcon),
-                contentDescription = tab.title,
-                modifier = Modifier.size(22.dp),
-                tint = cw_dark_whiteText
-            )
+            icon?.let { icon ->
+                Icon(
+                    painter = painterResource(icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp),
+                    tint = cw_dark_whiteText
+                )
+            }
             Spacer(modifier = Modifier.width(5.dp))
             AnimatedVisibility(isSelected) {
-                Text(
-                    text = tab.title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = cw_dark_whiteText
-                )
+                title?.let { title ->
+                    Text(
+                        text = stringResource(title),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = cw_dark_whiteText
+                    )
+                }
             }
         }
     }

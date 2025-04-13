@@ -67,7 +67,7 @@ fun CustomImagesSlider(
                                     bottomStart = 30.dp
                                 )
                             ),
-                        model = "${ApiConfig.BASE_URL}/images/${imagePaths[index]}",
+                        model = "${ApiConfig.IMAGE_URL}/${imagePaths[index]}",
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
                         onError = {},
@@ -106,7 +106,7 @@ fun CustomImagesSlider(
                                         pagerState.animateScrollToPage(index)
                                     }
                                 },
-                            model = "${ApiConfig.BASE_URL}/images/${path}",
+                            model = "${ApiConfig.IMAGE_URL}/${path}",
                             contentDescription = null,
                             contentScale = ContentScale.FillBounds,
                             onError = {},

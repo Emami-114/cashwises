@@ -43,7 +43,7 @@ fun CustomTopAppBar(
     isDivider: Boolean = true,
 ) {
     val animatedFloat by animateFloatAsState(
-        if (hasBackground) 1f else 0.4f,
+        if (hasBackground) 1f else 0.6f,
         animationSpec = tween(500)
     )
     Column(

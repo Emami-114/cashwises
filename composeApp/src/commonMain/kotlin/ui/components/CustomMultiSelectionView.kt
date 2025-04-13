@@ -70,31 +70,18 @@ fun CustomMultiSelection(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(tags) { tag ->
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                if (selectedItems.contains(tag.title)) cw_dark_green else cw_dark_background,
-                                shape = MaterialTheme.shapes.medium
-                            )
-                            .customBorder(shape = MaterialTheme.shapes.medium)
-                            .noRippleClickable {
-                                if (selectedItems.contains(tag.title)) {
-                                    selectedItems.remove(tag.title)
-                                    onSelected(selectedItems.toList())
-                                } else {
-                                    selectedItems.add(tag.title)
-                                    onSelected(selectedItems.toList())
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            tag.title,
-                            color = cw_dark_whiteText,
-                            modifier = Modifier.padding(5.dp),
-                            fontSize = 10.sp
-                        )
-                    }
+                    CustomSelectionView(
+                        text = tag.title,
+                        isSelected = selectedItems.contains(tag.title),
+                        onAction = {
+                            if (selectedItems.contains(tag.title)) {
+                                selectedItems.remove(tag.title)
+                                onSelected(selectedItems.toList())
+                            } else {
+                                selectedItems.add(tag.title)
+                                onSelected(selectedItems.toList())
+                            }
+                        })
                 }
             }
         }

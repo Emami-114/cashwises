@@ -39,7 +39,6 @@ import cashwises.composeapp.generated.resources.edit
 import coil3.compose.AsyncImage
 import data.repository.ApiConfig
 import domain.model.CategoryModel
-import domain.model.CategoryStatus
 import org.jetbrains.compose.resources.painterResource
 import ui.category.viewModel.CategoryEvent
 import ui.category.viewModel.CategoryState
@@ -87,13 +86,13 @@ fun CategoriesView(
                     modifier = modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(uiState.categories.filter { it.status == CategoryStatus.MAIN }) { category ->
+                    items(uiState.categories.filter { it.isMainCategory == true }) { category ->
                         CategoryItem(uiState, category) {
                             uiState.isUpdate = true
                             viewModel.onEvent(CategoryEvent.OnTitleChange(category.title ?: ""))
                             viewModel.onEvent(
                                 CategoryEvent.OnPublishedChange(
-                                    category.published ?: false
+                                    category.isPublic
                                 )
                             )
                             onClick()
@@ -114,17 +113,18 @@ fun CategoryItem(
     onClick: () -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .customBorder()
-        .background(
-            if (isExpanded) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
-            shape = MaterialTheme.shapes.large
-        )
-        .padding(5.dp)
-        .noRippleClickable {
-            isExpanded = !isExpanded
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .customBorder()
+            .background(
+                if (isExpanded) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
+                shape = MaterialTheme.shapes.large
+            )
+            .padding(5.dp)
+            .noRippleClickable {
+                isExpanded = !isExpanded
+            }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -133,7 +133,7 @@ fun CategoryItem(
             CategoryItemHeader(categoryModel) { onClick() }
             AnimatedVisibility(isExpanded) {
                 CustomDivider()
-                val filterSubCat = uiState.categories.filter { it.mainId == categoryModel.id }
+                val filterSubCat = uiState.categories.filter { it.isMainCategory == false }
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Spacer(modifier = Modifier.height(10.dp))
                     filterSubCat.onEachIndexed { _, categoryModel ->
@@ -171,7 +171,7 @@ fun CategoryItemHeader(
                     .size(height)
                     .customBorder()
                     .clip(shape = MaterialTheme.shapes.large),
-                model = "${ApiConfig.BASE_URL}/images/${categoryModel.thumbnail}",
+                model = "${ApiConfig.IMAGE_URL}/${categoryModel.thumbnail}",
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 onError = {},
@@ -198,7 +198,7 @@ fun CategoryItemHeader(
                 modifier = Modifier.size(20.dp).padding(end = 10.dp)
                     .background(
                         shape = MaterialTheme.shapes.large,
-                        color = if (categoryModel.published == true) Color.Green else Color.Gray
+                        color = if (categoryModel.isPublic == true) Color.Green else Color.Gray
                     )
             )
         }

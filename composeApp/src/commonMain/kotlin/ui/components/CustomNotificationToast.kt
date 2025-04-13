@@ -43,11 +43,12 @@ import org.jetbrains.compose.resources.painterResource
 import ui.components.customModiefier.customBorder
 
 @Composable
-fun CustomToast(
+fun CustomNotificationToast(
     modifier: Modifier = Modifier.zIndex(1f),
-    status: ToastStatus = ToastStatus.SUCCESS,
+    status: ToastStatusEnum = ToastStatusEnum.SUCCESS,
     title: String = "Successfully",
     delay: Long = 1500L,
+    isAvailableBottomBar: Boolean = true,
     onClose: () -> Unit = {}
 ) {
     var snackBarVisible by remember { mutableStateOf(false) }
@@ -55,7 +56,7 @@ fun CustomToast(
     val haptic = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) {
-        delay(100)
+        delay(120)
         snackBarVisible = true
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         delay(delay)
@@ -63,10 +64,12 @@ fun CustomToast(
         onClose()
     }
     BoxWithConstraints(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().zIndex(3f)
     ) {
         AnimatedVisibility(
-            snackBarVisible, modifier = modifier.align(Alignment.BottomStart),
+            snackBarVisible,
+            modifier = modifier.align(Alignment.BottomStart)
+                .padding(bottom = if (isAvailableBottomBar) 100.dp else 20.dp),
             enter = slideInVertically {
                 with(density) { 60.dp.roundToPx() }
             },
@@ -76,12 +79,12 @@ fun CustomToast(
         ) {
 
             Row(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth().zIndex(4f)
                     .padding(horizontal = 20.dp)
                     .clip(MaterialTheme.shapes.large)
                     .customBorder(shape = MaterialTheme.shapes.large)
                     .background(
-                        if (status == ToastStatus.SUCCESS) {
+                        if (status == ToastStatusEnum.SUCCESS) {
                             cw_dark_green
                         } else {
                             cw_dark_red
@@ -95,7 +98,7 @@ fun CustomToast(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (status == ToastStatus.SUCCESS) {
+                if (status == ToastStatusEnum.SUCCESS) {
                     Icon(
                         painter = painterResource(Res.drawable.checkbox),
                         contentDescription = null,
@@ -112,13 +115,11 @@ fun CustomToast(
                 }
                 Text(title, color = cw_dark_whiteText)
                 Spacer(modifier.size(20.dp))
-
-
             }
         }
     }
 }
 
-enum class ToastStatus {
-    SUCCESS, ERROR
+enum class ToastStatusEnum {
+    SUCCESS, ERROR, Warning
 }

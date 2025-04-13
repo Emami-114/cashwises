@@ -27,13 +27,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.btn_login
 import cashwises.composeapp.generated.resources.btn_register
+import cashwises.composeapp.generated.resources.password_forget
+import cashwises.composeapp.generated.resources.password_reset
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import ui.AppConstants
-import ui.AppScreen
+import domain.model.HomeRoute
 import ui.account.auth.login.LogInView
 import ui.account.auth.login.LoginViewModel
 import ui.account.auth.registration.PasswordForget
@@ -43,12 +46,12 @@ import ui.account.auth.verification.VerificationView
 import ui.components.CustomBackgroundView
 import ui.components.CustomButton
 import ui.components.CustomPopUp
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.components.CustomTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthView(onNavigate: (String) -> Unit) {
+fun AuthView(navController: NavHostController) {
     val registerViewModel: RegistrationViewModel = koinInject()
     val registerUiState by registerViewModel.state.collectAsState()
     val loginViewModel: LoginViewModel = koinInject()
@@ -57,12 +60,17 @@ fun AuthView(onNavigate: (String) -> Unit) {
     var animationState by remember { mutableStateOf(false) }
 
     Scaffold(topBar = {
-        CustomTopAppBar(title = currentView.name, backButtonAction = {
-            onNavigate(AppConstants.BackClickRoute.route)
+        CustomTopAppBar(title = when(currentView) {
+            AuthEnum.LOGIN -> stringResource(Res.string.btn_login)
+            AuthEnum.REGISTRATION -> stringResource(Res.string.btn_register)
+            AuthEnum.PASSWORDFORGET -> stringResource(Res.string.password_reset)
+            AuthEnum.VERIFICATION -> currentView.name
+        }, backButtonAction = {
+            navController.popBackStack()
         })
     }, snackbarHost = {
         if (registerUiState.isVerificationSuccess)
-            CustomToast {}
+            CustomNotificationToast {}
     }) { paddingValue ->
         Box(modifier = Modifier.fillMaxSize()) {
             CustomBackgroundView()
@@ -133,7 +141,7 @@ fun AuthView(onNavigate: (String) -> Unit) {
                                         toPasswordForget = {
                                             currentView = AuthEnum.PASSWORDFORGET
                                         }, toHome = {
-                                            onNavigate(AppScreen.Home.route)
+                                            navController.navigate(HomeRoute)
                                         })
                                 }
                             }

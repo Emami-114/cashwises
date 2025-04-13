@@ -51,8 +51,6 @@ import org.company.app.theme.md_theme_light_background
 import org.company.app.theme.md_theme_light_error
 import org.company.app.theme.md_theme_light_errorContainer
 import org.company.app.theme.md_theme_light_inverseOnSurface
-import org.company.app.theme.md_theme_light_inversePrimary
-import org.company.app.theme.md_theme_light_inverseSurface
 import org.company.app.theme.md_theme_light_onBackground
 import org.company.app.theme.md_theme_light_onError
 import org.company.app.theme.md_theme_light_onErrorContainer
@@ -65,14 +63,12 @@ import org.company.app.theme.md_theme_light_onSurfaceVariant
 import org.company.app.theme.md_theme_light_onTertiary
 import org.company.app.theme.md_theme_light_onTertiaryContainer
 import org.company.app.theme.md_theme_light_outline
-import org.company.app.theme.md_theme_light_outlineVariant
 import org.company.app.theme.md_theme_light_primary
 import org.company.app.theme.md_theme_light_primaryContainer
 import org.company.app.theme.md_theme_light_scrim
 import org.company.app.theme.md_theme_light_secondary
 import org.company.app.theme.md_theme_light_secondaryContainer
 import org.company.app.theme.md_theme_light_surface
-import org.company.app.theme.md_theme_light_surfaceTint
 import org.company.app.theme.md_theme_light_surfaceVariant
 import org.company.app.theme.md_theme_light_tertiary
 import org.company.app.theme.md_theme_light_tertiaryContainer
@@ -102,10 +98,6 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = md_theme_light_onSurfaceVariant,
     outline = md_theme_light_outline,
     inverseOnSurface = md_theme_light_inverseOnSurface,
-    inverseSurface = md_theme_light_inverseSurface,
-    inversePrimary = md_theme_light_inversePrimary,
-    surfaceTint = md_theme_light_surfaceTint,
-    outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
 )
 private val DarkColorScheme = darkColorScheme(
@@ -170,7 +162,7 @@ internal fun AppTheme(
     ) {
         val isDark by isDarkState
         SystemAppearance(!isDark)
-        
+
         MaterialTheme(
             colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
             typography = AppTypography,

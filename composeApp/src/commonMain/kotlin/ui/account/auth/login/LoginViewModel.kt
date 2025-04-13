@@ -1,15 +1,12 @@
 package ui.account.auth.login
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cashwises.composeapp.generated.resources.Res
-import cashwises.composeapp.generated.resources.invalid_email_address_error
 import cashwises.composeapp.generated.resources.login_failed_error
-import cashwises.composeapp.generated.resources.password_required_error
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString

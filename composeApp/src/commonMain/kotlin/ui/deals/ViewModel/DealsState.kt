@@ -1,16 +1,18 @@
 package ui.deals.ViewModel
 
+import data.model.DealModel
 import domain.model.CategoryModel
-import domain.model.DealModel
+import domain.model.DealDetailModel
 import domain.model.ImageModel
 import domain.model.TagModel
-import kotlinx.serialization.SerialName
+import ui.settings
 
 data class DealsState(
     val id: String = "",
     val deals: List<DealModel> = listOf(),
     val categories: List<CategoryModel> = listOf(),
     val isLoading: Boolean = false,
+    val isItemExpanded: Boolean = settings.getBoolean("is_item_expanded", false),
     val error: String? = null,
     val title: String = "",
     val description: String = "",
@@ -29,7 +31,7 @@ data class DealsState(
     val thumbnailByte: ImageModel? = null,
     var imagesByte: List<ImageModel>? = null,
     val dealCreatedSuccess: Boolean = false,
-    val selectedDeal: DealModel? = null,
+    val selectedDeal: DealDetailModel? = null,
     val couponCode: String? = null,
     val selectedTags: List<String> = listOf(),
     val shippingCosts: Double? = null,

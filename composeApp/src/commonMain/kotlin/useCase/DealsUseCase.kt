@@ -1,22 +1,22 @@
 package useCase
 
+import data.model.DealModel
 import data.model.DealsQuery
-import data.model.MarkedDealForUser
 import data.repository.ImageUploadRepository
-import domain.model.DealModel
-import domain.model.DealsModel
+import domain.model.DealDetailModel
 import domain.model.ImageModel
 import domain.repository.DealRepository
+import domain.repository.Result
+import kotlinx.coroutines.flow.Flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import ui.settings
 
 class DealsUseCase : KoinComponent {
     private val repository: DealRepository by inject()
     private val imageRepository = ImageUploadRepository()
     suspend fun getDeals(
         query: DealsQuery
-    ): DealsModel? {
+    ): Flow<Result<List<DealModel>>> {
         try {
             return repository.getDeals(
                 query = query
@@ -27,56 +27,16 @@ class DealsUseCase : KoinComponent {
         }
     }
 
-    suspend fun getSingleDeal(id: String): DealModel? {
-        return try {
-            repository.getSingleDeal(id)
-        } catch (e: Exception) {
-            throw e
-        }
-    }
-
-    suspend fun uploadImages(
-        imagesModel: List<ImageModel>,
-        imagePaths: (List<String>) -> Unit,
-    ) {
+    suspend fun getSingleDeal(id: String): Flow<Result<DealDetailModel?>> {
         try {
-            imageRepository.uploadImages(imagesModel,
-                subDir = "deals_images",
-                imagePaths = { paths ->
-                    if (paths.isNotEmpty()) {
-                        imagePaths(paths)
-                    } else {
-                        println("Failed upload image")
-                        throw Exception("oh, something went wrong!")
-                    }
-                })
-        } catch (e: Exception) {
-            throw e
-        }
-    }
-
-    suspend fun uploadImage(
-        imageModel: ImageModel,
-        imagePaths: (String) -> Unit,
-    ) {
-        try {
-            imageRepository.uploadImage(imageModel,
-                subDir = "deals_thumbnail",
-                imagePath = { paths ->
-                    if (paths.isNotEmpty()) {
-                        imagePaths(paths)
-                    } else {
-                        println("Failed upload image")
-                        throw Exception("oh, something went wrong!")
-                    }
-                })
+            return repository.getSingleDeal(id)
         } catch (e: Exception) {
             throw e
         }
     }
 
     suspend fun addDeals(
-        dealModel: DealModel,
+        dealModel: DealDetailModel,
         onSuccess: () -> Unit
     ) {
         try {
@@ -90,15 +50,15 @@ class DealsUseCase : KoinComponent {
         }
     }
 
-    suspend fun deleteDeal(deal: DealModel, onSuccess: () -> Unit) {
+    suspend fun deleteDeal(deal: DealDetailModel, onSuccess: () -> Unit) {
         try {
-            if (deal.images != null) {
-                deal.images.forEach { imagePath ->
+            if (deal.imagesUrl != null) {
+                deal.imagesUrl.forEach { imagePath ->
                     imageRepository.deleteImage(imagePath)
                 }
             }
-            if (deal.thumbnail != null) {
-                imageRepository.deleteImage(path = deal.thumbnail)
+            if (deal.thumbnailUrl != null) {
+                imageRepository.deleteImage(path = deal.thumbnailUrl)
             }
             repository.deleteDeal(deal.id ?: "").let { isSuccess ->
                 if (isSuccess) {

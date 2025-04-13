@@ -1,30 +1,28 @@
 package data.repository
 
+import data.model.DealModel
 import data.model.DealsQuery
-import data.model.MarkedDealForUser
 import data.repository.ApiConfig.httpClient
-import domain.model.DealModel
-import domain.model.DealsModel
-import domain.repository.AuthRepository
+import domain.enums.ErrorType
+import domain.model.DealDetailModel
+import domain.model.DealModelDto
 import domain.repository.DealRepository
+import domain.repository.Result
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.utils.io.errors.IOException
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import ui.settings
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.io.IOException
 
 
 class DealRepositoryImpl : DealRepository {
@@ -33,46 +31,51 @@ class DealRepositoryImpl : DealRepository {
     @OptIn(DelicateCoroutinesApi::class)
     override suspend fun getDeals(
         query: DealsQuery
-    ): DealsModel? {
-        return try {
-            val response = client.get("${ApiConfig.BASE_URL}/deals") {
+    ): Flow<Result<List<DealModel>>> = flow {
+        emit(Result.Loading())
+        try {
+            val result = client.get("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
-                parameter("query", query.searchQuery)
+                parameter("searchTerm", query.searchTerm)
                 parameter("page", query.page)
                 parameter("limit", query.limit)
-                val filterCategories = query.categories
-                val filterTags = query.filterTags
-                parameter("categories", filterCategories)
-                parameter("tags", filterTags)
+                parameter("category", query.category)
+                parameter("tag", query.tag)
+            }.body<List<DealModelDto>>()
+            val mappedResult = result.map { dto ->
+                dto.toModel()
             }
-            response.body<DealsModel>()
+            emit(Result.Success(mappedResult))
         } catch (e: Exception) {
-            throw e
+            when (e) {
+                is IOException -> emit(Result.Error(ErrorType.NoInternetConnection))
+                is HttpRequestTimeoutException -> emit(Result.Error(ErrorType.RequestTimeout))
+                else -> emit(Result.Error(ErrorType.UnknownError))
+            }
         }
     }
 
-    override suspend fun getSingleDeal(id: String): DealModel? {
-        return try {
-            val response = client.get("${ApiConfig.BASE_URL}/deals/$id") {
+    override suspend fun getSingleDeal(id: String): Flow<Result<DealDetailModel?>> = flow {
+        emit(Result.Loading())
+        try {
+            val result = client.get("${ApiConfig.BASE_URL}/deals/$id") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
-            }.body<DealModel>()
-
-            println("test deal Repo ${response.title}")
-            response
+            }.body<DealDetailModel>()
+            emit(Result.Success(result))
         } catch (e: Exception) {
             throw e
         }
     }
 
-    override suspend fun addDeal(dealModel: DealModel): Boolean {
+    override suspend fun addDeal(dealDetailModel: DealDetailModel): Boolean {
         return try {
             client.post("${ApiConfig.BASE_URL}/deals") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
-                setBody(dealModel)
-            }.status.value in 200..300
+                setBody(dealDetailModel)
+            }.status.isSuccess()
         } catch (e: Exception) {
             throw e
         }

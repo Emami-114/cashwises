@@ -19,6 +19,7 @@ import androidx.compose.ui.util.trace
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import kotlinx.datetime.Clock
 import org.emami.cashwises.AlarmReceiver
 import org.emami.cashwises.AndroidApp
@@ -92,9 +93,10 @@ internal actual object LocalPushNotification {
             }
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     actual fun requestAuthorization(completion: (Boolean) -> Unit) {
-        if (ActivityCompat.checkSelfPermission(
+        if (ContextCompat.checkSelfPermission(
                 MainActivity.ACTIVITY,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
@@ -104,7 +106,11 @@ internal actual object LocalPushNotification {
             val requestCode = 123
             ActivityCompat.requestPermissions(
                 MainActivity.ACTIVITY,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                arrayOf(
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.SCHEDULE_EXACT_ALARM,
+                    Manifest.permission.USE_EXACT_ALARM
+                ),
                 requestCode
             )
         }

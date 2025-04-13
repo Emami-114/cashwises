@@ -16,6 +16,7 @@ import io.ktor.http.parameters
 import io.ktor.utils.io.errors.IOException
 import kotlinx.serialization.Serializable
 import ui.settings
+import utils.decodeJWT
 
 @Serializable
 data class TokenModel(val token: String)
@@ -40,11 +41,12 @@ class AuthRepositoryImpl : AuthRepository {
             val response = client.post("${baseUrl}/auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(body)
-            }.body<TokenModel>()
+            }.body<String>()
             run {
-                settings.putString("TOKEN", response.token)
-                ApiConfig.userToken = response.token
-                UserRepository.INSTANCE.getMe()
+                settings.putString("TOKEN", response)
+                println("token: $response")
+                ApiConfig.userToken = response
+              //  UserRepository.INSTANCE.getMe()
                 true
             }
         } catch (e: Exception) {

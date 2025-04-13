@@ -43,7 +43,10 @@ import cashwises.composeapp.generated.resources.mail
 import cashwises.composeapp.generated.resources.password
 import cashwises.composeapp.generated.resources.password_confirm
 import cashwises.composeapp.generated.resources.password_confirm_not_match_error
+import cashwises.composeapp.generated.resources.password_forget
+import cashwises.composeapp.generated.resources.password_forget_desc
 import cashwises.composeapp.generated.resources.password_required_error
+import cashwises.composeapp.generated.resources.password_reset
 import cashwises.composeapp.generated.resources.privacy_policy_placeholder
 import cashwises.composeapp.generated.resources.terms_of_use_placeholder
 import cashwises.composeapp.generated.resources.user
@@ -62,12 +65,12 @@ import ui.components.customModiefier.noRippleClickable
 @Composable
 fun PasswordForget(backToLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(10.dp).padding(horizontal = 10.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
             Text(
-                "Password vergessen? Kein Problem! " + "Tragen hier deine E-mail-Adresse ein und wir schicken Dir " + "eine E-mail an die verknüpfte Adresse. Damit kann das " + "Password zurückgesetzt werden.",
+                stringResource(Res.string.password_forget_desc),
                 color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(horizontal = 20.dp)
+                modifier = Modifier
             )
             Spacer(modifier = Modifier.height(10.dp))
             CustomTextField(
@@ -88,7 +91,8 @@ fun PasswordForget(backToLogin: () -> Unit) {
                     keyboardType = KeyboardType.Email
                 )
             )
-            CustomButton(title = "Password reset") {
+            Spacer(modifier = Modifier.height(5.dp))
+            CustomButton(title = stringResource(Res.string.password_reset)) {
             }
             Text(
                 stringResource(Res.string.btn_login),
@@ -116,7 +120,6 @@ fun RegistrationView(
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-//        CustomBackgroundView()
         when {
             uiState.isLoading -> {
                 Column(
@@ -139,7 +142,8 @@ fun RegistrationView(
                         .padding(horizontal = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(15.dp)
                 ) {
-                    CustomTextField(value = uiState.nameText,
+                    CustomTextField(
+                        value = uiState.nameText,
                         onValueChange = {
                             viewModel.onRegisterEvent(
                                 RegistrationEvent.OnUserNameChange(
@@ -243,9 +247,10 @@ fun RegistrationView(
                             Res.string.password_confirm_not_match_error
                         ) else null,
                         trailingIcon = {
-                            Icon(painter = if (passwordConfirmVisible) painterResource(Res.drawable.eye) else painterResource(
-                                Res.drawable.eye_off
-                            ),
+                            Icon(
+                                painter = if (passwordConfirmVisible) painterResource(Res.drawable.eye) else painterResource(
+                                    Res.drawable.eye_off
+                                ),
                                 contentDescription = null,
                                 modifier = Modifier.size(26.dp).noRippleClickable {
                                     passwordConfirmVisible = !passwordConfirmVisible

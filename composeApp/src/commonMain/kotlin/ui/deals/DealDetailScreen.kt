@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.copy
 import cashwises.composeapp.generated.resources.external_link
@@ -59,16 +60,14 @@ import cashwises.composeapp.generated.resources.heart_fill
 import cashwises.composeapp.generated.resources.offers_ends_in_some_day
 import cashwises.composeapp.generated.resources.offers_ends_in_some_hour
 import cashwises.composeapp.generated.resources.offers_expired
-import cashwises.composeapp.generated.resources.some_day_ago
-import cashwises.composeapp.generated.resources.some_hour_ago
-import cashwises.composeapp.generated.resources.some_minute_ago
+import cashwises.composeapp.generated.resources.registration_required_desc
 import cashwises.composeapp.generated.resources.successfully_copied
 import cashwises.composeapp.generated.resources.trash
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import com.mohamedrejeb.richeditor.ui.material3.OutlinedRichTextEditor
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditorDefaults
 import data.repository.UserRepository
-import domain.model.DealModel
+import domain.model.DealDetailModel
 import domain.model.UserRole
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -89,29 +88,32 @@ import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import ui.AppConstants
 import ui.components.CustomBackgroundView
 import ui.components.CustomImagesSlider
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
+import ui.components.CustomPopUp
 import ui.components.CustomTopAppBar
-import ui.components.ToastStatus
+import ui.components.ToastStatusEnum
 import ui.components.customModiefier.noRippleClickable
 import ui.deals.ViewModel.DealsViewModel
+import utils.Utils
+import utils.openUrl
 import kotlin.math.absoluteValue
 
 
 @Composable
 fun DealDetailScreen(
     dealId: String? = null,
-    onNavigate: (String) -> Unit,
+    navController: NavHostController,
 ) {
     val viewModel: DealsViewModel = koinInject()
     val uiState by viewModel.state.collectAsState()
     val scrollState = rememberScrollState(0)
     var showToast by remember { mutableStateOf(false) }
+    var showErrorPopUp by remember { mutableStateOf(false) }
     var clipCopyText by remember { mutableStateOf("") }
     val clipBoard = LocalClipboardManager.current
-    var deal by remember { mutableStateOf<DealModel?>(null) }
+    var deal by remember { mutableStateOf<DealDetailModel?>(null) }
     val scopeCoroutine = rememberCoroutineScope()
     val colorAnimation by animateColorAsState(
         targetValue = if (scrollState.value < 700) cw_dark_background.copy(alpha = 0.03f) else cw_dark_background,
@@ -120,6 +122,7 @@ fun DealDetailScreen(
     var isDealMarked by remember { mutableStateOf(false) }
 
     LaunchedEffect(dealId) {
+        Utils.showNotification
         dealId?.let {
             viewModel.doGetSingleDeal(dealId) { dealModel ->
                 deal = dealModel
@@ -134,6 +137,7 @@ fun DealDetailScreen(
         val scope = this
         val maxWidth = scope.maxWidth
         CustomBackgroundView()
+
         CustomTopAppBar(
             modifier = Modifier.align(Alignment.TopStart).zIndex(1f).fillMaxWidth(),
             title = if (scrollState.value >= 800) deal?.title ?: "" else "",
@@ -141,7 +145,7 @@ fun DealDetailScreen(
             textColor = cw_dark_whiteText,
             isDivider = false,
             backButtonAction = {
-                onNavigate(AppConstants.BackClickRoute.route)
+                navController.popBackStack()
             },
             rightAction = {
                 Row(
@@ -153,7 +157,7 @@ fun DealDetailScreen(
                         contentDescription = null,
                         tint = if (isDealMarked) cw_dark_red else cw_dark_whiteText,
                         modifier = Modifier.size(26.dp).clickable {
-                            if (dealId != null) {
+                            if (dealId != null && UserRepository.INSTANCE.user != null) {
                                 scopeCoroutine.launch {
                                     UserRepository.INSTANCE.addMarkDealForUser(dealId)
                                         .let { isSuccess ->
@@ -166,6 +170,8 @@ fun DealDetailScreen(
                                         }
 
                                 }
+                            } else {
+                                showErrorPopUp = true
                             }
                         })
 
@@ -176,7 +182,7 @@ fun DealDetailScreen(
                             tint = cw_dark_whiteText,
                             modifier = Modifier.size(26.dp).clickable {
                                 viewModel.deleteDeal(deal)
-                                onNavigate(AppConstants.BackClickRoute.route)
+                                navController.popBackStack()
                             })
                     }
                 }
@@ -185,7 +191,7 @@ fun DealDetailScreen(
         deal?.let { deal ->
             DetailDealView(
                 modifier = Modifier,
-                dealModel = deal,
+                dealDetailModel = deal,
                 scrollState = scrollState,
                 clipBoard = { copyText ->
                     clipBoard.setText(annotatedString = AnnotatedString(text = copyText))
@@ -193,62 +199,73 @@ fun DealDetailScreen(
                     showToast = true
                 })
         }
-        Box(
-            modifier = Modifier.height(80.dp).background(cw_dark_background)
-                .align(Alignment.BottomStart), contentAlignment = Alignment.BottomStart
-        ) {
-            Button(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth().height(45.dp).align(Alignment.TopStart)
-                    .padding(top = 5.dp).padding(horizontal = 25.dp)
-                    .background(cw_dark_primary, shape = MaterialTheme.shapes.large)
+        deal?.providerUrl?.let { url ->
+            Box(
+                modifier = Modifier.height(80.dp).background(cw_dark_background)
+                    .align(Alignment.BottomStart), contentAlignment = Alignment.BottomStart
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Button(
+                    onClick = {
+                        openUrl(url)
+                    },
+                    modifier = Modifier.fillMaxWidth().height(45.dp).align(Alignment.TopStart)
+                        .padding(top = 5.dp).padding(horizontal = 25.dp)
+                        .background(cw_dark_primary, shape = MaterialTheme.shapes.large)
                 ) {
-                    if (uiState.selectedDeal?.isFree == true) {
-                        Text(
-                            text = stringResource(Res.string.free),
-                            color = cw_dark_whiteText,
-                            fontSize = 17.sp
-                        )
-                    } else if (uiState.selectedDeal?.offerPrice != null) {
-                        Text(
-                            text = "${uiState.selectedDeal?.offerPrice ?: 0}€",
-                            color = cw_dark_whiteText,
-                            fontSize = 17.sp
-                        )
-                        Text(
-                            text = "${uiState.selectedDeal?.price ?: 0}€",
-                            color = cw_dark_whiteText,
-                            fontSize = 10.sp,
-                            style = TextStyle(textDecoration = TextDecoration.LineThrough)
-                        )
-                    } else {
-                        Text(
-                            text = "${uiState.selectedDeal?.price ?: 0}€",
-                            color = cw_dark_whiteText,
-                            fontSize = 17.sp
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (uiState.selectedDeal?.isFree == true) {
+                            Text(
+                                text = stringResource(Res.string.free),
+                                color = cw_dark_whiteText,
+                                fontSize = 17.sp
+                            )
+                        } else if (uiState.selectedDeal?.offerPrice != null) {
+                            Text(
+                                text = "${uiState.selectedDeal?.offerPrice ?: 0}€",
+                                color = cw_dark_whiteText,
+                                fontSize = 17.sp
+                            )
+                            Text(
+                                text = "${uiState.selectedDeal?.price ?: 0}€",
+                                color = cw_dark_whiteText,
+                                fontSize = 10.sp,
+                                style = TextStyle(textDecoration = TextDecoration.LineThrough)
+                            )
+                        } else {
+                            Text(
+                                text = "${uiState.selectedDeal?.price ?: 0}€",
+                                color = cw_dark_whiteText,
+                                fontSize = 17.sp
+                            )
+                        }
+                        Icon(
+                            painter = painterResource(Res.drawable.external_link),
+                            contentDescription = null,
+                            tint = cw_dark_whiteText,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
-                    Icon(
-                        painter = painterResource(Res.drawable.external_link),
-                        contentDescription = null,
-                        tint = cw_dark_whiteText,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
 
+                }
             }
         }
+        if (showErrorPopUp) {
+            CustomPopUp(
+                true,
+                message = stringResource(Res.string.registration_required_desc),
+                cancelAction = { showErrorPopUp = false })
+        }
         if (showToast) {
-            CustomToast(
+            CustomNotificationToast(
                 modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 50.dp),
-                status = ToastStatus.SUCCESS,
+                status = ToastStatusEnum.SUCCESS,
                 title = stringResource(Res.string.successfully_copied, clipCopyText)
             ) { showToast = false }
         }
+
     }
 }
 
@@ -257,14 +274,14 @@ fun DealDetailScreen(
 @Composable
 fun DetailDealView(
     modifier: Modifier = Modifier,
-    dealModel: DealModel,
+    dealDetailModel: DealDetailModel,
     scrollState: ScrollState,
     clipBoard: (String) -> Unit
 ) {
     val richTextState = rememberRichTextState()
 
     LaunchedEffect(Unit) {
-        richTextState.setHtml(dealModel.description)
+        richTextState.setHtml(dealDetailModel.description ?: "")
     }
     Column(
         modifier = modifier.fillMaxSize().widthIn(min = 300.dp, max = 900.dp)
@@ -272,13 +289,13 @@ fun DetailDealView(
         verticalArrangement = Arrangement.spacedBy(15.dp),
     ) {
         Box {
-            dealModel.thumbnail?.let { _ ->
+            dealDetailModel.thumbnailUrl?.let { _ ->
                 CustomImagesSlider(
-                    paths = dealModel.images,
+                    paths = dealDetailModel.imagesUrl,
                 )
-                if (dealModel.offerPrice != null) {
+                if (dealDetailModel.offerPrice != null) {
                     val offerPercent =
-                        (((dealModel.price!! - dealModel.offerPrice) / dealModel.price) * 100).toInt()
+                        (((dealDetailModel.price!! - dealDetailModel.offerPrice) / dealDetailModel.price) * 100).toInt()
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
@@ -303,35 +320,35 @@ fun DetailDealView(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(dealModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
+            Text(dealDetailModel.provider ?: "", fontSize = 12.sp, color = cw_dark_grayText)
 
-            Text(
-                text = if (dealModel.currentCreatedHour.toInt() == 0) stringResource(
-                    Res.string.some_minute_ago,
-                    "${dealModel.currentCreatedMinute}"
-                )
-                else if (dealModel.currentCreatedDay == 0 && dealModel.currentCreatedHour < 24) stringResource(
-                    Res.string.some_hour_ago,
-                    "${dealModel.currentCreatedHour}"
-                )
-                else if (dealModel.currentCreatedDay > 0) stringResource(
-                    Res.string.some_day_ago,
-                    "${dealModel.currentCreatedDay}"
-                )
-                else "",
-                fontSize = 10.sp,
-                color = cw_dark_grayText,
-                fontWeight = FontWeight.Medium
-            )
+//            Text(
+//                text = if (dealModel.currentCreatedHour.toInt() == 0) stringResource(
+//                    Res.string.some_minute_ago,
+//                    "${dealModel.currentCreatedMinute}"
+//                )
+//                else if (dealModel.currentCreatedDay == 0 && dealModel.currentCreatedHour < 24) stringResource(
+//                    Res.string.some_hour_ago,
+//                    "${dealModel.currentCreatedHour}"
+//                )
+//                else if (dealModel.currentCreatedDay > 0) stringResource(
+//                    Res.string.some_day_ago,
+//                    "${dealModel.currentCreatedDay}"
+//                )
+//                else "",
+//                fontSize = 10.sp,
+//                color = cw_dark_grayText,
+//                fontWeight = FontWeight.Medium
+//            )
         }
         Text(
-            dealModel.title,
+            dealDetailModel.title,
             fontSize = 18.sp,
             color = cw_dark_whiteText,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
         )
         Spacer(modifier = Modifier.height(5.dp))
-        dealModel.expirationDate?.let { expirationDate ->
+        dealDetailModel.expirationDate?.let { expirationDate ->
             val expiration = Clock.System.now().daysUntil(
                 Instant.parse(expirationDate), timeZone = TimeZone.UTC
             )
@@ -365,8 +382,9 @@ fun DetailDealView(
             }
         }
         Spacer(modifier = Modifier.height(5.dp))
-        dealModel.couponCode?.let { couponCode ->
-            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+        dealDetailModel.couponCode?.let { couponCode ->
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
                 .background(cw_dark_onBackground, shape = MaterialTheme.shapes.large).height(50.dp)
                 .drawBehind {
                     val stroke = Stroke(

@@ -15,9 +15,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerColors
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -46,6 +50,13 @@ import cashwises.composeapp.generated.resources.title
 import cashwises.composeapp.generated.resources.video_url
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import org.company.app.theme.cw_dark_background
+import org.company.app.theme.cw_dark_blackText
+import org.company.app.theme.cw_dark_onBackground
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -58,7 +69,7 @@ import ui.components.CustomPopUp
 import ui.components.CustomRichTextEditor
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsViewModel
 import ui.deals.components.MainAndSubCategoryList
@@ -71,7 +82,8 @@ fun CreateDealView(modifier: Modifier = Modifier) {
     val uiState by viewModel.state.collectAsState()
     val richTextState = rememberRichTextState()
     val scrollState = rememberScrollState(0)
-    val dataPickerState = rememberDatePickerState()
+    val dataPickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    val timePickerState = rememberTimePickerState(is24Hour = true)
     val textQuery by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
         viewModel.getCategories()
@@ -90,7 +102,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
             ) {
                 CustomBackgroundView()
                 if (uiState.dealCreatedSuccess) {
-                    CustomToast(title = stringResource(Res.string.successfully_created)) {
+                    CustomNotificationToast(title = stringResource(Res.string.successfully_created)) {
                         viewModel.onEvent(DealEvent.OnSetDefaultState)
                     }
                 }
@@ -249,6 +261,26 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         colors = DatePickerDefaults.colors(),
                         title = null
                     )
+                    TimePicker(
+                        state = timePickerState,
+                        colors = TimePickerColors(
+                            containerColor = cw_dark_onBackground,
+                            clockDialColor = cw_dark_onBackground,
+                            selectorColor = cw_dark_whiteText,
+                            periodSelectorBorderColor = cw_dark_whiteText,
+                            clockDialSelectedContentColor = cw_dark_background,
+                            clockDialUnselectedContentColor = cw_dark_whiteText,
+                            periodSelectorSelectedContainerColor = cw_dark_whiteText,
+                            periodSelectorUnselectedContainerColor = cw_dark_background,
+                            periodSelectorSelectedContentColor = cw_dark_blackText,
+                            periodSelectorUnselectedContentColor = cw_dark_whiteText,
+                            timeSelectorSelectedContainerColor = cw_dark_onBackground,
+                            timeSelectorUnselectedContainerColor = cw_dark_background,
+                            timeSelectorSelectedContentColor = cw_dark_whiteText,
+                            timeSelectorUnselectedContentColor = cw_dark_whiteText
+                        )
+
+                    )
                     CustomMultipleImagePicker(
                         modifier = Modifier,
                         selectedImage = uiState.imagesByte ?: listOf()
@@ -259,9 +291,22 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         isLoading = uiState.isLoading,
                         onClick = {
                             val date = dataPickerState.selectedDateMillis?.let { dateMillis ->
-                                Instant.fromEpochMilliseconds(dateMillis).toString()
+                                Instant.fromEpochMilliseconds(dateMillis)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault()).date
                             }
-                            viewModel.onEvent(DealEvent.OnExpirationDateChange(date))
+                            val dateTime = date?.let {
+                                LocalDateTime(
+                                    it.year,
+                                    it.month,
+                                    it.dayOfMonth,
+                                    timePickerState.hour,
+                                    timePickerState.minute
+                                )
+                            }
+                            if (dateTime != null) {
+                                val instant = dateTime.toInstant(TimeZone.UTC).toString()
+                                viewModel.onEvent(DealEvent.OnExpirationDateChange(instant))
+                            }
                             viewModel.onEvent(DealEvent.OnDescriptionChange(richTextState.toHtml()))
                             viewModel.onEvent(DealEvent.OnAction)
                             richTextState.clear()

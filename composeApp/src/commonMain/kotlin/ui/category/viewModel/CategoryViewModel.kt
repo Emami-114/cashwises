@@ -1,24 +1,34 @@
 package ui.category.viewModel
 
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import domain.model.CategoryModel
-import domain.model.CategoryStatus
 import domain.model.ImageModel
+import domain.repository.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ui.deals.ViewModel.DealsState
 import useCase.CategoryUseCase
+import useCase.ImageUploadUseCase
 
 class CategoryViewModel : ViewModel(), KoinComponent {
     private val useCase: CategoryUseCase by inject()
+    private val imageUseCase: ImageUploadUseCase by inject()
     private val _state = MutableStateFlow(CategoryState())
-    val state = _state.asStateFlow()
+    val state = _state.asStateFlow().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        initialValue = CategoryState()
+    )
 
     fun onEvent(event: CategoryEvent) {
         when (event) {
@@ -27,9 +37,8 @@ class CategoryViewModel : ViewModel(), KoinComponent {
             is CategoryEvent.OnDeleteCategory -> {}
             is CategoryEvent.OnTitleChange -> doTitleChange(event)
             is CategoryEvent.OnImageChange -> doThumbnailChange(event)
-            is CategoryEvent.OnStatusChange -> doStatusChange(event)
             is CategoryEvent.OnPublishedChange -> doPublishedChange(event)
-            is CategoryEvent.OnSelectedCatChange -> doMainIdChange(event)
+            is CategoryEvent.OnChangeMainCat -> doChangeMainCat(event)
             is CategoryEvent.OnDefaultState -> _state.value = CategoryState()
         }
     }
@@ -40,18 +49,16 @@ class CategoryViewModel : ViewModel(), KoinComponent {
             _state.value = _state.value.copy(isLoading = true)
             try {
                 if (_state.value.imageModel != null) {
-                    useCase.uploadImage(
-                        imageModel = _state.value.imageModel!!,
-                        imagePaths = { imagePath ->
+                    imageUseCase.uploadThumbnailImage(
+                        image = _state.value.imageModel!!,
+                        imagePath = { imagePath ->
                             _state.value =
                                 _state.value.copy(thumbnail = imagePath)
                             val category = CategoryModel(
                                 title = _state.value.title,
                                 thumbnail = _state.value.thumbnail,
-                                published = _state.value.published,
-                                status = _state.value.status,
-                                mainId = _state.value.selectedCategory?.id,
-                                userId = null
+                                isPublic = _state.value.isPublic,
+                                parentCategoryId = _state.value.selectMainCategory?.id,
                             )
                             viewModelScope.launch {
                                 useCase.updateCategory(category) {
@@ -69,10 +76,8 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                     val category = CategoryModel(
                         title = _state.value.title,
                         thumbnail = _state.value.thumbnail,
-                        published = _state.value.published,
-                        status = _state.value.status,
-                        mainId = _state.value.selectedCategory?.id,
-                        userId = null
+                        isPublic = _state.value.isPublic,
+                        parentCategoryId = _state.value.selectMainCategory?.id,
                     )
                     useCase.createCategory(category) {
                         _state.update {
@@ -98,23 +103,35 @@ class CategoryViewModel : ViewModel(), KoinComponent {
     }
 
     fun getCategories() = viewModelScope.launch {
-        _state.update { it.copy(isLoading = true) }
         try {
-            _state.update {
-                it.copy(
-                    categories = useCase.getCategories().categories,
-                    isLoading = false
-                )
+            useCase.getCategories().collectLatest { status ->
+                when (status) {
+                    is Result.Loading -> _state.value.copy(isLoading = true, errorText = null)
+                    is Result.Success -> {
+                        _state.update {
+                            it.copy(
+                                categories = status.data ?: listOf(),
+                                isLoading = false,
+                                errorText = null
+                            )
+                        }
+                        println("Category State: ${_state.value.categories}")
+                    }
+
+                    is Result.Error -> _state.value.copy(
+                        errorText = getString(status.error?.message!!),
+                        isLoading = false
+                    )
+                }
             }
         } catch (e: Exception) {
             _state.update {
                 it.copy(
-                    errorText = e.message,
-                    isLoading = false
+                    errorText = e.message
                 )
             }
             delay(4000)
-            onEvent(CategoryEvent.OnDefaultState)
+            _state.value = CategoryState()
         }
     }
 
@@ -140,18 +157,16 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                     _state.value = _state.value.copy(isLoading = true)
                     try {
                         if (_state.value.imageModel != null) {
-                            useCase.uploadImage(
-                                imageModel = _state.value.imageModel!!,
-                                imagePaths = { imagePath ->
+                            imageUseCase.uploadCategoryImage(
+                                image = _state.value.imageModel!!,
+                                imagePath = { imagePath ->
                                     _state.value =
                                         _state.value.copy(thumbnail = imagePath)
                                     val category = CategoryModel(
                                         title = _state.value.title,
                                         thumbnail = _state.value.thumbnail,
-                                        published = _state.value.published,
-                                        status = if (_state.value.selectedCategory != null) CategoryStatus.SUB else CategoryStatus.MAIN,
-                                        mainId = if (_state.value.selectedCategory != null) _state.value.selectedCategory!!.id else _state.value.mainId,
-                                        userId = null
+                                        isPublic = _state.value.isPublic,
+                                        parentCategoryId = if (_state.value.selectMainCategory != null) _state.value.selectMainCategory!!.id else null,
                                     )
                                     viewModelScope.launch {
                                         useCase.createCategory(category) {
@@ -164,10 +179,8 @@ class CategoryViewModel : ViewModel(), KoinComponent {
                             val category = CategoryModel(
                                 title = _state.value.title,
                                 thumbnail = _state.value.thumbnail,
-                                published = _state.value.published,
-                                status = if (_state.value.selectedCategory != null) CategoryStatus.SUB else CategoryStatus.MAIN,
-                                mainId = if (_state.value.selectedCategory != null) _state.value.selectedCategory!!.id else _state.value.mainId,
-                                userId = null
+                                isPublic = _state.value.isPublic,
+                                parentCategoryId = if (_state.value.selectMainCategory != null) _state.value.selectMainCategory!!.id else null,
                             )
                             useCase.createCategory(category) {
                                 _state.value = CategoryState()
@@ -209,23 +222,15 @@ class CategoryViewModel : ViewModel(), KoinComponent {
     private fun doPublishedChange(event: CategoryEvent.OnPublishedChange) {
         _state.update {
             it.copy(
-                published = event.value
+                isPublic = event.value
             )
         }
     }
 
-    private fun doStatusChange(event: CategoryEvent.OnStatusChange) {
+    private fun doChangeMainCat(event: CategoryEvent.OnChangeMainCat) {
         _state.update {
             it.copy(
-                status = event.value
-            )
-        }
-    }
-
-    private fun doMainIdChange(event: CategoryEvent.OnSelectedCatChange) {
-        _state.update {
-            it.copy(
-                selectedCategory = event.value
+                selectMainCategory = event.value
             )
         }
     }

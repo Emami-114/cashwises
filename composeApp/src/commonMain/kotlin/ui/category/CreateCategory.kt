@@ -35,7 +35,6 @@ import cashwises.composeapp.generated.resources.successfully_copied
 import cashwises.composeapp.generated.resources.successfully_created
 import cashwises.composeapp.generated.resources.x
 import domain.model.CategoryModel
-import domain.model.CategoryStatus
 import org.company.app.theme.cw_dark_whiteText
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -47,7 +46,7 @@ import ui.components.CustomImagePicker
 import ui.components.CustomPopUp
 import ui.components.CustomSwitch
 import ui.components.CustomTextField
-import ui.components.CustomToast
+import ui.components.CustomNotificationToast
 import ui.components.customModiefier.customBorder
 import ui.components.customModiefier.noRippleClickable
 
@@ -67,7 +66,7 @@ fun CreateCategory(
         else -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 if (uiState.createdSuccessfully || uiState.updateSuccessfully) {
-                    CustomToast(title = stringResource(if (uiState.createdSuccessfully) Res.string.successfully_created else Res.string.successfully_copied)) {
+                    CustomNotificationToast(title = stringResource(if (uiState.createdSuccessfully) Res.string.successfully_created else Res.string.successfully_copied)) {
                         viewModel.onEvent(CategoryEvent.OnDefaultState)
                     }
                 }
@@ -86,11 +85,11 @@ fun CreateCategory(
                         placeholder = "Title"
                     )
                     MainCategoryList(uiState, onSelected = { category ->
-                        viewModel.onEvent(CategoryEvent.OnSelectedCatChange(category))
+                        viewModel.onEvent(CategoryEvent.OnChangeMainCat(category))
                     })
                     CustomSwitch(
                         textView = { Text("Published", color = cw_dark_whiteText) },
-                        value = uiState.published ?: false
+                        value = uiState.isPublic
                     ) {
                         viewModel.onEvent(CategoryEvent.OnPublishedChange(it))
                     }
@@ -128,11 +127,11 @@ fun MainCategoryList(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = uiState.selectedCategory?.title ?: "Categories",
+                    text = uiState.selectMainCategory?.title ?: "Categories",
                     color = MaterialTheme.colorScheme.secondary,
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (uiState.selectedCategory != null) {
+                    if (uiState.selectMainCategory != null) {
                         Spacer(modifier = Modifier.width(20.dp))
                         Icon(
                             painter = painterResource(Res.drawable.x),
@@ -153,7 +152,7 @@ fun MainCategoryList(
 
             }
             AnimatedVisibility(isExpanded) {
-                val filterCategory = uiState.categories.filter { it.status == CategoryStatus.MAIN }
+                val filterCategory = uiState.categories.filter { it.isMainCategory == true }
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center

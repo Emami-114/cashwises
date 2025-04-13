@@ -4,28 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,6 +27,7 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.auth_verification_description
 import cashwises.composeapp.generated.resources.auth_verification_not_receive
 import cashwises.composeapp.generated.resources.auth_verification_title
+import cashwises.composeapp.generated.resources.btn_send
 import cashwises.composeapp.generated.resources.button_send
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_red
@@ -43,10 +36,8 @@ import org.jetbrains.compose.resources.stringResource
 import ui.account.auth.registration.RegistrationState
 import ui.account.auth.registration.viewModel.RegistrationViewModel
 import ui.components.CustomButton
-import ui.components.CustomPopUp
-import ui.components.CustomTextField
-import ui.components.CustomToast
-import ui.components.ToastStatus
+import ui.components.CustomNotificationToast
+import ui.components.ToastStatusEnum
 
 @Composable
 fun VerificationView(
@@ -57,9 +48,9 @@ fun VerificationView(
     val focusManager = LocalFocusManager.current
     Box(modifier = Modifier.fillMaxSize().padding(20.dp)) {
         if (uiState.verificationCodeError != null) {
-            CustomToast(
+            CustomNotificationToast(
                 modifier = Modifier.align(Alignment.BottomStart),
-                status = ToastStatus.ERROR,
+                status = ToastStatusEnum.ERROR,
                 title = uiState.verificationCodeError
             ) { viewModel.doChangeOtpCode("") }
         }
@@ -121,7 +112,7 @@ fun VerificationView(
             TextButton(onClick = {}) {
                 Text(stringResource(Res.string.auth_verification_not_receive))
             }
-            CustomButton(title = stringResource(Res.string.button_send)) {
+            CustomButton(title = stringResource(Res.string.btn_send)) {
                 focusManager.clearFocus()
                 onAction()
             }

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.chevron_down
 import cashwises.composeapp.generated.resources.chevron_up
-import domain.model.CategoryStatus
 import org.jetbrains.compose.resources.painterResource
 import ui.components.CustomCheckBox
 import ui.components.customModiefier.customBorder
@@ -78,7 +77,7 @@ fun MainAndSubCategoryList(
             }
             AnimatedVisibility(isExpanded) {
                 val filterMainCategory =
-                    uiState.categories.filter { it.status == CategoryStatus.MAIN }
+                    uiState.categories.filter { it.isMainCategory == true }
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center
@@ -97,7 +96,7 @@ fun MainAndSubCategoryList(
                             }
                         )
                         HorizontalDivider(color = MaterialTheme.colorScheme.surface)
-                        val subCatFilter = uiState.categories.filter { category.id == it.mainId }
+                        val subCatFilter = uiState.categories.filter { category.isMainCategory == true }
                         subCatFilter.forEach { subCat ->
                             Row {
                                 Spacer(modifier = Modifier.width(15.dp))

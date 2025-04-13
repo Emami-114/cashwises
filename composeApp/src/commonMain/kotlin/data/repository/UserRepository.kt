@@ -52,6 +52,7 @@ class UserRepository {
     }
 
     fun userIsAdmin(): Boolean = user?.role == UserRole.ADMIN
+    fun userIsCreator(): Boolean = user?.role == UserRole.CREATOR
     suspend fun addMarkDealForUser(dealId: String): Boolean {
         try {
             val userId = user?.id ?: ""
