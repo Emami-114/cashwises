@@ -38,6 +38,7 @@ import kotlinx.datetime.LocalDateTime
 import okio.FileSystem
 import theme.AppTheme
 import ui.components.CustomNotificationToast
+import utils.ApiKeyService
 import utils.LocalPushNotification
 import utils.Utils
 import utils.decodeJWT
@@ -74,6 +75,7 @@ fun App() = AppTheme {
                 UserRepository.INSTANCE.getMe()
                 println("is jwt valid: ${Utils.isJwtTokenValid()}")
                 Utils.isJwtTokenValid()
+               println("API_KEY: ${ ApiKeyService.generateApiKey()}")
             }
             HomeNav()
         }

@@ -96,6 +96,8 @@ kotlin {
             implementation(libs.compose.material3.adaptive.layout)
             implementation(libs.compose.material3.adaptive.navigation)
             implementation(libs.compose.material3.windowsSize)
+            implementation(project.dependencies.platform("org.kotlincrypto.macs:bom:0.7.0"))
+            implementation("org.kotlincrypto.macs:hmac-sha2")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -108,7 +110,7 @@ kotlin {
 
 android {
     namespace = "org.emami.cashwises"
-    compileSdk = 35
+    compileSdk = 36
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
@@ -117,7 +119,8 @@ android {
     defaultConfig {
         applicationId = "org.emami.cashwises"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
+        //noinspection OldTargetApi
         versionCode = 1
         versionName = "1.0"
     }
