@@ -5,28 +5,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserModel(
-    val id: String? = null,
+    val userId: String,
     var name: String,
     val email: String,
-    val password: String? = null,
     var role: UserRole,
-    val photo: String,
+    val photoUrl: String? = null,
     val verified: Boolean = false,
-    @SerialName("verification_code")
-    val verificationCode: String? = null,
-    @SerialName("created_at")
     val createdAt: String? = null,
-    @SerialName("updated_at")
     val updatedAt: String? = null
 )
 
 enum class UserRole {
-    @SerialName("admin")
+    @SerialName("Admin")
     ADMIN,
-
-    @SerialName("creator")
+    @SerialName("Creator")
     CREATOR,
-
-    @SerialName("customer")
+    @SerialName("Customer")
     CUSTOMER
 }

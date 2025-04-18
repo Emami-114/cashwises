@@ -47,9 +47,8 @@ fun WishListView(modifier: Modifier = Modifier, navController: NavHostController
     Column {
         CustomTopAppBar(
             title = stringResource(Res.string.wish_list),
-            backButtonAction = {
-                navController.popBackStack()
-            })
+//            backButtonAction = { navController.popBackStack() }
+        )
         Spacer(modifier = Modifier.height(5.dp))
         LazyColumn(
             modifier = Modifier.padding(5.dp),

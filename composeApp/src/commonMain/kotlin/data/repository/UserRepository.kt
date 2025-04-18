@@ -12,6 +12,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readBytes
 import io.ktor.client.statement.request
 import io.ktor.http.ContentType
@@ -40,6 +41,7 @@ class UserRepository {
                     userIsLogged = true
                     user = me
                     getMarkDealsForUser()
+                    println("test: $me")
                 }
             }
         } catch (e: Exception) {
@@ -55,7 +57,7 @@ class UserRepository {
     fun userIsCreator(): Boolean = user?.role == UserRole.CREATOR
     suspend fun addMarkDealForUser(dealId: String): Boolean {
         try {
-            val userId = user?.id ?: ""
+            val userId = user?.userId ?: ""
             val body = MarkedDealForUser(userId, dealId)
             if (userMarkedDeals.value.contains(dealId)) {
                 deleteMarkDeal(markDeal = body).let { isSuccess ->
@@ -67,7 +69,7 @@ class UserRepository {
                     }
                 }
             } else {
-                val response = ApiConfig.httpClient.post("${ApiConfig.BASE_URL}/deals/marked") {
+                val response = ApiConfig.httpClient.post("${ApiConfig.BASE_URL}/marked-deals") {
                     contentType(ContentType.Application.Json)
                     bearerAuth(ApiConfig.userToken)
                     setBody(body)
@@ -87,7 +89,7 @@ class UserRepository {
     }
 
     private suspend fun getMarkDealsForUser() {
-        val response = ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/deals/marked/${user?.id}") {
+        val response = ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/marked-deals/user/${user?.userId}") {
             contentType(ContentType.Application.Json)
             bearerAuth(ApiConfig.userToken)
         }.body<List<MarkedDealForUser>>()
@@ -97,7 +99,7 @@ class UserRepository {
 
     private suspend fun deleteMarkDeal(markDeal: MarkedDealForUser): Boolean {
         return try {
-            ApiConfig.httpClient.delete("${ApiConfig.BASE_URL}/deals/marked/${markDeal.userId}/${markDeal.dealId}") {
+            ApiConfig.httpClient.delete("${ApiConfig.BASE_URL}/marked-deals/user/${markDeal.userId}/deal/${markDeal.dealId}") {
                 contentType(ContentType.Application.Json)
                 bearerAuth(ApiConfig.userToken)
             }.status.value in 200..300

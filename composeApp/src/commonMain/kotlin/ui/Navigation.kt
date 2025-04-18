@@ -200,7 +200,14 @@ fun NavHostMain(
             composable<CreateDealRoute> {
                 CreateDealAndCategoriesScreen(navController = navController)
             }
-            composable<WishlistRoute> {
+            composable<WishlistRoute>(
+                enterTransition = {
+                    fadeIn(animationSpec = tween(200))
+                },
+                exitTransition = {
+                    fadeOut(animationSpec = tween(200))
+                }
+            ) {
                 WishListView(navController = navController)
             }
             composable<ProfileRoute> {
@@ -233,12 +240,16 @@ sealed class BottomBarScreen(
         title = Res.string.global_search,
         defaultIcon = Res.drawable.search,
     )
-
-    data object Notification : BottomBarScreen(
-        route = "Notification",
-        title = Res.string.global_notification,
-        defaultIcon = Res.drawable.bell,
+    data object Wishlist: BottomBarScreen(
+        route = "Wishlist",
+        title = Res.string.global_wishList,
+        defaultIcon = Res.drawable.heart,
     )
+//    data object Notification : BottomBarScreen(
+//        route = "Notification",
+//        title = Res.string.global_notification,
+//        defaultIcon = Res.drawable.bell,
+//    )
 
     data object Account : BottomBarScreen(
         route = "Account",
@@ -251,7 +262,7 @@ private val NavController.shouldShowBottomBar
     get() = when (this.currentBackStackEntry?.destination?.route) {
         customFindRoute(HomeRoute),
         customFindRoute(SearchRoute),
-        customFindRoute(NotificationsRoute),
+        customFindRoute(WishlistRoute),
         customFindRoute(AccountRoute),
             -> true
 

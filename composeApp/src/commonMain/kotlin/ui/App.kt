@@ -71,7 +71,7 @@ fun App() = AppTheme {
         ) {
             LaunchedEffect(Unit) {
                 LocalPushNotification.requestAuthorization {}
-              //  UserRepository.INSTANCE.getMe()
+                UserRepository.INSTANCE.getMe()
                 println("is jwt valid: ${Utils.isJwtTokenValid()}")
                 Utils.isJwtTokenValid()
             }

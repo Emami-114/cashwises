@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -24,7 +25,6 @@ import cashwises.composeapp.generated.resources.Res
 import cashwises.composeapp.generated.resources.category_deals
 import cashwises.composeapp.generated.resources.compose_multiplatform
 import domain.model.CreateDealRoute
-import domain.model.DetailRoute
 import org.company.app.theme.md_theme_dark_primary
 import org.company.app.theme.md_theme_dark_secondary
 import org.jetbrains.compose.resources.painterResource
@@ -55,7 +55,8 @@ fun HomeView(navController: NavHostController) {
                 onExpanded = {
                     viewModel.doChangeExpandedItem()
                 },
-                onClick = { viewModel.doChangeSelectedCategory(it) })
+                onClick = { viewModel.doChangeSelectedCategory(it) }
+            )
         },
         floatingActionButton = {
             Button(
@@ -92,17 +93,59 @@ fun HomeTopAppBar(
     val items = listOf<String>(
         stringResource(Res.string.category_deals),
         stringResource(Res.string.category_free),
-        stringResource(Res.string.category_mobile_tariffs)
+        stringResource(Res.string.category_mobile_tariffs),
+        stringResource(Res.string.category_mobile_tariffs),
+        stringResource(Res.string.category_mobile_tariffs),
+        stringResource(Res.string.category_mobile_tariffs),
     )
 
 
     Column(modifier = Modifier.height(150.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Image(
                 painter = painterResource(Res.drawable.compose_multiplatform),
                 contentDescription = null,
                 modifier = Modifier.size(80.dp),
             )
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 5.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(0.9f),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(items) { item ->
+                    val color by animateColorAsState(
+                        targetValue = if (item == selectedItem) md_theme_dark_primary else Color.Transparent,
+                        animationSpec = tween(delayMillis = 80, easing = EaseInOut)
+                    )
+                    Text(
+                        text = item,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = md_theme_dark_secondary,
+                        modifier = Modifier
+                            .background(
+                                color = color,
+                                shape = RoundedCornerShape(7.dp)
+                            )
+                            .noRippleClickable {
+                                onClick(item)
+                            }
+                            .padding(vertical = 3.dp, horizontal = 6.dp)
+                    )
+                }
+            }
             Image(
                 painterResource(if (isExpanded) Res.drawable.layout_grid else Res.drawable.list),
                 contentDescription = null,
@@ -111,33 +154,6 @@ fun HomeTopAppBar(
                 },
                 colorFilter = ColorFilter.tint(color = md_theme_dark_secondary)
             )
-        }
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 15.dp, vertical = 5.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(items) { item ->
-                val color by animateColorAsState(
-                    targetValue = if (item == selectedItem) md_theme_dark_primary else Color.Transparent,
-                    animationSpec = tween(delayMillis = 80, easing = EaseInOut)
-                )
-                Text(
-                    text = item,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = md_theme_dark_secondary,
-                    modifier = Modifier
-                        .background(
-                            color = color,
-                            shape = RoundedCornerShape(7.dp)
-                        )
-                        .noRippleClickable {
-                            onClick(item)
-                        }
-                        .padding(vertical = 3.dp, horizontal = 6.dp)
-                )
-            }
         }
         CustomDivider(modifier = Modifier.zIndex(1f))
     }

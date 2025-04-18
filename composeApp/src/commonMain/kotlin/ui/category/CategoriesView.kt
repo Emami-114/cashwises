@@ -133,7 +133,7 @@ fun CategoryItem(
             CategoryItemHeader(categoryModel) { onClick() }
             AnimatedVisibility(isExpanded) {
                 CustomDivider()
-                val filterSubCat = uiState.categories.filter { it.isMainCategory == false }
+                val filterSubCat = uiState.categories.filter { it.parentCategoryId == categoryModel.id }
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Spacer(modifier = Modifier.height(10.dp))
                     filterSubCat.onEachIndexed { _, categoryModel ->

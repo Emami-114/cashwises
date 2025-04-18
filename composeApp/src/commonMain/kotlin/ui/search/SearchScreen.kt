@@ -111,7 +111,7 @@ fun SearchResultView(
                     ProductGridItem(
                         dealModel = deal,
                         onNavigateToDetail = {
-                            deal.id?.let { dealId ->
+                            deal.id.let { dealId ->
                                 navController.navigate(DetailRoute(dealId))
                             }
                         },
@@ -135,7 +135,6 @@ fun SearchScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getCategories()
-        println("category count: ${uiState.categories?.size}")
     }
 
     BoxWithConstraints {
@@ -236,7 +235,7 @@ class SearchScreenViewModel : ViewModel(), KoinComponent {
                     is Result.Success -> {
                         _state.update {
                             it.copy(
-                                categories = result.data
+                                categories = result.data?.filter { it.isMainCategory == true }
                             )
                         }
                     }

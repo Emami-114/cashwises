@@ -88,7 +88,7 @@ fun CreateTagView(modifier: Modifier = Modifier) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(tag.title, fontSize = 20.sp, color = cw_dark_whiteText)
-                                if (UserRepository.INSTANCE.user?.role == UserRole.ADMIN) {
+                                if (UserRepository.INSTANCE.userIsAdmin()) {
                                     Icon(
                                         painter = painterResource(Res.drawable.trash),
                                         contentDescription = null,
