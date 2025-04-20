@@ -6,6 +6,7 @@ import org.jetbrains.compose.reload.ComposeHotRun
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -195,5 +196,13 @@ tasks.register<ComposeHotRun>("runHot") {
 }
 
 buildConfig {
-    buildConfigField("String", "API_SECRET_KEY", "\"${project.findProperty("API_SECRET_KEY")}\"")
+    val localProperties = Properties().apply {
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            load(localPropertiesFile.inputStream())
+        }
+    }
+
+    val apiSecretKey = localProperties.getProperty("API_SECRET_KEY") ?: ""
+    buildConfigField("String", "API_SECRET_KEY", "\"$apiSecretKey\"")
 }

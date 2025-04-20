@@ -77,6 +77,7 @@ fun App() = AppTheme {
                 ApiKeyService.checkApiKey()
                 Utils.isJwtTokenValid()
                 UserRepository.INSTANCE.getMe()
+                println("API_KEY_SECRET: ${BuildConfig.API_SECRET_KEY}")
             }
             HomeNav()
         }
