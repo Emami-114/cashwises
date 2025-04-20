@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
+import cashwises.composeApp.BuildConfig
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.annotation.ExperimentalCoilApi
@@ -33,11 +34,13 @@ import coil3.util.DebugLogger
 import com.russhwolf.settings.Settings
 import data.repository.ApiConfig
 import data.repository.UserRepository
+import getPlatform
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import okio.FileSystem
 import theme.AppTheme
 import ui.components.CustomNotificationToast
+import utils.ApiKeyService
 import utils.LocalPushNotification
 import utils.Utils
 import utils.decodeJWT
@@ -71,14 +74,13 @@ fun App() = AppTheme {
         ) {
             LaunchedEffect(Unit) {
                 LocalPushNotification.requestAuthorization {}
-              //  UserRepository.INSTANCE.getMe()
-                println("is jwt valid: ${Utils.isJwtTokenValid()}")
+                ApiKeyService.checkApiKey()
                 Utils.isJwtTokenValid()
+                UserRepository.INSTANCE.getMe()
             }
             HomeNav()
         }
     }
-
 }
 
 fun getAsyncImageLoader(context: PlatformContext) =

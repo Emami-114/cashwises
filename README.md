@@ -6,6 +6,11 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
   - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
     For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
     `iosMain` would be the right folder for such calls.
+  - 
+### Desktop
+Run the desktop application: `./gradlew :composeApp:run`
+Run the desktop **hot reload** application: `./gradlew :composeApp:runHot`)
+Run desktop UI tests: `./gradlew :composeApp:jvmTest`
 
 * `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.

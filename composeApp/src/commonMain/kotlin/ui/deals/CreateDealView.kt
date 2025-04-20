@@ -140,12 +140,6 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         modifier = Modifier
                     )
 
-                    CustomTextField(
-                        value = uiState.description,
-                        onValueChange = { viewModel.onEvent(DealEvent.OnDescriptionChange(it)) },
-                        placeholder = stringResource(Res.string.description),
-                        modifier = Modifier
-                    )
                     MainAndSubCategoryList(
                         uiState = uiState,
                         selectedCategories = uiState.category ?: listOf(),
@@ -248,7 +242,7 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                     )
 
                     CustomTextField(
-                        value = "${uiState.shippingCosts ?: 0.0}",
+                        value = if (uiState.shippingCosts != null) "${uiState.shippingCosts}" else "",
                         onValueChange = { viewModel.onEvent(DealEvent.OnShippingCostChange(it.toDouble())) },
                         placeholder = stringResource(Res.string.shipping_costs),
                         modifier = Modifier,

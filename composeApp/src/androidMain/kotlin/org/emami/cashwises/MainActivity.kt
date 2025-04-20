@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import com.russhwolf.settings.BuildConfig
 import di.getSharedModules
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.context.startKoin

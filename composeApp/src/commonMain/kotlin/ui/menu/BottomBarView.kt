@@ -26,6 +26,7 @@ import domain.model.AccountRoute
 import domain.model.HomeRoute
 import domain.model.NotificationsRoute
 import domain.model.SearchRoute
+import domain.model.WishlistRoute
 import org.company.app.theme.cw_dark_background
 import ui.BottomBarScreen
 import ui.components.customModiefier.customBorder
@@ -52,7 +53,8 @@ fun BottomNavigationView(
         var bottomBarScreen = listOf(
             BottomBarScreen.Home,
             BottomBarScreen.Search,
-            BottomBarScreen.Notification,
+//            BottomBarScreen.Notification,
+            BottomBarScreen.Wishlist,
             BottomBarScreen.Account
         )
 
@@ -65,7 +67,7 @@ fun BottomNavigationView(
                     when(tab) {
                         BottomBarScreen.Home -> currentScreenRouter == navController.customFindRoute(HomeRoute)
                         BottomBarScreen.Search -> currentScreenRouter == navController.customFindRoute(SearchRoute)
-                        BottomBarScreen.Notification -> currentScreenRouter == navController.customFindRoute(NotificationsRoute)
+                        BottomBarScreen.Wishlist -> currentScreenRouter == navController.customFindRoute(WishlistRoute)
                         BottomBarScreen.Account -> currentScreenRouter == navController.customFindRoute(AccountRoute)
                     }
 
@@ -76,7 +78,7 @@ fun BottomNavigationView(
                     when(tab) {
                         BottomBarScreen.Home -> HomeRoute
                         BottomBarScreen.Search -> SearchRoute
-                        BottomBarScreen.Notification -> NotificationsRoute
+                        BottomBarScreen.Wishlist -> WishlistRoute
                         BottomBarScreen.Account -> AccountRoute
                     }
                 )

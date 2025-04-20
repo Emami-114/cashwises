@@ -74,7 +74,6 @@ fun DealsView(
                     viewModel.onEvent(DealEvent.OnSetDefaultState)
                 })
             }
-
             else -> {
                 if (isExpanded) {
                     LazyColumn(

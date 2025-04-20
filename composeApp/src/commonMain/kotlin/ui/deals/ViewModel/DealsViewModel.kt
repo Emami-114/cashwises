@@ -110,7 +110,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
         _state.update {
             it.copy(
                 thumbnailByte = image,
-                imagesByte = listOf(image!!)
+                imagesByte = image?.let { listOf(it) } ?: emptyList()
             )
         }
     }
@@ -327,13 +327,15 @@ class DealsViewModel : ViewModel(), KoinComponent {
             categoriesUseCase.getCategories().collect { status ->
                 when (status) {
                     is Result.Loading -> _state.value.copy(isLoading = true, error = null)
-                    is Result.Success -> _state.value.copy(
-                        categories = status.data ?: listOf(),
-                        isLoading = false,
-                        error = null
-                    )
+                    is Result.Success -> _state.update {
+                        it.copy(
+                            categories = status.data ?: listOf(),
+                            isLoading = false,
+                            error = null
+                        )
+                    }
 
-                    is Result.Error<*> -> _state.value.copy(
+                    is Result.Error -> _state.value.copy(
                         error = getString(status.error?.message!!),
                         isLoading = false
                     )

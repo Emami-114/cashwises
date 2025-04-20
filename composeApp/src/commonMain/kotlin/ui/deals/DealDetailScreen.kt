@@ -175,7 +175,7 @@ fun DealDetailScreen(
                             }
                         })
 
-                    if (UserRepository.INSTANCE.user?.role == UserRole.ADMIN) {
+                    if (UserRepository.INSTANCE.userIsAdmin()) {
                         Icon(
                             painter = painterResource(Res.drawable.trash),
                             contentDescription = null,

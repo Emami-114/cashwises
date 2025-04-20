@@ -99,7 +99,7 @@ fun ProductItem(
                         .heightIn(max = 130.dp)
                         .clickable { onNavigateToDetail() }
                         .clip(MaterialTheme.shapes.large).customBorder(),
-                    model = "${ApiConfig.BASE_URL}/images/${dealModel.thumbnailUrl}",
+                    model = "${ApiConfig.IMAGE_URL}/${dealModel.thumbnailUrl}",
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     onError = {},
@@ -114,7 +114,6 @@ fun ProductItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Test")
                     Text(
                         text = if (dealModel.currentCreatedHour.toInt() == 0)
                             "${dealModel.currentCreatedMinute}m"

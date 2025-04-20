@@ -30,30 +30,12 @@ fun decodeJWT(jwt: String): Long {
     val decoderBytes = base64UrlDecode(payloadBase64)
     val payloadJson = decoderBytes.decodeToString()
 
-//    val formatter = LocalDateTime.Format {
-//        byUnicodePattern("dd.MM.yyyy HH:mm:ss")
-//    }
-
     val jsonElement = Json.parseToJsonElement(payloadJson)
     val jsonObject = jsonElement.jsonObject
-    println("Payload: $jsonObject")
     val key = "exp"
         val value = jsonObject[key]
         if (value is JsonPrimitive && value.isString.not()) {
             val timestamp = value.longOrNull ?: 0
-            println("$key: $timestamp")
-            UserRepository.INSTANCE.userIsLogged = true
-            UserRepository.INSTANCE.user = UserModel(
-                name = jsonObject["unique_name"].toString(),
-                role = UserRole.ADMIN,
-                email = "",
-                verified = true,
-                photo = ""
-            )
-            UserRepository.INSTANCE.user?.role = UserRole.ADMIN
-            UserRepository.INSTANCE.user?.name = jsonObject["unique_name"].toString()
-            println("Role: ${jsonObject["role"].toString()}")
-            println("Name: ${jsonObject["unique_name"].toString()}")
             return timestamp
         } else {
             println("$key: nicht vorhanden oder kein Zahlentyp")
