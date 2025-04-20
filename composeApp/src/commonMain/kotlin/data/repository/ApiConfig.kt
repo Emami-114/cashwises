@@ -25,7 +25,8 @@ object ApiConfig {
 
     //    const val BASE_URL = "http://192.168.178.22:8000/api"
     var userToken = settings.getString("TOKEN", "Token not found")
-    private const val API_KEY = "MyDevice:1743553316102:QgyGvPkTiFTbIi5LclkI38Va88Vyrgm8qfPYR3v8j5E"
+    private var API_KEY = settings.getString("api_key", "")
+
 
     val httpClient = HttpClient {
         install(ContentNegotiation) {

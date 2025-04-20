@@ -90,11 +90,11 @@ fun CreateDealAndCategoriesScreen(navController: NavHostController) {
                 navController.popBackStack()
             }, rightAction = {
                 if (UserRepository.INSTANCE.userIsCreator() || UserRepository.INSTANCE.userIsAdmin())
-                Icon(
-                    if (isExpanded) Icons.Default.Close else Icons.Default.Menu,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.noRippleClickable { isExpanded = !isExpanded })
+                    Icon(
+                        if (isExpanded) Icons.Default.Close else Icons.Default.Menu,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.noRippleClickable { isExpanded = !isExpanded })
             })
         },
         modifier = Modifier.fillMaxSize()
@@ -188,7 +188,12 @@ fun CreateDealAndCategoriesScreen(navController: NavHostController) {
                         color = cw_dark_whiteText
                     )
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text(stringResource(Res.string.registration_required_desc), fontSize = 15.sp, textAlign = TextAlign.Center, color = cw_dark_whiteText)
+                    Text(
+                        stringResource(Res.string.registration_required_desc),
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Center,
+                        color = cw_dark_whiteText
+                    )
                 }
             }
         }

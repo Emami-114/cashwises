@@ -96,7 +96,7 @@ fun MainAndSubCategoryList(
                             }
                         )
                         HorizontalDivider(color = MaterialTheme.colorScheme.surface)
-                        val subCatFilter = uiState.categories.filter { category.isMainCategory == true }
+                        val subCatFilter = uiState.categories.filter { it.parentCategoryId == category.id }
                         subCatFilter.forEach { subCat ->
                             Row {
                                 Spacer(modifier = Modifier.width(15.dp))

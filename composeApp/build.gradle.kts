@@ -1,6 +1,9 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.reload.ComposeHotRun
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -10,7 +13,10 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.buildConfig)
+    alias(libs.plugins.hotReload)
 }
+
 
 kotlin {
     androidTarget {
@@ -73,7 +79,7 @@ kotlin {
             implementation(libs.ktor.client.serialization)
             implementation(libs.kotlinx.datetime)
             // MOKO
-           // implementation(libs.moko.mvvm)
+            // implementation(libs.moko.mvvm)
             // settings
             implementation(libs.multiplatformSettings)
             implementation(libs.multiplatformSettings.noArg)
@@ -167,6 +173,27 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.emami.cashwises"
             packageVersion = "1.0.0"
+//            linux {
+//                iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))
+//            }
+//            windows {
+//                iconFile.set(project.file("desktopAppIcons/WindowsIcon.ico"))
+//            }
+//            macOS {
+//                iconFile.set(project.file("desktopAppIcons/MacosIcon.icns"))
+//                bundleID = "org.company.app.desktopApp"
+//            }
         }
     }
+}
+
+composeCompiler {
+    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
+}
+tasks.register<ComposeHotRun>("runHot") {
+    mainClass.set("MainKt")
+}
+
+buildConfig {
+    buildConfigField("String", "API_SECRET_KEY", "\"${project.findProperty("API_SECRET_KEY")}\"")
 }

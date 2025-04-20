@@ -29,6 +29,7 @@ coil3 = "3.1.0"
 windows-size = "1.7.0-rc01"
 adaptiveNavigationSuite = "1.0.0-alpha07"
 hotReload = "1.0.0-alpha03"
+buildConfig = "5.4.0"
 
 
 
@@ -100,3 +101,5 @@ jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
+hotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "hotReload" }
