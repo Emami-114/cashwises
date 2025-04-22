@@ -79,7 +79,6 @@ fun CustomImagePicker(
                             byteArray = file.readByteArray(context)
                         )
                     )
-                    println("image path: ${file.getPath(context)}")
                 }
                 isImageShowing = true
             }

@@ -33,41 +33,40 @@ class DealVoteRepositoryImpl : DealVoteRepository {
         }
     }
 
-    override suspend fun getDealVotesByDealId(dealId: String): Flow<Result<List<DealVoteModel>>> =
-        flow {
-            emit(Result.Loading())
+    override suspend fun gerDealVotesByUserId(userId: String): List<DealVoteModel> {
+        try {
+            val result = client.get("${ApiConfig.BASE_URL}/vote/user/$userId") {
+                bearerAuth(ApiConfig.userToken)
+            }.body<List<DealVoteModel>>()
+            return result
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun getDealVotesByDealId(dealId: String): List<DealVoteModel> {
             try {
-                val result = client.get("${ApiConfig.BASE_URL}/vote/$dealId") {
+                val result = client.get("${ApiConfig.BASE_URL}/vote/deal/$dealId") {
                     bearerAuth(ApiConfig.userToken)
                 }.body<List<DealVoteModel>>()
-                emit(Result.Success(result))
+               return result
             } catch (e: Exception) {
-                when (e) {
-                    is IOException -> emit(Result.Error(ErrorType.NoInternetConnection))
-                    is HttpRequestTimeoutException -> emit(Result.Error(ErrorType.RequestTimeout))
-                    else -> emit(Result.Error(ErrorType.UnknownError))
-                }
+               throw e
             }
         }
 
     override suspend fun getDealVotesByDealIdAndUserId(
         userId: String,
         dealId: String
-    ): Flow<Result<DealVoteModel?>> = flow {
-        emit(Result.Loading())
+    ): DealVoteModel? {
         try {
-            val result = client.get("${ApiConfig.BASE_URL}/vote/deal/$dealId/user/$userId") {
-                bearerAuth(ApiConfig.userToken)
-            }.body<DealVoteModel?>()
-            emit(Result.Success(result))
-        } catch (e: Exception) {
-            when (e) {
-                is IOException -> emit(Result.Error(ErrorType.NoInternetConnection))
-                is HttpRequestTimeoutException -> emit(Result.Error(ErrorType.RequestTimeout))
-                else -> emit(Result.Error(ErrorType.UnknownError))
-            }
-        }
-
+           val result = client.get("${ApiConfig.BASE_URL}/vote/deal/$dealId/user/$userId") {
+               bearerAuth(ApiConfig.userToken)
+           }.body<DealVoteModel?>()
+          return result
+       } catch (e: Exception) {
+           throw  e
+       }
     }
 
     override suspend fun deleteDealVoteByDealIdAndUserId(

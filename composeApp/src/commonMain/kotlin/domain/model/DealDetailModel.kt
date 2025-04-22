@@ -24,5 +24,6 @@ data class DealDetailModel(
     val tags: List<String>? = null,
     val shippingCost: Double? = null,
     val createdAt: String? = null,
-    val updatedAt: String? = null
+    val updatedAt: String? = null,
+    val voteCount: Int = 100
 )

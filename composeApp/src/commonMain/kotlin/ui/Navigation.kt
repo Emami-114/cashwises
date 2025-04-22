@@ -270,10 +270,12 @@ private val NavController.shouldShowBottomBar
     }
 
 fun NavController.customNavigate(route: Any) {
-    if (this.currentBackStackEntry?.destination?.route != customFindRoute(route)) {
-        println(this.findDestination(this.currentBackStackEntry?.destination?.route ?: ""))
-        println(customFindRoute(route))
-        this.navigate(route)
+    val currentRoute = this.currentBackStackEntry?.destination?.route
+    if (currentRoute != route) {
+        this.navigate(route) {
+            launchSingleTop = true
+            restoreState = true
+        }
     }
 }
 

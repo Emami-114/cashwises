@@ -69,7 +69,8 @@ fun CustomNotificationToast(
         AnimatedVisibility(
             snackBarVisible,
             modifier = modifier.align(Alignment.BottomStart)
-                .padding(bottom = if (isAvailableBottomBar) 100.dp else 20.dp),
+//                .padding(bottom = if (isAvailableBottomBar) 50.dp else 20.dp)
+            ,
             enter = slideInVertically {
                 with(density) { 60.dp.roundToPx() }
             },

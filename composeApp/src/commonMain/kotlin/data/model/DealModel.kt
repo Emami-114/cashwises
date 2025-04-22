@@ -1,6 +1,6 @@
 package data.model
 
-import domain.model.DealModelDto
+import domain.model.DealVoteModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -22,10 +22,11 @@ data class DealModel(
     val providerUrl: String? = null,
     val thumbnailUrl: String? = null,
     val userId: String? = null,
+    val voteCount: Int = 0,
     val couponCode: String? = null,
+    var dealVote: List<DealVoteModel> = listOf(),
     val updatedAt: String? = null
 ) {
-
     val currentCreatedHour = Clock.System.now().until(
         Instant.parse(updatedAt ?: ""), unit = DateTimeUnit.HOUR
     ).absoluteValue
@@ -43,6 +44,7 @@ data class DealModel(
         else
             0
     }
+
     fun hasExpirationDate(): Boolean {
         return expirationDate != null
     }

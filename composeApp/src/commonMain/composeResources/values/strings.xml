@@ -109,5 +109,7 @@
     </string>
     <string name="registration_required_notification">You are not logged in. To create a notification, please log in.
     </string>
+    <string name="voteCount">Number of votes</string>
+    <string name="login_required">You are not logged in. please log in.</string>
 
 </resources>

@@ -2,30 +2,26 @@ package data.repository
 
 import androidx.compose.runtime.mutableStateOf
 import data.model.MarkedDealForUser
+import domain.model.DealVoteModel
 import domain.model.UserModel
 import domain.model.UserRole
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readBytes
-import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import io.ktor.http.isSuccess
 import ui.settings
 
 class UserRepository {
     var user: UserModel? = null
     var userIsLogged: Boolean = false
     var userMarkedDeals = mutableStateOf(listOf<String>())
+    var userDealsVote = mutableStateOf(listOf<DealVoteModel>())
+    var dealVoteRepository = DealVoteRepositoryImpl()
 
     companion object {
         var INSTANCE: UserRepository = UserRepository()
@@ -41,11 +37,27 @@ class UserRepository {
                     userIsLogged = true
                     user = me
                     getMarkDealsForUser()
-                    println("test: $me")
+                    getUserDealsVote()
                 }
             }
         } catch (e: Exception) {
             println("Error GET ME Failed ${e.message}")
+        }
+    }
+
+     fun hasDealVoted(dealId: String): Boolean {
+        return userDealsVote.value.any { it.dealId == dealId }
+    }
+
+    suspend fun getUserDealsVote() {
+        try {
+            user?.userId?.let { userId ->
+                userDealsVote.value = dealVoteRepository.gerDealVotesByUserId(userId)
+                println("user deals vote: ${userDealsVote.value}")
+            }
+        } catch (e: Exception) {
+            println("Error GET User Deal Vote Failed ${e.message}")
+
         }
     }
 
@@ -55,6 +67,7 @@ class UserRepository {
 
     fun userIsAdmin(): Boolean = user?.role == UserRole.ADMIN
     fun userIsCreator(): Boolean = user?.role == UserRole.CREATOR
+
     suspend fun addMarkDealForUser(dealId: String): Boolean {
         try {
             val userId = user?.userId ?: ""
@@ -73,7 +86,8 @@ class UserRepository {
                     contentType(ContentType.Application.Json)
                     bearerAuth(ApiConfig.userToken)
                     setBody(body)
-                }.status.value in 200..300
+                }.status.isSuccess()
+                println("marked delas: ${response}")
                 response.let { isSuccess ->
                     if (isSuccess) {
                         getMarkDealsForUser()
@@ -89,11 +103,11 @@ class UserRepository {
     }
 
     private suspend fun getMarkDealsForUser() {
-        val response = ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/marked-deals/user/${user?.userId}") {
-            contentType(ContentType.Application.Json)
-            bearerAuth(ApiConfig.userToken)
-        }.body<List<MarkedDealForUser>>()
-        println("test: $response")
+        val response =
+            ApiConfig.httpClient.get("${ApiConfig.BASE_URL}/marked-deals/user/${user?.userId}") {
+                contentType(ContentType.Application.Json)
+                bearerAuth(ApiConfig.userToken)
+            }.body<List<MarkedDealForUser>>()
         userMarkedDeals.value = response.map { it.dealId }
     }
 

@@ -48,6 +48,7 @@ import cashwises.composeapp.generated.resources.shipping_costs
 import cashwises.composeapp.generated.resources.successfully_created
 import cashwises.composeapp.generated.resources.title
 import cashwises.composeapp.generated.resources.video_url
+import cashwises.composeapp.generated.resources.voteCount
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
@@ -236,8 +237,6 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         },
                         onSelected = {
                             viewModel.onEvent(DealEvent.OnTagsChange(it))
-                            println("test list tags $it")
-
                         }
                     )
 
@@ -248,6 +247,15 @@ fun CreateDealView(modifier: Modifier = Modifier) {
                         modifier = Modifier,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
+
+                    CustomTextField(
+                        value = uiState.voteCount,
+                        onValueChange = { viewModel.doChangeVoteCount(it) },
+                        placeholder = stringResource(Res.string.voteCount),
+                        modifier = Modifier,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+
                     DatePicker(
                         state = dataPickerState,
                         showModeToggle = true,

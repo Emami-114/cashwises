@@ -89,4 +89,7 @@
     <string name="create_notification">Benachrichtigung erstellen</string>
     <string name="required_select_notification">Sie haben keine Benachrichtigungskategorie ausgewählt. Um Benachrichtigungen zu erhalten, klicken Sie bitte auf den Button unten.</string>
     <string name="registration_required_notification">Sie sind nicht angemeldet. Um eine Benachrichtigung zu erstellen, melden Sie sich bitte an.</string>
+    <string name="voteCount">Anzahl der Stimmen</string>
+    <string name="login_required">Sie sind nicht angemeldet. Bitte melden Sie sich an.</string>
+
 </resources>

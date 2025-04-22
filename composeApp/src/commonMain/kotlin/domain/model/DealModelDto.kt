@@ -17,6 +17,7 @@ data class DealModelDto(
     val providerUrl: String? = null,
     val thumbnailUrl: String? = null,
     val userId: String? = null,
+    val voteCount: Int = 0,
     val couponCode: String? = null,
     val updatedAt: String? = null
 ) {
@@ -32,6 +33,7 @@ data class DealModelDto(
             providerUrl = this.providerUrl,
             thumbnailUrl = this.thumbnailUrl,
             userId = this.userId,
+            voteCount = this.voteCount,
             couponCode = this.couponCode,
             updatedAt = this.updatedAt
         )

@@ -35,15 +35,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.arrow_big_down_line
+import cashwises.composeapp.generated.resources.arrow_big_up_lines
 import cashwises.composeapp.generated.resources.external_link
 import cashwises.composeapp.generated.resources.free
 import coil3.compose.AsyncImage
 import data.model.DealModel
 import data.repository.ApiConfig
+import data.repository.UserRepository
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
+import org.company.app.theme.cw_dark_borderColor
 import org.company.app.theme.cw_dark_grayText
 import org.company.app.theme.cw_dark_primary
 import org.company.app.theme.cw_dark_whiteText
@@ -58,7 +62,8 @@ fun ProductItem(
     modifier: Modifier = Modifier,
     dealModel: DealModel,
     onNavigateToDetail: () -> Unit,
-    onNavigateToProvider: (String) -> Unit
+    onNavigateToProvider: (String) -> Unit,
+    dealVoteAction: (dealId: String) -> Unit,
 ) {
     val roundedCornerShape = RoundedCornerShape(15.dp)
     var imageByte by remember { mutableStateOf(ByteArray(0)) }
@@ -114,6 +119,35 @@ fun ProductItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+                    Row(
+                        modifier = Modifier
+                            .noRippleClickable {
+                                dealVoteAction(dealModel.id)
+                            }
+                            .customBorder(
+                                color = if (UserRepository.INSTANCE.hasDealVoted(dealModel.id)) cw_dark_primary else
+                                    cw_dark_borderColor,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "${dealModel.voteCount}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (UserRepository.INSTANCE.hasDealVoted(dealModel.id)) cw_dark_primary  else cw_dark_whiteText.copy(0.7f)
+                        )
+                        Icon(
+                            painter = painterResource(
+                                if (UserRepository.INSTANCE.hasDealVoted(dealModel.id)) Res.drawable.arrow_big_down_line else
+                                Res.drawable.arrow_big_up_lines),
+                            contentDescription = null,
+                            tint = if (UserRepository.INSTANCE.hasDealVoted(dealModel.id)) cw_dark_primary  else cw_dark_whiteText.copy(0.7f),
+                            modifier = Modifier.size(17.dp)
+                        )
+                    }
                     Text(
                         text = if (dealModel.currentCreatedHour.toInt() == 0)
                             "${dealModel.currentCreatedMinute}m"
@@ -178,7 +212,8 @@ fun ProductItem(
                         }
                     }
                     dealModel.providerUrl?.let { url ->
-                        Icon(painter = painterResource(Res.drawable.external_link),
+                        Icon(
+                            painter = painterResource(Res.drawable.external_link),
                             contentDescription = null,
                             tint = cw_dark_primary,
                             modifier = Modifier

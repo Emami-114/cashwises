@@ -2,10 +2,15 @@ package ui.deals.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cashwises.composeapp.generated.resources.Res
+import cashwises.composeapp.generated.resources.login_required
 import com.russhwolf.settings.set
 import data.model.DealsQuery
+import data.repository.UserRepository
 import domain.model.DealDetailModel
+import domain.model.DealVoteModel
 import domain.model.ImageModel
+import domain.repository.DealVoteRepository
 import domain.repository.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +33,8 @@ class DealsViewModel : ViewModel(), KoinComponent {
     private val useCase: DealsUseCase by inject()
     private val imageUseCase: ImageUploadUseCase by inject()
     private val tagsUseCase: TagsUseCase by inject()
+    private val dealVoteRepository: DealVoteRepository by inject()
+
     private val _state = MutableStateFlow(DealsState())
     val state = _state.asStateFlow()
         .stateIn(
@@ -115,6 +122,13 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun doChangeVoteCount(voteCount: String) {
+        _state.update {
+            it.copy(
+                voteCount = voteCount
+            )
+        }
+    }
     fun doChangeImages(image: List<ImageModel>?) {
         _state.update {
             it.copy(imagesByte = _state.value.imagesByte?.plus(image!!))
@@ -160,6 +174,7 @@ class DealsViewModel : ViewModel(), KoinComponent {
                 imagesUrl = _state.value.images,
                 userId = _state.value.userId,
                 videoUrl = _state.value.videoUrl,
+                voteCount = if (_state.value.voteCount.isNotEmpty()) _state.value.voteCount.toInt() else 300
             )
             try {
                 useCase.addDeals(dealModel = deal) {
@@ -170,7 +185,6 @@ class DealsViewModel : ViewModel(), KoinComponent {
                             error = null
                         )
                     }
-                    println("Deals mit image $deal")
                 }
             } catch (e: Exception) {
                 _state.update {
@@ -293,6 +307,52 @@ class DealsViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun addDealVote(dealId: String) = viewModelScope.launch {
+        if (!UserRepository.INSTANCE.userIsLogged) {
+            _state.update {
+                it.copy(
+                    error = getString(Res.string.login_required)
+                )
+            }
+        }
+        val dealVote = DealVoteModel(
+            dealId = dealId,
+            userId = UserRepository.INSTANCE.user?.userId ?: ""
+        )
+        if (UserRepository.INSTANCE.hasDealVoted(dealId)) {
+            dealVoteRepository.deleteDealVoteByDealIdAndUserId(
+                dealId = dealId,
+                userId = UserRepository.INSTANCE.user?.userId ?: ""
+            )
+            _state.update {
+                it.copy(
+                    deals = _state.value.deals.map { deal ->
+                        if (deal.id == dealId) {
+                            deal.copy(voteCount = deal.voteCount - 1)
+                        } else {
+                            deal
+                        }
+                    }
+                )
+            }
+        } else {
+            dealVoteRepository.addDealVote(dealVote)
+            _state.update {
+                it.copy(
+                    deals = _state.value.deals.map { deal ->
+                        if (deal.id == dealId) {
+                            deal.copy(voteCount = deal.voteCount + 1)
+                        } else {
+                            deal
+                        }
+                    }
+                )
+            }
+        }
+
+        UserRepository.INSTANCE.getUserDealsVote()
+    }
+
     fun getTags(queryText: String? = null) = viewModelScope.launch {
         try {
             _state.value = _state.value.copy(isLoading = true)
@@ -304,7 +364,6 @@ class DealsViewModel : ViewModel(), KoinComponent {
                             listTag = status.data ?: listOf(),
                             error = null
                         )
-
                         is Result.Error -> _state.value.copy(error = getString(status.error?.message!!))
                     }
 

@@ -35,5 +35,6 @@ data class DealsState(
     val couponCode: String? = null,
     val selectedTags: List<String> = listOf(),
     val shippingCosts: Double? = null,
-    val listTag: List<TagModel> = listOf()
+    val listTag: List<TagModel> = listOf(),
+    val voteCount: String = "",
 )

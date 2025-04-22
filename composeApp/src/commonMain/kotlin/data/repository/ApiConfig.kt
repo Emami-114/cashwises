@@ -20,7 +20,7 @@ import org.jetbrains.compose.resources.getString
 import ui.settings
 
 object ApiConfig {
-    const val BASE_URL = "https://api2.maldeals.de/api"
+    const val BASE_URL = "https://api.maldeals.de/api"
     const val IMAGE_URL = "https://minio.maldeals.de"
 
     //    const val BASE_URL = "http://192.168.178.22:8000/api"

@@ -168,13 +168,11 @@ fun DealDetailScreen(
                                                     )
                                             }
                                         }
-
                                 }
                             } else {
                                 showErrorPopUp = true
                             }
                         })
-
                     if (UserRepository.INSTANCE.userIsAdmin()) {
                         Icon(
                             painter = painterResource(Res.drawable.trash),
@@ -206,6 +204,7 @@ fun DealDetailScreen(
             ) {
                 Button(
                     onClick = {
+                        clipBoard.setText(annotatedString = AnnotatedString(text = deal?.couponCode ?: ""))
                         openUrl(url)
                     },
                     modifier = Modifier.fillMaxWidth().height(45.dp).align(Alignment.TopStart)
@@ -286,7 +285,7 @@ fun DetailDealView(
     Column(
         modifier = modifier.fillMaxSize().widthIn(min = 300.dp, max = 900.dp)
             .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
         Box {
             dealDetailModel.thumbnailUrl?.let { _ ->
@@ -347,7 +346,7 @@ fun DetailDealView(
             color = cw_dark_whiteText,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
         )
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(0.dp))
         dealDetailModel.expirationDate?.let { expirationDate ->
             val expiration = Clock.System.now().daysUntil(
                 Instant.parse(expirationDate), timeZone = TimeZone.UTC
@@ -419,6 +418,7 @@ fun DetailDealView(
             fontWeight = FontWeight.Medium,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).offset(y = 15.dp)
         )
+        Spacer(Modifier.height(5.dp))
         OutlinedRichTextEditor(
             state = richTextState,
             readOnly = true,

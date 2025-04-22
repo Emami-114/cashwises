@@ -31,10 +31,10 @@ import ui.components.CustomBackgroundView
 import ui.components.CustomDivider
 import ui.components.CustomPopUp
 import ui.customNavigate
-import ui.deals.components.ProductGridItem
 import ui.deals.ViewModel.DealEvent
 import ui.deals.ViewModel.DealsState
 import ui.deals.ViewModel.DealsViewModel
+import ui.deals.components.ProductGridItem
 import ui.deals.components.ProductItem
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
@@ -74,6 +74,7 @@ fun DealsView(
                     viewModel.onEvent(DealEvent.OnSetDefaultState)
                 })
             }
+
             else -> {
                 if (isExpanded) {
                     LazyColumn(
@@ -88,7 +89,11 @@ fun DealsView(
                                 onNavigateToDetail = {
                                     navController.customNavigate(DetailRoute(deal.id))
                                 },
-                                onNavigateToProvider = {})
+                                onNavigateToProvider = {},
+                                dealVoteAction = { dealId ->
+                                    viewModel.addDealVote(dealId)
+                                }
+                            )
                             CustomDivider(height = 0.6.dp)
                         }
                     }
